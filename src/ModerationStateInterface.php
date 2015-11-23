@@ -11,6 +11,7 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 
 /**
  * Provides an interface for defining Moderation state entities.
+ * @todo phpdoc
  */
 interface ModerationStateInterface extends ConfigEntityInterface {
 
