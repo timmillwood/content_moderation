@@ -2,7 +2,9 @@
 
 /**
  * @file
- * Contains moderation_state.module..
+ * Contains moderation_state.module.
+ *
+ * @todo modify the 'Save and keep published' button?
  */
 
 use Drupal\Core\Entity\EntityTypeInterface;
