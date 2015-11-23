@@ -1,0 +1,99 @@
+moderation_state.overview:
+  path: '/admin/structure/moderation-state'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Moderation state'
+  requirements:
+  # todo write a test for this
+    _permission: 'access administration pages'
+
+# ModerationState routing definition
+entity.moderation_state.collection:
+  path: '/admin/structure/moderation-state/states'
+  defaults:
+    _entity_list: 'moderation_state'
+    _title: 'Moderation states'
+  requirements:
+  # todo write a test for this
+    _permission: 'administer moderation state'
+  options:
+    _admin_route: TRUE
+
+entity.moderation_state.add_form:
+  path: '/admin/structure/moderation-state/states/add'
+  defaults:
+    _entity_form: 'moderation_state.add'
+    _title: 'Add Moderation state'
+  requirements:
+  # todo write a test for this
+    _permission: 'administer moderation state'
+  options:
+    _admin_route: TRUE
+
+entity.moderation_state.edit_form:
+  path: '/admin/structure/moderation-state/states/{moderation_state}'
+  defaults:
+    _entity_form: 'moderation_state.edit'
+    _title: 'Edit Moderation state'
+  requirements:
+  # todo write a test for this
+    _permission: 'administer moderation state'
+  options:
+    _admin_route: TRUE
+
+entity.moderation_state.delete_form:
+  path: '/admin/structure/moderation-state/states/{moderation_state}/delete'
+  defaults:
+    _entity_form: 'moderation_state.delete'
+    _title: 'Delete Moderation state'
+  requirements:
+  # todo write a test for this
+    _permission: 'administer moderation state'
+  options:
+    _admin_route: TRUE
+
+# ModerationStateTransition routing definition
+entity.moderation_state_transition.collection:
+  path: '/admin/structure/moderation-state/transitions'
+  defaults:
+    _entity_list: 'moderation_state_transition'
+    _title: 'Moderation state transitions'
+  requirements:
+  # todo write a test for this
+    _permission: 'administer moderation state transitions'
+  options:
+    _admin_route: TRUE
+
+entity.moderation_state_transition.add_form:
+  path: '/admin/structure/moderation-state/transitions/add'
+  defaults:
+    _entity_form: 'moderation_state_transition.add'
+    _title: 'Add Moderation state transition'
+  requirements:
+  # todo write a test for this
+    _permission: 'administer moderation state transitions'
+  options:
+    _admin_route: TRUE
+
+entity.moderation_state_transition.edit_form:
+  path: '/admin/structure/moderation-state/transitions/{moderation-state-transition}'
+  defaults:
+    _entity_form: 'moderation_state_transition.edit'
+    _title: 'Edit Moderation state transition'
+  requirements:
+  # todo write a test for this
+    _permission: 'administer moderation state transitions'
+  options:
+    _admin_route: TRUE
+
+entity.moderation_state_transition.delete_form:
+  path: '/admin/structure/moderation-state/transitions/{moderation-state-transition}/delete'
+  defaults:
+    _entity_form: 'moderation_state_transition.delete'
+    _title: 'Delete Moderation state transition'
+  requirements:
+  # todo write a test for this
+    _permission: 'administer moderation state transitions'
+  options:
+    _admin_route: TRUE
+
