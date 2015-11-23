@@ -1,0 +1,9 @@
+name: Moderation state
+type: module
+description: Provides moderation states for content
+core: 8.x
+package: Other
+dependencies:
+  - node
+  - views
+  - options
