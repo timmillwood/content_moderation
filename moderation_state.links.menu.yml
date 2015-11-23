@@ -1,0 +1,22 @@
+# Moderation state menu items definition
+moderation_state.overview:
+  title: 'Moderation state'
+  route_name: moderation_state.overview
+  description: 'Moderation state'
+  parent: system.admin_structure
+
+entity.moderation_state.collection:
+  title: 'Moderation states'
+  route_name: entity.moderation_state.collection
+  description: 'Administer moderation states'
+  parent: moderation_state.overview
+  weight: 10
+
+# Moderation state transition menu items definition
+entity.moderation_state_transition.collection:
+  title: 'Moderation state transitions'
+  route_name: entity.moderation_state_transition.collection
+  description: 'Administer moderation states transitions'
+  parent: moderation_state.overview
+  weight: 20
+
