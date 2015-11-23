@@ -1,0 +1,28 @@
+moderation_state.moderation_state.*:
+  type: config_entity
+  label: 'Moderation state config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    published:
+      type: bool
+      label: 'Is published'
+    uuid:
+      type: string
+
+node.type.*.third_party.moderation_state:
+  type: mapping
+  label: 'Enable moderation states for this node type'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Moderation states enabled'
+    allowed_moderation_states:
+      type: sequence
+      sequence:
+        type: string
+        label: 'Moderation state'
