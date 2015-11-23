@@ -1,0 +1,14 @@
+{
+  "name": "drupal/moderation_state",
+  "type": "drupal-module",
+  "description": "Provides moderation states for content",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "http://drupal.org/project/moderation_state",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "http://drupal.org/project/issues/moderation_state",
+    "source": "http://cgit.drupalcode.org/moderation_state"
+  },
+  "require": { }
+}
