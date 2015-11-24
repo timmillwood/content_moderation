@@ -12,6 +12,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsSelectWidget;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\moderation_state\Entity\ModerationState;
+use Drupal\node\NodeInterface;
 
 /**
  * Plugin implementation of the 'moderation_state_default' widget.
@@ -37,11 +38,12 @@ class ModerationStateWidget extends OptionsSelectWidget {
       ->getOptionsProvider($this->column, $items->getEntity())
       ->getSettableOptions($user);
 
-    $default = $items->get($delta)->target_id;
+    // @todo make the starting state configurable.
+    $default = $items->get($delta)->target_id ?: 'draft';
     // @todo write a test for this.
     // @todo inject this.
     $from = \Drupal::entityQuery('moderation_state_transition')
-      ->condition('stateFrom', $items->get($delta)->getValue())
+      ->condition('stateFrom', $default)
       ->execute();
     // Can always keep this one as is.
     $to[$default] = $default;
@@ -63,16 +65,13 @@ class ModerationStateWidget extends OptionsSelectWidget {
       '#type' => 'select',
       '#options' => $options,
       '#default_value' => $default,
-      '#published' => ModerationState::load($default)->isPublished(),
+      '#published' => $default ? ModerationState::load($default)->isPublished() : FALSE,
     ];
     if ($user->hasPermission('administer nodes') && count($options)) {
+      // Use the dropbutton.
+      $element['#process'][] = [$this, 'processActions'];
       // Don't show in sidebar/body.
       $element['#access'] = FALSE;
-      // Use the dropbutton.
-      // We have to do this in a form alter because process callbacks cannot
-      // add elements that influence input values.
-      // @see moderation_state_form_node_form_alter
-      $form_state->setTemporaryValue('moderation_state_dropbutton', $element);
     }
     else {
       // Place the field as a details element in the advanced tab-set in e.g.
@@ -90,6 +89,71 @@ class ModerationStateWidget extends OptionsSelectWidget {
     return $element;
   }
 
+  /**
+   * Entity builder updating the node moderation state with the submitted value.
+   *
+   * @param string $entity_type_id
+   *   The entity type identifier.
+   * @param \Drupal\node\NodeInterface $node
+   *   The node updated with the submitted values.
+   * @param array $form
+   *   The complete form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
+  public function updateStatus($entity_type_id, NodeInterface $node, array $form, FormStateInterface $form_state) {
+    $element = $form_state->getTriggeringElement();
+    if (isset($element['#moderation_state'])) {
+      $node->moderation_state->target_id = $element['#moderation_state'];
+    }
+  }
+
+  /**
+   * Process callback to alter action buttons.
+   */
+  public function processActions($element, FormStateInterface $form_state, array &$form) {
+    $default_button = $form['actions']['submit'];
+    $default_button['#access'] = TRUE;
+    $options = $element['#options'];
+    foreach ($options as $id => $label) {
+      if ($id === $element['#default_value']) {
+        if ($element['#published']) {
+          $button = [
+            '#value' => $this->t('Save and keep @state', ['@state' => $label]),
+            '#dropbutton' => 'save',
+            '#moderation_state' => $id,
+            '#weight' => -10,
+          ];
+        }
+        else {
+          $button = [
+            '#value' => $this->t('Save as @state', ['@state' => $label]),
+            '#dropbutton' => 'save',
+            '#moderation_state' => $id,
+            '#weight' => -10,
+          ];
+        }
+      }
+      else {
+        // @todo write a test for this.
+        $button = [
+          '#value' => $this->t('Save and @type @state', [
+            '@state' => $label,
+            '@type' => $element['#published'] ? $this->t('create new revision in') : $this->t('transition to'),
+          ]),
+          '#dropbutton' => 'save',
+          '#moderation_state' => $id,
+        ];
+      }
+      $form['actions']['moderation_state_' . $id] = $button + $default_button;
+    }
+    foreach (['publish', 'unpublish'] as $key) {
+      $form['actions'][$key]['#access'] = FALSE;
+      unset($form['actions'][$key]['#dropbutton']);
+    }
+    $form['#entity_builders']['update_moderation_state'] = [$this, 'updateStatus'];
+    return $element;
+  }
   /**
    * {@inheritdoc}
    */
