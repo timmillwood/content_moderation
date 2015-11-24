@@ -9,7 +9,6 @@
  * Implements hook_install().
  */
 function moderation_state_install() {
-  // @todo write a test for this.
-  $moderation_state_definition = \Drupal::entityManager()->getFieldStorageDefinitions('node')['moderation_state'];
+  $moderation_state_definition = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('node')['moderation_state'];
   \Drupal::entityDefinitionUpdateManager()->installFieldStorageDefinition('moderation_state', 'node', 'moderation_state', $moderation_state_definition);
 }

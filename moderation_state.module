@@ -141,7 +141,6 @@ function moderation_state_entity_bundle_field_info_alter(&$fields, EntityTypeInt
     $node_type = NodeType::load($bundle);
     if ($node_type->getThirdPartySetting('moderation_state', 'enabled', FALSE)) {
       /* @var \Drupal\Core\Field\FieldDefinitionInterface $field */
-      // @todo Create constraint plugin.
       // @todo write a test for this.
       $fields['moderation_state']->addConstraint('ModerationState', []);
     }
