@@ -8,4 +8,5 @@
   description: Create and edit moderation state transitions
   'restrict access': TRUE
 
-#todo add a permission to access the field and each transition
+permission_callbacks:
+  - \Drupal\moderation_state\ModerationStatePermissions::transitionPermissions
