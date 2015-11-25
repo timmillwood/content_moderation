@@ -157,7 +157,6 @@ function moderation_state_entity_bundle_field_info_alter(&$fields, EntityTypeInt
  */
 function moderation_state_node_presave(NodeInterface $node) {
   // @todo write a test for this.
-  //   version exists, and then write a test for it.
   if ($node->moderation_state->entity) {
     $original = !empty($node->original) ? $node->original : NULL;
     if ($original && $original->moderation_state->target_id !== $node->moderation_state->target_id) {
