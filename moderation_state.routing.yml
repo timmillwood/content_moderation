@@ -54,7 +54,6 @@ entity.moderation_state_transition.collection:
     _entity_list: 'moderation_state_transition'
     _title: 'Moderation state transitions'
   requirements:
-  # todo write a test for this
     _permission: 'administer moderation state transitions'
   options:
     _admin_route: TRUE
@@ -65,7 +64,6 @@ entity.moderation_state_transition.add_form:
     _entity_form: 'moderation_state_transition.add'
     _title: 'Add Moderation state transition'
   requirements:
-  # todo write a test for this
     _permission: 'administer moderation state transitions'
   options:
     _admin_route: TRUE
@@ -76,7 +74,6 @@ entity.moderation_state_transition.edit_form:
     _entity_form: 'moderation_state_transition.edit'
     _title: 'Edit Moderation state transition'
   requirements:
-  # todo write a test for this
     _permission: 'administer moderation state transitions'
   options:
     _admin_route: TRUE
@@ -87,7 +84,6 @@ entity.moderation_state_transition.delete_form:
     _entity_form: 'moderation_state_transition.delete'
     _title: 'Delete Moderation state transition'
   requirements:
-  # todo write a test for this
     _permission: 'administer moderation state transitions'
   options:
     _admin_route: TRUE
