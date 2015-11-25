@@ -36,6 +36,7 @@ abstract class ModerationStateTestBase extends WebTestBase {
     'use draft_needs_review transition',
     'use published_draft transition',
     'use needs_review_published transition',
+    'access administration pages',
   ];
 
   /**
@@ -45,6 +46,11 @@ abstract class ModerationStateTestBase extends WebTestBase {
    */
   public static $modules = [
     'moderation_state',
+    'block',
+    'node',
+    'views',
+    'options',
+    'user',
   ];
 
   /**

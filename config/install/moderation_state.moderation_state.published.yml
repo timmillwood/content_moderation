@@ -3,4 +3,4 @@ status: true
 dependencies: {  }
 id: published
 label: Published
-published: 1
+published: true

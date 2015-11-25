@@ -7,6 +7,8 @@
  * @todo Routing changes 'Edit draft' 'New draft'
  * @todo editing should always edit latest draft, not published
  * @todo include UI bits of https://www.drupal.org/node/2429153
+ * @todo How to remove the live version (i.e. published => draft without new
+ *   revision)
  */
 
 use Drupal\Core\Entity\EntityTypeInterface;

@@ -9,7 +9,7 @@ moderation_state.moderation_state.*:
       type: label
       label: 'Label'
     published:
-      type: bool
+      type: boolean
       label: 'Is published'
     uuid:
       type: string

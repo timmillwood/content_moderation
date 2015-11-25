@@ -3,4 +3,4 @@ status: true
 dependencies: {  }
 id: draft
 label: Draft
-published: 0
+published: false

@@ -26,7 +26,7 @@ use Drupal\moderation_state\ModerationStateTransitionInterface;
  *     }
  *   },
  *   config_prefix = "moderation_state_transition",
- *   admin_permission = "administer site configuration",
+ *   admin_permission = "administer moderation state transitions",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",
