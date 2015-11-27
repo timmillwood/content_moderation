@@ -32,6 +32,12 @@ class ModerationStateWidget extends OptionsSelectWidget {
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     // @todo inject this.
+    $node_type = \Drupal::entityTypeManager()->getStorage('node_type')->load($items->getEntity()->bundle());
+    if (!$node_type->getThirdPartySetting('moderation_state', 'enabled', FALSE)) {
+      // @todo write a test for this.
+      return $element + ['#access' => FALSE];
+    }
+      // @todo inject this.
     $user = \Drupal::currentUser();
     $options = $this->fieldDefinition
       ->getFieldStorageDefinition()
@@ -47,13 +53,16 @@ class ModerationStateWidget extends OptionsSelectWidget {
       ->execute();
     // Can always keep this one as is.
     $to[$default] = $default;
+    // @todo write a test for this.
+    $allowed = $node_type->getThirdPartySetting('moderation_state', 'allowed_moderation_states', []);
     if ($from) {
       // @todo inject this.
       foreach (\Drupal::entityManager()
                  ->getStorage('moderation_state_transition')
                  ->loadMultiple($from) as $id => $transition) {
-        if ($user->hasPermission('use ' . $id . 'transition')) {
-          $to[$transition->getToState()] = $transition->getToState();
+        $to_state = $transition->getToState();
+        if ($user->hasPermission('use ' . $id . 'transition') && in_array($to_state, $allowed, TRUE)) {
+          $to[$to_state] = $to_state;
         }
       }
     }

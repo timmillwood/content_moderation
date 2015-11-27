@@ -4,10 +4,9 @@
  * @file
  * Contains moderation_state.module.
  *
- * @todo editing should always edit latest draft, not published
  * @todo include UI bits of https://www.drupal.org/node/2429153
  * @todo How to remove the live version (i.e. published => draft without new
- *   revision)
+ *   revision) - i.e. unpublish
  */
 
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -46,6 +45,7 @@ function moderation_state_entity_base_field_info(EntityTypeInterface $entity_typ
       ->setLabel(t('Moderation state'))
       ->setDescription(t('The moderation state of this piece of content.'))
       ->setSetting('target_type', 'moderation_state')
+      ->setRevisionable(TRUE)
       // @todo write a test for this.
       ->setDisplayOptions('view', [
         'label' => 'hidden',
@@ -156,6 +156,11 @@ function moderation_state_entity_bundle_field_info_alter(&$fields, EntityTypeInt
  *   The node being saved.
  */
 function moderation_state_node_presave(NodeInterface $node) {
+  $node_type = \Drupal::entityTypeManager()->getStorage('node_type')->load($node->bundle());
+  if (!$node_type->getThirdPartySetting('moderation_state', 'enabled', FALSE)) {
+    // @todo write a test for this.
+    return;
+  }
   // @todo write a test for this.
   if ($node->moderation_state->entity) {
     $original = !empty($node->original) ? $node->original : NULL;

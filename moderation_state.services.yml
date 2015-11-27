@@ -1,0 +1,6 @@
+services:
+  paramconverter.latest_revision:
+    class: Drupal\moderation_state\ParamConverter\NodeRevisionConverter
+    tags:
+      - { name: paramconverter, priority: 5 }
+    arguments: ['@entity.manager']
