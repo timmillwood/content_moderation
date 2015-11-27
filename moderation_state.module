@@ -4,7 +4,6 @@
  * @file
  * Contains moderation_state.module.
  *
- * @todo Routing changes 'Edit draft' 'New draft'
  * @todo editing should always edit latest draft, not published
  * @todo include UI bits of https://www.drupal.org/node/2429153
  * @todo How to remove the live version (i.e. published => draft without new
@@ -15,6 +14,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\moderation_state\Plugin\Menu\EditTab;
 use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
 use Drupal\node\NodeTypeInterface;
@@ -170,4 +170,11 @@ function moderation_state_node_presave(NodeInterface $node) {
 
     $node->setPublished($node->moderation_state->entity->isPublished());
   }
+}
+
+/**
+ * Implements hook_local_tasks_alter().
+ */
+function moderation_state_local_tasks_alter(&$local_tasks) {
+  $local_tasks['entity.node.edit_form']['class'] = EditTab::class;
 }
