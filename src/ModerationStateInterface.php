@@ -11,10 +11,15 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 
 /**
  * Provides an interface for defining Moderation state entities.
- * @todo phpdoc
  */
 interface ModerationStateInterface extends ConfigEntityInterface {
 
+  /**
+   * Determines if this state represents a published node.
+   *
+   * @return bool
+   *   TRUE if this state deems the node published.
+   */
   public function isPublished();
 
 }
