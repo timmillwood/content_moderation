@@ -95,6 +95,19 @@ function moderation_state_form_node_type_form_alter(&$form, FormStateInterface $
       ],
     ],
   ];
+  $form['workflow']['default_moderation_state'] = [
+    '#type' => 'select',
+    '#title' => t('Default moderation state'),
+    '#empty_option' => t('-- Select --'),
+    '#options' => $options,
+    '#description' => t('Select the moderation state for new content'),
+    '#default_value' => $node_type->getThirdPartySetting('moderation_state', 'default_moderation_state', ''),
+    '#states' => [
+      'visible' => [
+        ':input[name=enable_moderation_state]' => ['checked' => TRUE],
+      ],
+    ],
+  ];
   $form['#entity_builders'][] = 'moderation_state_node_type_form_builder';
   $form['#validate'][] = 'moderation_state_node_type_form_validate';
 }
@@ -108,7 +121,8 @@ function moderation_state_node_type_form_validate(array $form, FormStateInterfac
     $states = \Drupal::entityTypeManager()->getStorage('moderation_state')->loadMultiple();
     $published = FALSE;
     $non_published = TRUE;
-    foreach (array_keys(array_filter($form_state->getValue('allowed_moderation_states'))) as $state_id) {
+    $allowed = array_keys(array_filter($form_state->getValue('allowed_moderation_states')));
+    foreach ($allowed as $state_id) {
       $state = $states[$state_id];
       if ($state->isPublished()) {
         $published = TRUE;
@@ -119,6 +133,14 @@ function moderation_state_node_type_form_validate(array $form, FormStateInterfac
     }
     if (!$published || !$non_published) {
       $form_state->setErrorByName('allowed_moderation_states', t('You must select at least one published moderation and one non-published state.'));
+    }
+    if (($default = $form_state->getValue('default_moderation_state')) && !empty($default)) {
+      if (!in_array($default, $allowed, TRUE)) {
+        $form_state->setErrorByName('default_moderation_state', t('The default moderation state must be one of the allowed states.'));
+      }
+    }
+    else {
+      $form_state->setErrorByName('default_moderation_state', t('You must select a default moderation state.'));
     }
   }
 }
@@ -132,6 +154,7 @@ function moderation_state_node_type_form_builder($entity_type, NodeTypeInterface
   // @todo write a test for this.
   $node_type->setThirdPartySetting('moderation_state', 'enabled', $form_state->getValue('enable_moderation_state'));
   $node_type->setThirdPartySetting('moderation_state', 'allowed_moderation_states', array_keys(array_filter($form_state->getValue('allowed_moderation_states'))));
+  $node_type->setThirdPartySetting('moderation_state', 'default_moderation_state', $form_state->getValue('default_moderation_state'));
 }
 
 /**

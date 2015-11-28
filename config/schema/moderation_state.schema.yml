@@ -26,3 +26,6 @@ node.type.*.third_party.moderation_state:
       sequence:
         type: string
         label: 'Moderation state'
+    default_moderation_state:
+      type: string
+      label: 'Moderation state for new content'
