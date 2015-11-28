@@ -22,7 +22,7 @@ use Drupal\moderation_state\ModerationStateInterface;
  *       "add" = "Drupal\moderation_state\Form\ModerationStateForm",
  *       "edit" = "Drupal\moderation_state\Form\ModerationStateForm",
  *       "delete" = "Drupal\moderation_state\Form\ModerationStateDeleteForm"
- *     }
+ *     },
  *   },
  *   config_prefix = "moderation_state",
  *   admin_permission = "administer moderation state",

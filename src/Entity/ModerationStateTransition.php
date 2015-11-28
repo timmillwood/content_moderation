@@ -23,7 +23,8 @@ use Drupal\moderation_state\ModerationStateTransitionInterface;
  *       "add" = "Drupal\moderation_state\Form\ModerationStateTransitionForm",
  *       "edit" = "Drupal\moderation_state\Form\ModerationStateTransitionForm",
  *       "delete" = "Drupal\moderation_state\Form\ModerationStateTransitionDeleteForm"
- *     }
+ *     },
+ *     "storage" = "Drupal\moderation_state\ModerationStateTransitionStorage"
  *   },
  *   config_prefix = "moderation_state_transition",
  *   admin_permission = "administer moderation state transitions",
@@ -70,12 +71,18 @@ class ModerationStateTransition extends ConfigEntityBase implements ModerationSt
   protected $stateTo;
 
   /**
+   * Moderation state config prefix
+   *
+   * @var string.
+   */
+  protected $moderationStateConfigPrefix;
+
+  /**
    * {@inheritdoc}
    */
   public function calculateDependencies() {
     parent::calculateDependencies();
-    // @todo Can we use DI here?
-    $prefix = \Drupal::entityTypeManager()->getDefinition('moderation_state')->getConfigPrefix() . '.';
+    $prefix = $this->getModerationStateConfigPrefix() . '.';
     if ($this->stateFrom) {
       $this->addDependency('config', $prefix . $this->stateFrom);
     }
@@ -97,6 +104,33 @@ class ModerationStateTransition extends ConfigEntityBase implements ModerationSt
    */
   public function getToState() {
     return $this->stateTo;
+  }
+
+  /**
+   * Gets the moderation state config prefix.
+   *
+   * @return string
+   *   Moderation state config prefix.
+   */
+  protected function getModerationStateConfigPrefix() {
+    if (!isset($this->moderationStateConfigPrefix)) {
+      $this->moderationStateConfigPrefix = \Drupal::service('entity_type.manager')->getDefinition('moderation_state')->getConfigPrefix();
+    }
+    return $this->moderationStateConfigPrefix;
+  }
+
+  /**
+   * Sets the moderation state config prefix.
+   *
+   * @param string $moderation_state_config_prefix
+   *   Moderation state config prefix.
+   *
+   * @return self
+   *   Called instance.
+   */
+  public function setModerationStateConfigPrefix($moderation_state_config_prefix) {
+    $this->moderationStateConfigPrefix = $moderation_state_config_prefix;
+    return $this;
   }
 
 }

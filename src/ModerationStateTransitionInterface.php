@@ -30,4 +30,15 @@ interface ModerationStateTransitionInterface extends ConfigEntityInterface {
    */
   public function getToState();
 
+  /**
+   * Sets the moderation state config prefix.
+   *
+   * @param string $moderation_state_config_prefix
+   *   Moderation state config prefix.
+   *
+   * @return self
+   *   Called instance.
+   */
+  public function setModerationStateConfigPrefix($moderation_state_config_prefix);
+
 }
