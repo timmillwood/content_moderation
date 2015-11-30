@@ -37,6 +37,8 @@ abstract class ModerationStateTestBase extends WebTestBase {
     'use published_draft transition',
     'use needs_review_published transition',
     'access administration pages',
+    'administer content types',
+    'administer nodes',
   ];
 
   /**
