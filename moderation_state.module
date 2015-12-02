@@ -15,6 +15,8 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\moderation_state\BaseFieldInfo;
+use Drupal\moderation_state\NodeEventSubscriber;
 use Drupal\moderation_state\Plugin\Menu\EditTab;
 use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
@@ -40,31 +42,8 @@ function moderation_state_help($route_name, RouteMatchInterface $route_match) {
  * Implements hook_entity_base_field_info().
  */
 function moderation_state_entity_base_field_info(EntityTypeInterface $entity_type) {
-  if ($entity_type->id() === 'node') {
-    $fields = [];
-    // @todo write a test for this.
-    $fields['moderation_state'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Moderation state'))
-      ->setDescription(t('The moderation state of this piece of content.'))
-      ->setSetting('target_type', 'moderation_state')
-      ->setRevisionable(TRUE)
-      // @todo write a test for this.
-      ->setDisplayOptions('view', [
-        'label' => 'hidden',
-        'type' => 'string',
-        'weight' => -5,
-      ])
-      // @todo write a custom widget/selection handler plugin instead of
-      // manual filtering?
-      ->setDisplayOptions('form', [
-        'type' => 'moderation_state_default',
-        'weight' => 5,
-        'settings' => [],
-      ])
-      ->setDisplayConfigurable('form', FALSE)
-      ->setDisplayConfigurable('view', TRUE);
-    return $fields;
-  }
+  $base_field_info = new BaseFieldInfo();
+  return $base_field_info->entityBaseFieldInfo($entity_type);
 }
 
 /**
@@ -204,25 +183,8 @@ function moderation_state_entity_bundle_field_info_alter(&$fields, EntityTypeInt
  *   The node being saved.
  */
 function moderation_state_node_presave(NodeInterface $node) {
-  $node_type = \Drupal::entityTypeManager()->getStorage('node_type')->load($node->bundle());
-  if (!$node_type->getThirdPartySetting('moderation_state', 'enabled', FALSE)) {
-    // @todo write a test for this.
-    return;
-  }
-  // @todo write a test for this.
-  if ($node->moderation_state->entity) {
-    $original = !empty($node->original) ? $node->original : NULL;
-    if ($original && $original->moderation_state->target_id !== $node->moderation_state->target_id) {
-      // We're moving to a new state, so force a new revision.
-      $node->setNewRevision(TRUE);
-      if ($original->moderation_state->entity->isPublished() && !$node->moderation_state->entity->isPublished()) {
-        // Mark this as a new forward revision.
-        $node->isDefaultRevision(FALSE);
-      }
-    }
-
-    $node->setPublished($node->moderation_state->entity->isPublished());
-  }
+  $node_event_subscriber = new NodeEventSubscriber(\Drupal::entityTypeManager());
+  $node_event_subscriber->nodePresave($node);
 }
 
 /**
