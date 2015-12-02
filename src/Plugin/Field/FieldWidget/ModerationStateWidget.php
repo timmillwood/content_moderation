@@ -127,7 +127,9 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       ->getSettableOptions($this->currentUser);
 
     $default = $items->get($delta)->target_id ?: $node_type->getThirdPartySetting('moderation_state', 'default_moderation_state', FALSE);
-    if (!$default) {
+    /** @var \Drupal\moderation_state\ModerationStateInterface $default_state */
+    $default_state = ModerationState::load($default);
+    if (!$default || !$default_state) {
       throw new \UnexpectedValueException(sprintf('The %s node type has an invalid moderation state configuration, moderation states are enabled but no default is set.', $node_type->label()));
     }
     // @todo write a test for this.
@@ -155,7 +157,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       '#type' => 'select',
       '#options' => $options,
       '#default_value' => $default,
-      '#published' => $default ? ModerationState::load($default)->isPublished() : FALSE,
+      '#published' => $default ? $default_state->isPublishedState() : FALSE,
     ];
     if ($this->currentUser->hasPermission('administer nodes') && count($options)) {
       // Use the dropbutton.

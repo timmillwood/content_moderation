@@ -100,7 +100,7 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
     $revision_ids = $this->nodeStorage->revisionIds($this->node);
     sort($revision_ids);
     $latest = end($revision_ids);
-    if ($this->node->getRevisionId() === $latest && $this->node->isDefaultRevision() && $this->node->moderation_state->entity && $this->node->moderation_state->entity->isPublished()) {
+    if ($this->node->getRevisionId() === $latest && $this->node->isDefaultRevision() && $this->node->moderation_state->entity && $this->node->moderation_state->entity->isPublishedState()) {
       // @todo write a test for this.
       return $this->t('New draft');
     }

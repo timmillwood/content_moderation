@@ -20,6 +20,6 @@ interface ModerationStateInterface extends ConfigEntityInterface {
    * @return bool
    *   TRUE if this state deems the node published.
    */
-  public function isPublished();
+  public function isPublishedState();
 
 }
