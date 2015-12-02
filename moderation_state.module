@@ -9,6 +9,8 @@
  *   revision) - i.e. unpublish
  */
 
+use Drupal\Core\Entity\Annotation\EntityType;
+use Drupal\Core\Entity\ContentEntityType;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
@@ -64,6 +66,29 @@ function moderation_state_entity_base_field_info(EntityTypeInterface $entity_typ
     return $fields;
   }
 }
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function moderation_state_entity_type_alter(array &$entity_types) {
+
+  $bundleable_config_entity_filter = new \CallbackFilterIterator(new \ArrayIterator($entity_types), function(EntityType $current, $key) {
+    return (bool)$current->get('bundle_of');
+  });
+
+  $revisionable_entity_filter = new \CallbackFilterIterator($bundleable_config_entity_filter, function(EntityType $current, $key) use ($entity_types) {
+    /** @var ContentEntityType $content_entity */
+    $content_entity = $entity_types[$current->get('bundle_of')];
+    return $content_entity->isRevisionable();
+  });
+
+  foreach ($revisionable_entity_filter as $type_name => $type) {
+    dpm($type_name);
+    // @todo Add another form handler and link, and a route provider to generate routes to the new form.
+  }
+
+}
+
 
 /**
  * Implements hook_form_FORM_ID_alter() for node_type_form().
