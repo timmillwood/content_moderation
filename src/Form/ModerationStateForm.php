@@ -47,7 +47,7 @@ class ModerationStateForm extends EntityForm {
       '#type' => 'checkbox',
       '#title' => $this->t('Published'),
       '#description' => $this->t('When content reaches this state it should be published'),
-      '#default_value' => $moderation_state->isPublished(),
+      '#default_value' => $moderation_state->isPublishedState(),
     ];
 
     return $form;

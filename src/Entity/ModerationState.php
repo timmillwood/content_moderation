@@ -64,7 +64,7 @@ class ModerationState extends ConfigEntityBase implements ModerationStateInterfa
   /**
    * {@inheritdoc}
    */
-  public function isPublished() {
+  public function isPublishedState() {
     return $this->published;
   }
 
