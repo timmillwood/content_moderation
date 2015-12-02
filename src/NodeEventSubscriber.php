@@ -49,13 +49,13 @@ class NodeEventSubscriber {
       if ($original && $original->moderation_state->target_id !== $node->moderation_state->target_id) {
         // We're moving to a new state, so force a new revision.
         $node->setNewRevision(TRUE);
-        if ($original->moderation_state->entity->isPublished() && !$node->moderation_state->entity->isPublished()) {
+        if ((!$original->moderation_state->entity && $original->isPublished()) || ($original->moderation_state->entity->isPublishedState() && !$node->moderation_state->entity->isPublishedState())) {
           // Mark this as a new forward revision.
           $node->isDefaultRevision(FALSE);
         }
       }
 
-      $node->setPublished($node->moderation_state->entity->isPublished());
+      $node->setPublished($node->moderation_state->entity->isPublishedState());
     }
   }
 
