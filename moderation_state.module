@@ -9,10 +9,7 @@
  *   revision) - i.e. unpublish
  */
 
-use Drupal\Core\Entity\Annotation\EntityType;
-use Drupal\Core\Entity\ContentEntityType;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\moderation_state\BaseFieldInfo;
@@ -50,24 +47,8 @@ function moderation_state_entity_base_field_info(EntityTypeInterface $entity_typ
  * Implements hook_entity_type_alter().
  */
 function moderation_state_entity_type_alter(array &$entity_types) {
-
-  $bundleable_config_entity_filter = new \CallbackFilterIterator(new \ArrayIterator($entity_types), function(EntityType $current, $key) {
-    return (bool)$current->get('bundle_of');
-  });
-
-  $revisionable_entity_filter = new \CallbackFilterIterator($bundleable_config_entity_filter, function(EntityType $current, $key) use ($entity_types) {
-    /** @var ContentEntityType $content_entity */
-    $content_entity = $entity_types[$current->get('bundle_of')];
-    return $content_entity->isRevisionable();
-  });
-
-  foreach ($revisionable_entity_filter as $type_name => $type) {
-    dpm($type_name);
-    // @todo Add another form handler and link, and a route provider to generate routes to the new form.
-  }
-
+  \Drupal::service('moderation_state.entity_type')->entityTypeAlter($entity_types);
 }
-
 
 /**
  * Implements hook_form_FORM_ID_alter() for node_type_form().
@@ -186,6 +167,37 @@ function moderation_state_node_presave(NodeInterface $node) {
   $node_event_subscriber = new NodeEventSubscriber(\Drupal::entityTypeManager());
   $node_event_subscriber->nodePresave($node);
 }
+
+/**
+ * Implements hook_entity_presave().
+ */
+/*
+function moderation_state_entity_presave(Drupal\Core\Entity\EntityInterface $entity) {
+  $definition = \Drupal::entityTypeManager()->getDefinition($entity->getEntityType()->id());
+
+  /** @var ConfigEntityBundleBase $bundle_definition
+  $bundle_definition = \Drupal::entityTypeManager()->getStorage($definition->getBundleEntityType())->load($entity->bundle());
+
+  if (!$bundle_definition->getThirdPartySetting('moderation_state', 'enabled', FALSE)) {
+    // @todo write a test for this.
+    return;
+  }
+  // @todo write a test for this.
+  if ($entity->moderation_state->entity) {
+    $original = !empty($entity->original) ? $entity->original : NULL;
+    if ($original && $original->moderation_state->target_id !== $entity->moderation_state->target_id) {
+      // We're moving to a new state, so force a new revision.
+      $entity->setNewRevision(TRUE);
+      if ($original->moderation_state->entity->isPublished() && !$entity->moderation_state->entity->isPublished()) {
+        // Mark this as a new forward revision.
+        $entity->isDefaultRevision(FALSE);
+      }
+    }
+
+    $entity->setPublished($entity->moderation_state->entity->isPublished());
+  }
+}
+*/
 
 /**
  * Implements hook_local_tasks_alter().
