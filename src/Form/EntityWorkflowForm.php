@@ -95,7 +95,7 @@ class EntityWorkflowForm extends EntityForm {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     // @todo write a test for this.
     if ($form_state->getValue('enable_moderation_state')) {
-      $states = \Drupal::entityTypeManager()->getStorage('moderation_state')->loadMultiple();
+      $states = $this->entityTypeManager->getStorage('moderation_state')->loadMultiple();
       $published = FALSE;
       $non_published = TRUE;
       $allowed = array_keys(array_filter($form_state->getValue('allowed_moderation_states')));
