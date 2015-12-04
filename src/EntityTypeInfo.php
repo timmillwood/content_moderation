@@ -7,7 +7,11 @@
 namespace Drupal\moderation_state;
 
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
 use Drupal\moderation_state\Form\EntityWorkflowForm;
 use Drupal\moderation_state\Routing\WorkflowRouteProvider;
 
@@ -17,9 +21,32 @@ use Drupal\moderation_state\Routing\WorkflowRouteProvider;
 class EntityTypeInfo {
 
   /**
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypes;
+
+  /**
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
+   * Constructs a new EntityTypeInfo service.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_types
+   *   The entity type manager.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_types, AccountInterface $current_user) {
+    $this->entityTypes = $entity_types;
+    $this->currentUser = $current_user;
+  }
+
+  /**
    * Adds Workflow configuration to approprite entity types.
    *
    * This is an alter hook bridge.
+   *
+   * @see hook_entity_type_alter().
    *
    * @param EntityTypeInterface[] $entity_types
    *   The master entity type list to alter.
@@ -76,4 +103,45 @@ class EntityTypeInfo {
       }
     }
   }
+
+  /**
+   * Adds an operation on bundles that should have a Workflow form.
+   *
+   * @see hook_entity_operation().
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity on which to define an operation.
+   *
+   * @return array
+   *   An array of operation definitions.
+   */
+  public function entityOperation(EntityInterface $entity) {
+    $operations = [];
+    $type = $entity->getEntityType();
+
+    if ($this->entityOperationApplies($entity)) {
+      $operations['manage-workflow'] = [
+        'title' => t('Manage workflow'),
+        'weight' => 27,
+        'url' => Url::fromRoute("entity.{$type->id()}.workflow", [$entity->getEntityTypeId() => $entity->id()]),
+      ];
+    }
+
+    return $operations;
+  }
+
+  protected function entityOperationApplies(EntityInterface $entity) {
+    $type = $entity->getEntityType();
+    if ($type instanceof ConfigEntityTypeInterface) {
+      if ($bundle_of = $type->get('bundle_of')) {
+        if ($this->entityTypes->getDefinition($bundle_of)->isRevisionable()) {
+          if ($this->currentUser->hasPermission('administer moderation state')) {
+            return TRUE;
+          }
+        }
+      }
+    }
+    return FALSE;
+  }
+
 }

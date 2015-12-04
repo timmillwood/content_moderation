@@ -9,8 +9,8 @@
  *   revision) - i.e. unpublish
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\moderation_state\BaseFieldInfo;
 use Drupal\moderation_state\NodeEventSubscriber;
@@ -48,6 +48,13 @@ function moderation_state_entity_base_field_info(EntityTypeInterface $entity_typ
  */
 function moderation_state_entity_type_alter(array &$entity_types) {
   \Drupal::service('moderation_state.entity_type')->entityTypeAlter($entity_types);
+}
+
+/**
+ * Implements hook_entity_operation().
+ */
+function moderation_state_entity_operation(EntityInterface $entity) {
+  return \Drupal::service('moderation_state.entity_type')->entityOperation($entity);
 }
 
 /**
