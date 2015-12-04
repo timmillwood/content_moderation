@@ -7,7 +7,6 @@
 namespace Drupal\moderation_state;
 
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
-use Drupal\Core\Entity\ContentEntityType;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\moderation_state\Form\EntityWorkflowForm;
 use Drupal\moderation_state\Routing\WorkflowRouteProvider;
@@ -63,50 +62,18 @@ class EntityTypeInfo {
    *
    * @param EntityTypeInterface[] $entity_types
    *   The master entity type list to alter.
-   * @return \CallbackFilterIterator
-   *   An iterator producing only the config entities we want to modify.
+   * @return \Generator
+   *   A generator producing only the config entities we want to modify.
    */
-  protected function revisionableEntityTypes($entity_types) {
-    $filtered_list = new \CallbackFilterIterator(
-      new \CallbackFilterIterator(
-        new \ArrayIterator($entity_types),
-        [$this, 'typeFilter']),
-      [$this, 'bundleFilter']);
-
-    // This one needs to be inlined since it calls back to the $entity_types variable.
-    $filtered_list = new \CallbackFilterIterator($filtered_list, function(EntityTypeInterface $current, $key) use ($entity_types) {
-      /** @var ContentEntityType $content_entity */
-      $content_entity = $entity_types[$current->get('bundle_of')];
-      return $content_entity->isRevisionable();
-    });
-
-    return $filtered_list;
-  }
-
-  /**
-   * Determines if the provided entity type is a config entity.
-   *
-   * This method is only public to make it work with \CallbackFilterIterator.
-   *
-   * @param \Drupal\Core\Entity\EntityType $type
-   *   The entity type to check.
-   * @return bool
-   *   True of the entity type is a Config entity, False otherwise.
-   */
-  public function typeFilter(EntityTypeInterface $type) {
-    return $type instanceof ConfigEntityTypeInterface;
-  }
-
-  /**
-   * Determines if the provided entity type is a bundle.
-   *
-   * This method is only public to make it work with \CallbackFilterIterator.
-   *
-   * @param \Drupal\Core\Config\Entity\ConfigEntityType $type
-   * @return bool
-   *   True if the entity type is a Bundle definition for a Content entity.
-   */
-  public function bundleFilter(ConfigEntityTypeInterface $type) {
-    return (bool)$type->get('bundle_of');
+  protected function revisionableEntityTypes(array $entity_types) {
+    foreach ($entity_types as $type) {
+      if ($type instanceof ConfigEntityTypeInterface) {
+        if ($type->get('bundle_of')) {
+          if ($entity_types[$type->get('bundle_of')]->isRevisionable()) {
+            yield $type;
+          }
+        }
+      }
+    }
   }
 }
