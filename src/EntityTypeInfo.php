@@ -66,11 +66,11 @@ class EntityTypeInfo {
    *   A generator producing only the config entities we want to modify.
    */
   protected function revisionableEntityTypes(array $entity_types) {
-    foreach ($entity_types as $type) {
+    foreach ($entity_types as $type_name => $type) {
       if ($type instanceof ConfigEntityTypeInterface) {
         if ($type->get('bundle_of')) {
           if ($entity_types[$type->get('bundle_of')]->isRevisionable()) {
-            yield $type;
+            yield $type_name => $type;
           }
         }
       }
