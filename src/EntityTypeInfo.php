@@ -130,18 +130,26 @@ class EntityTypeInfo {
     return $operations;
   }
 
+  /**
+   * Determines if we should be adding Workflow operations to this entity type.
+   *
+   * This is the same check as exists in revisionableEntityTypes(), but that
+   * one cannot use the entity manager due to recursion and this one doesn't
+   * have the entity list otherwise so must use the entity manager.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to check.
+   * @return bool
+   *   TRUE if we want to add a Workflow operation to this entity, FALSE
+   *   otherwise.
+   */
   protected function entityOperationApplies(EntityInterface $entity) {
     $type = $entity->getEntityType();
-    if ($type instanceof ConfigEntityTypeInterface) {
-      if ($bundle_of = $type->get('bundle_of')) {
-        if ($this->entityTypes->getDefinition($bundle_of)->isRevisionable()) {
-          if ($this->currentUser->hasPermission('administer moderation state')) {
-            return TRUE;
-          }
-        }
-      }
-    }
-    return FALSE;
+
+    return
+      $type instanceof ConfigEntityTypeInterface
+      && $this->entityTypes->getDefinition($type->get('bundle_of'))->isRevisionable()
+      && $this->currentUser->hasPermission('administer moderation state');
   }
 
 }
