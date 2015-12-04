@@ -79,7 +79,7 @@ class EntityWorkflowForm extends EntityForm {
    *
    * @param $entity_type
    * @param \Drupal\Core\Config\Entity\ConfigEntityInterface $bundle
-   * @param $form
+   * @param array $form
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function formBuilderCallback($entity_type, ConfigEntityInterface $bundle, &$form, FormStateInterface $form_state) {
