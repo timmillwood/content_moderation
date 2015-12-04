@@ -51,18 +51,6 @@ function moderation_state_entity_type_alter(array &$entity_types) {
 }
 
 /**
- * Entity builder for the node type edit form with third party options.
- *
- * @see moderation_state_form_node_type_form_alter()
- */
-function moderation_state_node_type_form_builder($entity_type, NodeTypeInterface $node_type, &$form, FormStateInterface $form_state) {
-  // @todo write a test for this.
-  $node_type->setThirdPartySetting('moderation_state', 'enabled', $form_state->getValue('enable_moderation_state'));
-  $node_type->setThirdPartySetting('moderation_state', 'allowed_moderation_states', array_keys(array_filter($form_state->getValue('allowed_moderation_states'))));
-  $node_type->setThirdPartySetting('moderation_state', 'default_moderation_state', $form_state->getValue('default_moderation_state'));
-}
-
-/**
  * Sets required flag based on enabled state.
  */
 function moderation_state_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
