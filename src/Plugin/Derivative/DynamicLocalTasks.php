@@ -18,6 +18,13 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   use StringTranslationTrait;
 
   /**
+   * The base plugin ID
+   *
+   * @var string
+   */
+  protected $basePluginId;
+
+  /**
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypes;
@@ -25,14 +32,17 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   /**
    * Creates an FieldUiLocalTask object.
    *
+   * @param string $base_plugin_id
+   *   The base plugin ID.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity type manager.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The translation manager.
    */
-  public function __construct(EntityTypeManagerInterface $entity_types, TranslationInterface $string_translation) {
+  public function __construct($base_plugin_id, EntityTypeManagerInterface $entity_types, TranslationInterface $string_translation) {
     $this->entityTypes = $entity_types;
     $this->stringTranslation = $string_translation;
+    $this->basePluginId = $base_plugin_id;
   }
 
   /**
@@ -40,6 +50,7 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
    */
   public static function create(ContainerInterface $container, $base_plugin_id) {
     return new static(
+      $base_plugin_id,
       $container->get('entity_type.manager'),
       $container->get('string_translation')
     );
@@ -47,24 +58,18 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
 
   /**
    * {@inheritdoc}
-   *
-   * @todo I don't know why this doesn't work. I suspect it's because
-   * I've no idea what base_route is supposed to be or how it works. Help wanted.
    */
   public function getDerivativeDefinitions($base_plugin_definition) {
-    $this->derivatives = array();
+    $this->derivatives = [];
 
     foreach ($this->workflowEntities() as $entity_type_id => $entity_type) {
-      $this->derivatives["$entity_type_id.devel_tab"] = array(
+      $this->derivatives["$entity_type_id.workflow_tab"] = [
         'route_name' => "entity.$entity_type_id.workflow",
         'title' => $this->t('Manage workflow'),
-        'base_route' => "moderation_state.entities:$entity_type_id.workflow",
+          // @todo - are we sure they all have an edit_form?
+        'base_route' => "entity.$entity_type_id.edit_form",
         'weight' => 30,
-      );
-    }
-
-    foreach ($this->derivatives as &$entry) {
-      $entry += $base_plugin_definition;
+      ] + $base_plugin_definition;
     }
 
     return $this->derivatives;
