@@ -1,0 +1,3 @@
+moderation_state.entities:
+  deriver: 'Drupal\moderation_state\Plugin\Derivative\DynamicLocalTasks'
+  weight: 100
