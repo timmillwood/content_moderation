@@ -51,7 +51,7 @@ class WorkflowRouteProvider implements EntityRouteProviderInterface, EntityHandl
       $route
         ->setDefaults([
           '_entity_form' => "{$entity_type_id}.workflow",
-          '_title' => 'Workflow', // @todo Translate this.
+          '_title' => 'Workflow',
           //'_title_callback' => '\Drupal\Core\Entity\Controller\EntityController::editTitle'
         ])
         ->setRequirement('_permission', 'administer moderation state') // @todo Come up with a new permission.
