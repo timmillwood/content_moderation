@@ -13,10 +13,8 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\moderation_state\BaseFieldInfo;
-use Drupal\moderation_state\NodeEventSubscriber;
 use Drupal\moderation_state\Plugin\Menu\EditTab;
 use Drupal\node\Entity\NodeType;
-use Drupal\node\NodeInterface;
 use Drupal\node\NodeTypeInterface;
 
 /**
@@ -73,14 +71,10 @@ function moderation_state_entity_bundle_field_info_alter(&$fields, EntityTypeInt
 }
 
 /**
- * Acts on a node and set the published status based on the moderation state.
- *
- * @param \Drupal\node\NodeInterface $node
- *   The node being saved.
+ * Implements hook_entity_presave().
  */
-function moderation_state_node_presave(NodeInterface $node) {
-  $node_event_subscriber = new NodeEventSubscriber(\Drupal::entityTypeManager());
-  $node_event_subscriber->nodePresave($node);
+function moderation_state_entity_presave(EntityInterface $entity) {
+  return \Drupal::service('moderation_state.entity_operations')->entityPresave($entity);
 }
 
 /**

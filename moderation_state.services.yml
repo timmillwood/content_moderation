@@ -8,3 +8,6 @@ services:
     class: Drupal\moderation_state\EntityTypeInfo
     tags:
     arguments: ['@entity_type.manager', '@current_user']
+  moderation_state.entity_operations:
+    class: Drupal\moderation_state\EntityOperations
+    arguments: ['@entity_type.manager']

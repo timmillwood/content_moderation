@@ -2,18 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\moderation_state\NodeEventSubscriber.
+ * Contains \Drupal\moderation_state\EntityOperations.
  */
 
 namespace Drupal\moderation_state;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\node\NodeInterface;
 
 /**
  * Defines a class for reacting to node events.
  */
-class NodeEventSubscriber {
+class EntityOperations {
 
   /**
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
@@ -21,7 +21,7 @@ class NodeEventSubscriber {
   protected $entityTypeManager;
 
   /**
-   * Constructs a new NodeEventSubscriber object.
+   * Constructs a new EntityOperations object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity type manager service.
@@ -31,12 +31,12 @@ class NodeEventSubscriber {
   }
 
   /**
-   * Acts on a node and set the published status based on the moderation state.
+   * Acts on an entity and set the published status based on the moderation state.
    *
-   * @param \Drupal\node\NodeInterface $node
-   *   The node being saved.
+   * @param \Drupal\Core\Entity\EntityInterface $node
+   *   The entity being saved.
    */
-  public function nodePresave(NodeInterface $node) {
+  public function entityPresave(EntityInterface $node) {
     /* @var \Drupal\node\NodeTypeInterface $node_type */
     $node_type = $this->entityTypeManager->getStorage('node_type')->load($node->bundle());
     if (!$node_type->getThirdPartySetting('moderation_state', 'enabled', FALSE)) {
