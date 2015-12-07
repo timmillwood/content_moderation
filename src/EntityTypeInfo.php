@@ -144,6 +144,7 @@ class EntityTypeInfo {
 
     return
       $type instanceof ConfigEntityTypeInterface
+      && $type->get('bundle_of')
       && $this->entityTypes->getDefinition($type->get('bundle_of'))->isRevisionable()
       && $this->currentUser->hasPermission('administer moderation state');
   }
