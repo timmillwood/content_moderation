@@ -14,6 +14,8 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\moderation_state\Form\EntityModerationForm;
 use Drupal\moderation_state\Routing\ModerationRouteProvider;
+use Drupal\node\NodeTypeInterface;
+use Drupal\node\Entity\NodeType;
 
 /**
  * Service class for manipulating entity type information.
@@ -122,6 +124,46 @@ class EntityTypeInfo {
     }
 
     return $operations;
+  }
+
+  /**
+   * Force moderatable bundles to have a moderation_state field.
+   *
+   * @see hook_entity_bundle_field_info_alter();
+   *
+   * @param array $fields
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   * @param string $bundle
+   */
+  public function entityBundleFieldInfoAlter(&$fields, EntityTypeInterface $entity_type, $bundle) {
+    if ($this->isModeratableBundle($entity_type, $bundle)) {
+      $fields['moderation_state']->addConstraint('ModerationState', []);
+    }
+
+    return;
+  }
+
+  /**
+   * Determines if an entity type/bundle is one that will be moderated.
+   *
+   * @todo Generalize this to not be Node-specific.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type definition to check.
+   * @param string $bundle
+   *   The bundle to check.
+   * @return bool
+   *   TRUE if this is a bundle we want to moderate, FALSE otherwise.
+   */
+  protected function isModeratableBundle(EntityTypeInterface $entity_type, $bundle) {
+    if ($entity_type->id() === 'node' && !empty($fields['moderation_state'])) {
+      /* @var NodeTypeInterface $node_type */
+      $node_type = NodeType::load($bundle);
+      if ($node_type->getThirdPartySetting('moderation_state', 'enabled', FALSE)) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
   /**
