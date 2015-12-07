@@ -33,6 +33,11 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     $this->installConfig('moderation_state');
   }
 
+  /**
+   * Test valid transitions.
+   *
+   * @covers ::validate
+   */
   public function testValidTransition() {
     $node_type = NodeType::create([
       'type' => 'example',
@@ -49,6 +54,11 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     $this->assertCount(0, $node->validate());
   }
 
+  /**
+   * Test invalid transitions.
+   *
+   * @covers ::validate
+   */
   public function testInvalidTransition() {
     $node_type = NodeType::create([
       'type' => 'example',
