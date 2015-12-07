@@ -7,6 +7,7 @@
 
 namespace Drupal\moderation_state;
 
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -68,6 +69,10 @@ class EntityOperations {
    *   TRUE if this is an entity that we should act upon, FALSE otherwise.
    */
   protected function isModeratableEntity(EntityInterface $entity) {
+    if (! $entity->getEntityType() instanceof ContentEntityTypeInterface) {
+      return FALSE;
+    }
+
     $type_string = $entity->getEntityType()->getBundleEntityType();
 
     /** @var EntityTypeInterface $entity_type */
