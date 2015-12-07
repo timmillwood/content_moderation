@@ -89,19 +89,15 @@ class EntityTypeInfo {
    *
    * @param EntityTypeInterface[] $entity_types
    *   The master entity type list to alter.
-   * @return \Generator
-   *   A generator producing only the config entities we want to modify.
+   * @return array
+   *   An array of only the config entities we want to modify.
    */
   protected function revisionableEntityTypes(array $entity_types) {
-    foreach ($entity_types as $type_name => $type) {
-      if ($type instanceof ConfigEntityTypeInterface) {
-        if ($type->get('bundle_of')) {
-          if ($entity_types[$type->get('bundle_of')]->isRevisionable()) {
-            yield $type_name => $type;
-          }
-        }
-      }
-    }
+
+    $entity_type_with_workflow = array_filter($entity_types, function (EntityTypeInterface $type) use ($entity_types) {
+      return ($type instanceof ConfigEntityTypeInterface) && $type->get('bundle_of') && $entity_types[$type->get('bundle_of')]->isRevisionable();
+    });
+    return $entity_type_with_workflow;
   }
 
   /**

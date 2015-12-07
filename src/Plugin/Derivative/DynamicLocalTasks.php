@@ -1,13 +1,15 @@
 <?php
 
 /**
- * @file Contains Drupal\moderation_state\Plugin\Derivative\DynamicLocalTasks.
+ * @file
+ * Contains Drupal\moderation_state\Plugin\Derivative\DynamicLocalTasks.
  */
 
 namespace Drupal\moderation_state\Plugin\Derivative;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -27,20 +29,20 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   /**
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypes;
+  protected $entityTypeManager;
 
   /**
    * Creates an FieldUiLocalTask object.
    *
    * @param string $base_plugin_id
    *   The base plugin ID.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The translation manager.
    */
-  public function __construct($base_plugin_id, EntityTypeManagerInterface $entity_types, TranslationInterface $string_translation) {
-    $this->entityTypes = $entity_types;
+  public function __construct($base_plugin_id, EntityTypeManagerInterface $entity_type_manager, TranslationInterface $string_translation) {
+    $this->entityTypeManager = $entity_type_manager;
     $this->stringTranslation = $string_translation;
     $this->basePluginId = $base_plugin_id;
   }
@@ -78,19 +80,15 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   /**
    * Returns an iterable of the entities to which to attach local tasks.
    *
-   * @return \Generator
-   *   A generator that produces just the entities we care about.
+   * @return array
+   *   An array of just those entity types we care about.
    */
   protected function workflowEntities() {
-    $entity_types = $this->entityTypes->getDefinitions();
-    foreach ($entity_types as $type_name => $type) {
-      if ($type instanceof ConfigEntityTypeInterface) {
-        if ($type->get('bundle_of')) {
-          if ($entity_types[$type->get('bundle_of')]->isRevisionable()) {
-            yield $type_name => $type;
-          }
-        }
-      }
-    }
+    $entity_types = $this->entityTypeManager->getDefinitions();
+
+    $entity_type_with_workflow = array_filter($entity_types, function (EntityTypeInterface $type) use ($entity_types) {
+      return ($type instanceof ConfigEntityTypeInterface) && $type->get('bundle_of') && $entity_types[$type->get('bundle_of')]->isRevisionable();
+    });
+    return $entity_type_with_workflow;
   }
 }
