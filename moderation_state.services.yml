@@ -4,3 +4,8 @@ services:
     tags:
       - { name: paramconverter, priority: 5 }
     arguments: ['@entity.manager']
+  moderation_state.state_transition_validation:
+    class: \Drupal\moderation_state\StateTransitionValidation
+    factory: \Drupal\moderation_state\StateTransitionValidation::create
+    arguments: ['@entity_type.manager']
+
