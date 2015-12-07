@@ -12,8 +12,8 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\moderation_state\Form\EntityWorkflowForm;
-use Drupal\moderation_state\Routing\WorkflowRouteProvider;
+use Drupal\moderation_state\Form\EntityModerationForm;
+use Drupal\moderation_state\Routing\ModerationRouteProvider;
 
 /**
  * Service class for manipulating entity type information.
@@ -42,7 +42,7 @@ class EntityTypeInfo {
   }
 
   /**
-   * Adds Workflow configuration to approprite entity types.
+   * Adds Moderation configuration to appropriate entity types.
    *
    * This is an alter hook bridge.
    *
@@ -53,12 +53,12 @@ class EntityTypeInfo {
    */
   public function entityTypeAlter(array &$entity_types) {
     foreach ($this->revisionableEntityTypes($entity_types) as $type_name => $type) {
-      $entity_types[$type_name] = $this->addWorkflow($type);
+      $entity_types[$type_name] = $this->addModeration($type);
     }
   }
 
   /**
-   * Modifies an entity type to include workflow configuration support.
+   * Modifies an entity type to include moderation configuration support.
    *
    * That "configuration support" includes a configuration form, a hypermedia
    * link, and a route provider to tie it all together.
@@ -68,17 +68,17 @@ class EntityTypeInfo {
    * @return \Drupal\Core\Config\Entity\ConfigEntityTypeInterface
    *   The modified config entity definition.
    */
-  protected function addWorkflow(ConfigEntityTypeInterface $type) {
+  protected function addModeration(ConfigEntityTypeInterface $type) {
     if ($type->hasLinkTemplate('edit-form')) {
-      $type->setLinkTemplate('workflow-form', $type->getLinkTemplate('edit-form') . '/workflow');
+      $type->setLinkTemplate('moderation-form', $type->getLinkTemplate('edit-form') . '/moderation');
     }
 
-    $type->setFormClass('workflow', EntityWorkflowForm::class);
+    $type->setFormClass('moderation', EntityModerationForm::class);
 
     // @todo Core forgot to add a direct way to manipulate route_provider, so
     // we have to do it the sloppy way for now.
     $providers = $type->getHandlerClass('route_provider') ?: [];
-    $providers['workflow'] = WorkflowRouteProvider::class;
+    $providers['moderation'] = ModerationRouteProvider::class;
     $type->setHandlerClass('route_provider', $providers);
 
     return $type;
@@ -93,15 +93,13 @@ class EntityTypeInfo {
    *   An array of only the config entities we want to modify.
    */
   protected function revisionableEntityTypes(array $entity_types) {
-
-    $entity_type_with_workflow = array_filter($entity_types, function (EntityTypeInterface $type) use ($entity_types) {
+    return array_filter($entity_types, function (EntityTypeInterface $type) use ($entity_types) {
       return ($type instanceof ConfigEntityTypeInterface) && $type->get('bundle_of') && $entity_types[$type->get('bundle_of')]->isRevisionable();
     });
-    return $entity_type_with_workflow;
   }
 
   /**
-   * Adds an operation on bundles that should have a Workflow form.
+   * Adds an operation on bundles that should have a Moderation form.
    *
    * @see hook_entity_operation().
    *
@@ -116,10 +114,10 @@ class EntityTypeInfo {
     $type = $entity->getEntityType();
 
     if ($this->entityOperationApplies($entity)) {
-      $operations['manage-workflow'] = [
-        'title' => t('Manage workflow'),
+      $operations['manage-moderation'] = [
+        'title' => t('Manage moderation'),
         'weight' => 27,
-        'url' => Url::fromRoute("entity.{$type->id()}.workflow", [$entity->getEntityTypeId() => $entity->id()]),
+        'url' => Url::fromRoute("entity.{$type->id()}.moderation", [$entity->getEntityTypeId() => $entity->id()]),
       ];
     }
 
@@ -127,7 +125,7 @@ class EntityTypeInfo {
   }
 
   /**
-   * Determines if we should be adding Workflow operations to this entity type.
+   * Determines if we should be adding Moderation operations to this entity type.
    *
    * This is the same check as exists in revisionableEntityTypes(), but that
    * one cannot use the entity manager due to recursion and this one doesn't
@@ -136,7 +134,7 @@ class EntityTypeInfo {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity to check.
    * @return bool
-   *   TRUE if we want to add a Workflow operation to this entity, FALSE
+   *   TRUE if we want to add a Moderation operation to this entity, FALSE
    *   otherwise.
    */
   protected function entityOperationApplies(EntityInterface $entity) {

@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
-class WorkflowRouteProvider implements EntityRouteProviderInterface, EntityHandlerInterface  {
+class ModerationRouteProvider implements EntityRouteProviderInterface, EntityHandlerInterface  {
 
   /**
    * {@inheritdoc}
@@ -25,16 +25,16 @@ class WorkflowRouteProvider implements EntityRouteProviderInterface, EntityHandl
   public function getRoutes(EntityTypeInterface $entity_type) {
     $collection = new RouteCollection();
 
-    if ($workflow_route = $this->getWorkflowFormRoute($entity_type)) {
+    if ($moderation_route = $this->getModerationFormRoute($entity_type)) {
       $entity_type_id = $entity_type->id();
-      $collection->add("entity.{$entity_type_id}.workflow", $workflow_route);
+      $collection->add("entity.{$entity_type_id}.moderation", $moderation_route);
     }
 
     return $collection;
   }
 
   /**
-   * Gets the workflow-form route.
+   * Gets the moderation-form route.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type.
@@ -42,16 +42,16 @@ class WorkflowRouteProvider implements EntityRouteProviderInterface, EntityHandl
    * @return \Symfony\Component\Routing\Route|null
    *   The generated route, if available.
    */
-  protected function getWorkflowFormRoute(EntityTypeInterface $entity_type) {
-    if ($entity_type->hasLinkTemplate('workflow-form') && $entity_type->getFormClass('workflow')) {
+  protected function getModerationFormRoute(EntityTypeInterface $entity_type) {
+    if ($entity_type->hasLinkTemplate('moderation-form') && $entity_type->getFormClass('moderation')) {
       $entity_type_id = $entity_type->id();
 
-      $route = new Route($entity_type->getLinkTemplate('workflow-form'));
+      $route = new Route($entity_type->getLinkTemplate('moderation-form'));
 
       $route
         ->setDefaults([
-          '_entity_form' => "{$entity_type_id}.workflow",
-          '_title' => 'Workflow',
+          '_entity_form' => "{$entity_type_id}.moderation",
+          '_title' => 'Moderation',
           //'_title_callback' => '\Drupal\Core\Entity\Controller\EntityController::editTitle'
         ])
         ->setRequirement('_permission', 'administer moderation state') // @todo Come up with a new permission.

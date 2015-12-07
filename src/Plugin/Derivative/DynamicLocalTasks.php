@@ -64,10 +64,10 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   public function getDerivativeDefinitions($base_plugin_definition) {
     $this->derivatives = [];
 
-    foreach ($this->workflowEntities() as $entity_type_id => $entity_type) {
-      $this->derivatives["$entity_type_id.workflow_tab"] = [
-        'route_name' => "entity.$entity_type_id.workflow",
-        'title' => $this->t('Manage workflow'),
+    foreach ($this->moderatableEntityTypes() as $entity_type_id => $entity_type) {
+      $this->derivatives["$entity_type_id.moderation_tab"] = [
+        'route_name' => "entity.$entity_type_id.moderation",
+        'title' => $this->t('Manage moderation'),
           // @todo - are we sure they all have an edit_form?
         'base_route' => "entity.$entity_type_id.edit_form",
         'weight' => 30,
@@ -83,12 +83,11 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
    * @return array
    *   An array of just those entity types we care about.
    */
-  protected function workflowEntities() {
+  protected function moderatableEntityTypes() {
     $entity_types = $this->entityTypeManager->getDefinitions();
 
-    $entity_type_with_workflow = array_filter($entity_types, function (EntityTypeInterface $type) use ($entity_types) {
+    return array_filter($entity_types, function (EntityTypeInterface $type) use ($entity_types) {
       return ($type instanceof ConfigEntityTypeInterface) && $type->get('bundle_of') && $entity_types[$type->get('bundle_of')]->isRevisionable();
     });
-    return $entity_type_with_workflow;
   }
 }
