@@ -130,6 +130,16 @@ class EntityModerationForm extends EntityForm {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+
+    // If moderation is enabled, revisions MUST be enabled as well.
+    // Otherwise we can't have forward revisions.
+    if($form_state->getValue('enable_moderation_state')) {
+      /* @var ConfigEntityTypeInterface $bundle */
+      $bundle = $form_state->getFormObject()->getEntity();
+      $bundle->setNewRevision(TRUE);
+      $bundle->save();
+    }
+
     parent::submitForm( $form, $form_state);
 
     drupal_set_message($this->t('Your settings have been saved.'));
