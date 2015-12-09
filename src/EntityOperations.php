@@ -23,13 +23,19 @@ class EntityOperations {
   protected $entityTypeManager;
 
   /**
+   * @var \Drupal\moderation_state\ModerationInformation
+   */
+  protected $moderationInfo;
+
+  /**
    * Constructs a new EntityOperations object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity type manager service.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ModerationInformation $moderation_info) {
     $this->entityTypeManager = $entity_type_manager;
+    $this->moderationInfo = $moderation_info;
   }
 
   /**
@@ -39,7 +45,7 @@ class EntityOperations {
    *   The entity being saved.
    */
   public function entityPresave(EntityInterface $entity) {
-    if (!$this->isModeratableEntity($entity)) {
+    if (!$this->moderationInfo->isModeratableEntity($entity)) {
       return;
     }
 
@@ -57,26 +63,5 @@ class EntityOperations {
 
       $entity->setPublished($entity->moderation_state->entity->isPublishedState());
     }
-  }
-
-  /**
-   * Determines if an entity is one we should be moderating.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity we may be moderating.
-   *
-   * @return bool
-   *   TRUE if this is an entity that we should act upon, FALSE otherwise.
-   */
-  protected function isModeratableEntity(EntityInterface $entity) {
-    if (! $entity->getEntityType() instanceof ContentEntityTypeInterface) {
-      return FALSE;
-    }
-
-    $type_string = $entity->getEntityType()->getBundleEntityType();
-
-    /** @var EntityTypeInterface $entity_type */
-    $entity_type = $this->entityTypeManager->getStorage($type_string)->load($entity->bundle());
-    return $entity_type->getThirdPartySetting('moderation_state', 'enabled', FALSE);
   }
 }
