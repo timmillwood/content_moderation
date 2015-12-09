@@ -6,6 +6,7 @@
 
 namespace Drupal\moderation_state;
 
+use Drupal\block_content\Entity\BlockContentType;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\BundleEntityFormBase;
 use Drupal\Core\Entity\EntityInterface;
@@ -14,6 +15,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\moderation_state\Form\EntityModerationForm;
 use Drupal\moderation_state\Routing\ModerationRouteProvider;
@@ -24,6 +27,8 @@ use Drupal\node\NodeTypeInterface;
  * Service class for manipulating entity type information.
  */
 class EntityTypeInfo {
+  use StringTranslationTrait;
+
 
   /**
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
@@ -40,10 +45,15 @@ class EntityTypeInfo {
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_types
    *   The entity type manager.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user service, for access checking.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $translation
+   *   The translation service. for form alters.
    */
-  public function __construct(EntityTypeManagerInterface $entity_types, AccountInterface $current_user) {
+  public function __construct(EntityTypeManagerInterface $entity_types, AccountInterface $current_user, TranslationInterface $translation) {
     $this->entityTypes = $entity_types;
     $this->currentUser = $current_user;
+    $this->stringTranslation = $translation;
   }
 
   /**
@@ -197,21 +207,37 @@ class EntityTypeInfo {
    *
    * @see hook_form_alter()
    */
-  public function bundleFormAlter(&$form, FormStateInterface $form_state, $form_id) {
+  public function bundleFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
     if ($this->isRevisionableBundleForm($form_state->getFormObject())) {
-      $this->enforceRevisionsFormAlter($form, $form_state, $form_id);
+      $this->enforceRevisionsBundleFormAlter($form, $form_state, $form_id);
     }
   }
 
-  protected function enforceRevisionsFormAlter(&$form, FormStateInterface $form_state, $form_id) {
-    dpm($form);
+  /**
+   * Alters bundle forms to enforce revision handling.
+   *
+   * Different entity types structure their forms completely differently, so
+   * there's seemingly no way to do this globally. Instead, we'll just hard
+   * code form changes for core's entity types. Suggestions for a better
+   * approach are welcome.
+   *
+   * @see hook_form_alter()
+   *
+   * @param $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @param $form_id
+   */
+  protected function enforceRevisionsBundleFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
+    $entity = $form_state->getFormObject()->getEntity();
 
-    // This structure seems to be different depending on which entity type
-    // we're on. That is... a problem.
-    dpm($form['workflow']);
-
-    $form['workflow']['options']['revision'] = 'revision';
-
+    if ($entity instanceof NodeType) {
+      $form['workflow']['options']['#default_value']['revision'] = 'revision';
+    }
+    else if ($entity instanceof BlockContentType) {
+      $form['revision']['#default_value'] = 1;
+      $form['revision']['#disabled'] = TRUE;
+      $form['revision']['#description'] = $this->t('Revisions must be required when moderation is enabled.');
+    }
   }
 
   /**
