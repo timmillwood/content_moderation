@@ -6,9 +6,11 @@
 
 namespace Drupal\moderation_state;
 
+use Drupal\block_content\Entity\BlockContent;
 use Drupal\block_content\Entity\BlockContentType;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\BundleEntityFormBase;
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -20,8 +22,10 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\moderation_state\Form\EntityModerationForm;
 use Drupal\moderation_state\Routing\ModerationRouteProvider;
+use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeTypeInterface;
+use Drupal\Core\Entity\ContentEntityFormInterface;
 
 /**
  * Service class for manipulating entity type information.
@@ -210,6 +214,77 @@ class EntityTypeInfo {
   public function bundleFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
     if ($this->isRevisionableBundleForm($form_state->getFormObject())) {
       $this->enforceRevisionsBundleFormAlter($form, $form_state, $form_id);
+    }
+    else if ($this->isModeratedEntityForm($form_state->getFormObject())) {
+      $this->enforceRevisionsEntityFormAlter($form, $form_state, $form_id);
+    }
+  }
+
+  /**
+   * Determines if this form is for a moderated entity.
+   *
+   * @param \Drupal\Core\Form\FormInterface $form_object
+   *   The form definition object for this form.
+   * @return bool
+   *   TRUE if the form is for an entity that is subject to moderation, FALSe
+   *   otherwise.
+   */
+  protected function isModeratedEntityForm(FormInterface $form_object) {
+    return $form_object instanceof ContentEntityFormInterface
+      && $this->isModeratableEntity($form_object->getEntity());
+  }
+
+  /**
+   * Determines if an entity is one we should be moderating.
+   *
+   * @todo This is a copy-paste from EntityOperations. It should be factored
+   * out to a shared supporting service.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity we may be moderating.
+   *
+   * @return bool
+   *   TRUE if this is an entity that we should act upon, FALSE otherwise.
+   */
+  protected function isModeratableEntity(EntityInterface $entity) {
+    if (! $entity->getEntityType() instanceof ContentEntityTypeInterface) {
+      return FALSE;
+    }
+
+    $type_string = $entity->getEntityType()->getBundleEntityType();
+
+    /** @var EntityTypeInterface $entity_type */
+    $entity_type = $this->entityTypes->getStorage($type_string)->load($entity->bundle());
+    return $entity_type->getThirdPartySetting('moderation_state', 'enabled', FALSE);
+  }
+
+  /**
+   * Alters entity forms to enforce revision handling.
+   *
+   * Different entity types structure their forms completely differently, so
+   * there's seemingly no way to do this globally. Instead, we'll just hard
+   * code form changes for core's entity types. Suggestions for a better
+   * approach are welcome.
+   *
+   * @see hook_form_alter()
+   *
+   * @param $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @param $form_id
+   */
+  protected function enforceRevisionsEntityFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
+    $entity = $form_state->getFormObject()->getEntity();
+
+    if ($entity instanceof Node) {
+      $form['revision']['#disabled'] = TRUE;
+      $form['revision']['#default_value'] = TRUE;
+      $form['revision']['#description'] = $this->t('Revisions are required.');
+    }
+    else if ($entity instanceof BlockContent) {
+
+      $form['revision_information']['revision']['#default_value'] = TRUE;
+      $form['revision_information']['revision']['#disabled'] = TRUE;
+      $form['revision_information']['revision']['#description'] = $this->t('Revisions must be required when moderation is enabled.');
     }
   }
 
