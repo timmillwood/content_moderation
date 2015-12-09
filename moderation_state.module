@@ -81,20 +81,5 @@ function moderation_state_local_tasks_alter(&$local_tasks) {
  * Implements hook_form_alter().
  */
 function moderation_state_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // We really shouldn't be checking for a base class, but core lacks an
-  // interface here. When core adds a better way to determine if we're on
-  // a Bundle configuration form we should switch to that.
-  if ($form_state->getFormObject() instanceof \Drupal\Core\Entity\BundleEntityFormBase) {
-    $bundle_of = $form_state->getFormObject()->getEntity()->getEntityType()->getBundleOf();
-    $type = \Drupal::entityTypeManager()->getDefinition($bundle_of);
-    $revisionable = $type->isRevisionable();
-
-    if ($revisionable) {
-      dpm($form_id);
-    }
-    /*
-    (new BundleFormAlter($form_state->getFormObject()->getEntity()))
-      ->formAlter($form, $form_state);
-    */
-  }
+  return \Drupal::service('moderation_state.entity_type')->bundleFormAlter($form, $form_state, $form_id);
 }

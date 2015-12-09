@@ -7,15 +7,18 @@
 namespace Drupal\moderation_state;
 
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
+use Drupal\Core\Entity\BundleEntityFormBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\moderation_state\Form\EntityModerationForm;
 use Drupal\moderation_state\Routing\ModerationRouteProvider;
-use Drupal\node\NodeTypeInterface;
 use Drupal\node\Entity\NodeType;
+use Drupal\node\NodeTypeInterface;
 
 /**
  * Service class for manipulating entity type information.
@@ -187,6 +190,42 @@ class EntityTypeInfo {
       && $type->get('bundle_of')
       && $this->entityTypes->getDefinition($type->get('bundle_of'))->isRevisionable()
       && $this->currentUser->hasPermission('administer moderation state');
+  }
+
+  /**
+   * Alters bundle forms to enforce revision handling.
+   *
+   * @see hook_form_alter()
+   */
+  public function bundleFormAlter(&$form, FormStateInterface $form_state, $form_id) {
+    if ($this->isRevisionableBundleForm($form_state->getFormObject())) {
+      dpm($form_id);
+    }
+  }
+
+  /**
+   * Determines if the form is the bundle edit of a revisionable entity.
+   *
+   * The logic here is not entirely clear, but seems to work. The form- and
+   * entity-dereference chaining seems excessive but is what works.
+   *
+   * @param \Drupal\Core\Form\FormInterface $form_object
+   *   The form definition object for this form.
+   * @return bool
+   *   True if the form is the bundle edit form for an entity type that supports
+   *   revisions, false otherwise.
+   */
+  protected function isRevisionableBundleForm(FormInterface $form_object) {
+    // We really shouldn't be checking for a base class, but core lacks an
+    // interface here. When core adds a better way to determine if we're on
+    // a Bundle configuration form we should switch to that.
+    if ($form_object instanceof BundleEntityFormBase) {
+      $bundle_of = $form_object->getEntity()->getEntityType()->getBundleOf();
+      $type = $this->entityTypes->getDefinition($bundle_of);
+      return $type->isRevisionable();
+    }
+
+    return FALSE;
   }
 
 }
