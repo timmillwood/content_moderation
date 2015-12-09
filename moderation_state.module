@@ -16,6 +16,7 @@ use Drupal\moderation_state\BaseFieldInfo;
 use Drupal\moderation_state\Plugin\Menu\EditTab;
 use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeTypeInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_help().
@@ -74,4 +75,29 @@ function moderation_state_entity_presave(EntityInterface $entity) {
  */
 function moderation_state_local_tasks_alter(&$local_tasks) {
   $local_tasks['entity.node.edit_form']['class'] = EditTab::class;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function moderation_state_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // We really shouldn't be checking for a base class, but core lacks an
+  // interface here. When core adds a better way to determine if we're on
+  // a Bundle configuration form we should switch to that.
+  if ($form_state->getFormObject() instanceof \Drupal\Core\Entity\BundleEntityFormBase) {
+    $form_object = $form_state->getFormObject();
+    $entity = $form_object->getEntity();
+    $entity_type = $entity->getEntityType();
+    $bundle_of = $entity_type->getBundleOf();
+    $type = \Drupal::entityTypeManager()->getDefinition($bundle_of);
+    $revisionable = $type->isRevisionable();
+
+    if ($revisionable) {
+      dpm($form_id);
+    }
+    /*
+    (new BundleFormAlter($form_state->getFormObject()->getEntity()))
+      ->formAlter($form, $form_state);
+    */
+  }
 }
