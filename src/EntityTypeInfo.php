@@ -199,8 +199,19 @@ class EntityTypeInfo {
    */
   public function bundleFormAlter(&$form, FormStateInterface $form_state, $form_id) {
     if ($this->isRevisionableBundleForm($form_state->getFormObject())) {
-      dpm($form_id);
+      $this->enforceRevisionsFormAlter($form, $form_state, $form_id);
     }
+  }
+
+  protected function enforceRevisionsFormAlter(&$form, FormStateInterface $form_state, $form_id) {
+    dpm($form);
+
+    // This structure seems to be different depending on which entity type
+    // we're on. That is... a problem.
+    dpm($form['workflow']);
+
+    $form['workflow']['options']['revision'] = 'revision';
+
   }
 
   /**
