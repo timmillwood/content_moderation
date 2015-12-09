@@ -95,10 +95,11 @@ class ModerationInformation {
    */
   public function selectRevisionableEntityTypes(array $entity_types) {
     return array_filter($entity_types, function (EntityTypeInterface $type) use ($entity_types) {
-      return ($type instanceof ConfigEntityTypeInterface) && $type->get('bundle_of') && $entity_types[$type->get('bundle_of')]->isRevisionable();
+      return ($type instanceof ConfigEntityTypeInterface)
+        && $type->get('bundle_of')
+        && $entity_types[$type->get('bundle_of')]->isRevisionable();
     });
   }
-
 
   /**
    * Determines if a config entity is a bundle for entities that may be moderated.

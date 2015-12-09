@@ -14,4 +14,4 @@ services:
     arguments: ['@string_translation', '@moderation_state.moderation_information']
   moderation_state.entity_operations:
     class: Drupal\moderation_state\EntityOperations
-    arguments: ['@entity_type.manager', '@moderation_state.moderation_information']
+    arguments: ['@moderation_state.moderation_information']
