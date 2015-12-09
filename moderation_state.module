@@ -85,10 +85,7 @@ function moderation_state_form_alter(&$form, FormStateInterface $form_state, $fo
   // interface here. When core adds a better way to determine if we're on
   // a Bundle configuration form we should switch to that.
   if ($form_state->getFormObject() instanceof \Drupal\Core\Entity\BundleEntityFormBase) {
-    $form_object = $form_state->getFormObject();
-    $entity = $form_object->getEntity();
-    $entity_type = $entity->getEntityType();
-    $bundle_of = $entity_type->getBundleOf();
+    $bundle_of = $form_state->getFormObject()->getEntity()->getEntityType()->getBundleOf();
     $type = \Drupal::entityTypeManager()->getDefinition($bundle_of);
     $revisionable = $type->isRevisionable();
 
