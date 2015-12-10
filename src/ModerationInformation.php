@@ -53,6 +53,9 @@ class ModerationInformation {
       return FALSE;
     }
 
+    // @todo There is a bug here if the entity bundle type doesn't exist. We'll
+    // get a fatal on the last line.
+
     $type_string = $entity->getEntityType()->getBundleEntityType();
 
     /** @var EntityTypeInterface $entity_type */
