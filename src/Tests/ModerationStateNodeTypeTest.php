@@ -46,14 +46,14 @@ class ModerationStateNodeTypeTest extends ModerationStateTestBase {
     ], t('Save and publish'));
     $this->assertText('Not moderated Test has been created.');
     // Now enable moderation state.
-    $this->drupalGet('admin/structure/types/manage/not_moderated');
+    $this->drupalGet('admin/structure/types/manage/not_moderated/moderation');
     $this->drupalPostForm(NULL, [
       'enable_moderation_state' => 1,
       'allowed_moderation_states[draft]' => 1,
       'allowed_moderation_states[needs_review]' => 1,
       'allowed_moderation_states[published]' => 1,
       'default_moderation_state' => 'draft',
-    ], t('Save content type'));
+    ], t('Save'));
     $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
       'title' => 'Test'
     ]);
@@ -88,20 +88,24 @@ class ModerationStateNodeTypeTest extends ModerationStateTestBase {
   protected function createContentTypeFromUI($content_type_name, $content_type_id, $moderated = FALSE, $allowed_states = [], $default_state = NULL) {
     $this->drupalGet('admin/structure/types');
     $this->clickLink('Add content type');
-    $this->assertFieldByName('enable_moderation_state');
-    $this->assertNoFieldChecked('edit-enable-moderation-state');
     $edit = [
       'name' => $content_type_name,
       'type' => $content_type_id,
     ];
+    $this->drupalPostForm(NULL, $edit, t('Save content type'));
+
     if ($moderated) {
+      $this->drupalGet('admin/structure/types/' . $content_type_id . '/moderation');
+      $this->assertFieldByName('enable_moderation_state');
+      $this->assertNoFieldChecked('edit-enable-moderation-state');
       $edit['enable_moderation_state'] = 1;
       foreach ($allowed_states as $state) {
         $edit['allowed_moderation_states[' . $state . ']'] = 1;
       }
       $edit['default_moderation_state'] = $default_state;
+
+      $this->drupalPostForm('admin/structure/types/' . $content_type_id . '/moderation', $edit, t('Save'));
     }
-    $this->drupalPostForm(NULL, $edit, t('Save content type'));
   }
 
   /**
