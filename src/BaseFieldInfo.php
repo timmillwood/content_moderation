@@ -16,13 +16,6 @@ use Drupal\Core\Field\BaseFieldDefinition;
 class BaseFieldInfo {
 
   /**
-   * Entity type ID to add fields for.
-   *
-   * @var string
-   */
-  protected $targetEntityTypeId = 'node';
-
-  /**
    * Adds base field info to an entity type.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
@@ -32,13 +25,14 @@ class BaseFieldInfo {
    *   New fields added by moderation state.
    */
   public function entityBaseFieldInfo(EntityTypeInterface $entity_type) {
-    if ($entity_type->id() === $this->targetEntityTypeId) {
+    if ($entity_type->isRevisionable()) {
       $fields = [];
       // @todo write a test for this.
       $fields['moderation_state'] = BaseFieldDefinition::create('entity_reference')
         ->setLabel(t('Moderation state'))
         ->setDescription(t('The moderation state of this piece of content.'))
         ->setSetting('target_type', 'moderation_state')
+        ->setTargetEntityTypeId($entity_type->id())
         ->setRevisionable(TRUE)
         // @todo write a test for this.
         ->setDisplayOptions('view', [
