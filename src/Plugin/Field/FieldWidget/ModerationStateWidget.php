@@ -7,7 +7,10 @@
 
 namespace Drupal\moderation_state\Plugin\Field\FieldWidget;
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -16,7 +19,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\moderation_state\Entity\ModerationState;
-use Drupal\node\NodeInterface;
+use Drupal\moderation_state\ModerationInformation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -40,13 +43,6 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
   protected $currentUser;
 
   /**
-   * Node type storage.
-   *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
-   */
-  protected $nodeTypeStorage;
-
-  /**
    * Moderation state transition entity query.
    *
    * @var \Drupal\Core\Entity\Query\QueryInterface
@@ -59,23 +55,23 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $moderationStateStorage;
+
   /**
-   * {@inheritdoc}
+   * @var \Drupal\moderation_state\ModerationInformation
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $plugin_id,
-      $plugin_definition,
-      $configuration['field_definition'],
-      $configuration['settings'],
-      $configuration['third_party_settings'],
-      $container->get('current_user'),
-      $container->get('entity_type.manager')->getStorage('node_type'),
-      $container->get('entity_type.manager')->getStorage('moderation_state'),
-      $container->get('entity_type.manager')->getStorage('moderation_state_transition'),
-      $container->get('entity.query')->get('moderation_state_transition', 'AND')
-    );
-  }
+  protected $moderationInformation;
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $moderationStateTransitionStorage;
 
   /**
    * Constructs a new ModerationStateWidget object.
@@ -92,8 +88,6 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
    *   Third party settings.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   Current user service.
-   * @param \Drupal\Core\Entity\EntityStorageInterface $node_type_storage
-   *   Node type storage.
    * @param \Drupal\Core\Entity\EntityStorageInterface $moderation_state_storage
    *   Moderation state storage.
    * @param \Drupal\Core\Entity\EntityStorageInterface $moderation_state_transition_storage
@@ -101,36 +95,56 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
    * @param \Drupal\Core\Entity\Query\QueryInterface $entity_query
    *   Moderation transation entity query service.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, AccountInterface $current_user, EntityStorageInterface $node_type_storage, EntityStorageInterface $moderation_state_storage, EntityStorageInterface $moderation_state_transition_storage, QueryInterface $entity_query) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, EntityStorageInterface $moderation_state_storage, EntityStorageInterface $moderation_state_transition_storage, QueryInterface $entity_query, ModerationInformation $moderation_information) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
-    $this->nodeTypeStorage = $node_type_storage;
     $this->moderationStateTransitionEntityQuery = $entity_query;
     $this->moderationStateTransitionStorage = $moderation_state_transition_storage;
     $this->moderationStateStorage = $moderation_state_storage;
+    $this->entityTypeManager = $entity_type_manager;
     $this->currentUser = $current_user;
+    $this->moderationInformation = $moderation_information;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['third_party_settings'],
+      $container->get('current_user'),
+      $container->get('entity_type.manager'),
+      $container->get('entity_type.manager')->getStorage('moderation_state'),
+      $container->get('entity_type.manager')->getStorage('moderation_state_transition'),
+      $container->get('entity.query')->get('moderation_state_transition', 'AND'),
+      $container->get('moderation_state.moderation_information')
+    );
   }
 
   /**
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    $node = $items->getEntity();
-    /* @var \Drupal\node\NodeTypeInterface $node_type */
-    $node_type = $this->nodeTypeStorage->load($node->bundle());
-    if (!$node_type->getThirdPartySetting('moderation_state', 'enabled', FALSE)) {
+    $entity = $items->getEntity();
+    /* @var \Drupal\Core\Config\Entity\ConfigEntityInterface $bundle_entity */
+    $bundle_entity = $this->entityTypeManager->getStorage($entity->getEntityType()->getBundleEntityType())->load($entity->bundle());
+    if (!$this->moderationInformation->isModeratableEntity($entity)) {
       // @todo write a test for this.
       return $element + ['#access' => FALSE];
     }
     $options = $this->fieldDefinition
       ->getFieldStorageDefinition()
-      ->getOptionsProvider($this->column, $node)
+      ->getOptionsProvider($this->column, $entity)
       ->getSettableOptions($this->currentUser);
 
-    $default = $items->get($delta)->target_id ?: $node_type->getThirdPartySetting('moderation_state', 'default_moderation_state', FALSE);
+    $default = $items->get($delta)->target_id ?: $bundle_entity->getThirdPartySetting('moderation_state', 'default_moderation_state', FALSE);
     /** @var \Drupal\moderation_state\ModerationStateInterface $default_state */
     $default_state = ModerationState::load($default);
     if (!$default || !$default_state) {
-      throw new \UnexpectedValueException(sprintf('The %s node type has an invalid moderation state configuration, moderation states are enabled but no default is set.', $node_type->label()));
+      throw new \UnexpectedValueException(sprintf('The %s bundle has an invalid moderation state configuration, moderation states are enabled but no default is set.', $bundle_entity->label()));
     }
     // @todo write a test for this.
     $from = $this->moderationStateTransitionEntityQuery
@@ -139,7 +153,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
     // Can always keep this one as is.
     $to[$default] = $default;
     // @todo write a test for this.
-    $allowed = $node_type->getThirdPartySetting('moderation_state', 'allowed_moderation_states', []);
+    $allowed = $bundle_entity->getThirdPartySetting('moderation_state', 'allowed_moderation_states', []);
     if ($from) {
       /* @var \Drupal\moderation_state\ModerationStateTransitionInterface $transition */
       foreach ($this->moderationStateTransitionStorage->loadMultiple($from) as $id => $transition) {
@@ -159,7 +173,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       '#default_value' => $default,
       '#published' => $default ? $default_state->isPublishedState() : FALSE,
     ];
-    if ($this->currentUser->hasPermission('administer nodes') && count($options)) {
+    if ($this->currentUser->hasPermission($this->getAdminPermission($entity->getEntityType())) && count($options)) {
       // Use the dropbutton.
       $element['#process'][] = [$this, 'processActions'];
       // Don't show in sidebar/body.
@@ -181,22 +195,31 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
     return $element;
   }
 
+  protected function getAdminPermission(EntityTypeInterface $entity_type) {
+    switch ($entity_type->id()) {
+      case 'node':
+        return 'administer nodes';
+      default:
+        return $entity_type->getAdminPermission();
+    }
+  }
+
   /**
    * Entity builder updating the node moderation state with the submitted value.
    *
    * @param string $entity_type_id
    *   The entity type identifier.
-   * @param \Drupal\node\NodeInterface $node
-   *   The node updated with the submitted values.
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The entity updated with the submitted values.
    * @param array $form
    *   The complete form array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function updateStatus($entity_type_id, NodeInterface $node, array $form, FormStateInterface $form_state) {
+  public function updateStatus($entity_type_id, ContentEntityInterface $entity, array $form, FormStateInterface $form_state) {
     $element = $form_state->getTriggeringElement();
     if (isset($element['#moderation_state'])) {
-      $node->moderation_state->target_id = $element['#moderation_state'];
+      $entity->moderation_state->target_id = $element['#moderation_state'];
     }
   }
   /**
@@ -251,6 +274,6 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
    * {@inheritdoc}
    */
   public static function isApplicable(FieldDefinitionInterface $field_definition) {
-    return parent::isApplicable($field_definition) && $field_definition->getName() === 'moderation_state' && $field_definition->getTargetEntityTypeId() === 'node';
+    return parent::isApplicable($field_definition) && $field_definition->getName() === 'moderation_state';
   }
 }
