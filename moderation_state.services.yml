@@ -1,6 +1,6 @@
 services:
   paramconverter.latest_revision:
-    class: Drupal\moderation_state\ParamConverter\NodeRevisionConverter
+    class: Drupal\moderation_state\ParamConverter\EntityRevisionConverter
     tags:
       - { name: paramconverter, priority: 5 }
     arguments: ['@entity.manager']

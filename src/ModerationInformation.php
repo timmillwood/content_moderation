@@ -7,6 +7,7 @@
 
 namespace Drupal\moderation_state;
 
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\BundleEntityFormBase;
 use Drupal\Core\Entity\ContentEntityFormInterface;
@@ -49,15 +50,17 @@ class ModerationInformation {
    *   TRUE if this is an entity that we should act upon, FALSE otherwise.
    */
   public function isModeratableEntity(EntityInterface $entity) {
-    if (! $entity->getEntityType() instanceof ContentEntityTypeInterface) {
+    if (!$entity->getEntityType() instanceof ContentEntityTypeInterface) {
       return FALSE;
     }
 
-    $type_string = $entity->getEntityType()->getBundleEntityType();
+    if ($bundle_entity_type_id = $entity->getEntityType()->getBundleEntityType()) {
+      /** @var ConfigEntityInterface $bundle_entity */
+      $bundle_entity = $this->entityTypeManager->getStorage($bundle_entity_type_id)->load($entity->bundle());
+      return $bundle_entity->getThirdPartySetting('moderation_state', 'enabled', FALSE);
+    }
 
-    /** @var EntityTypeInterface $entity_type */
-    $entity_type = $this->entityTypeManager->getStorage($type_string)->load($entity->bundle());
-    return $entity_type->getThirdPartySetting('moderation_state', 'enabled', FALSE);
+    return FALSE;
   }
 
 
