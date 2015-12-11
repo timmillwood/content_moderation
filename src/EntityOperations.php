@@ -40,14 +40,16 @@ class EntityOperations {
    *   The entity being saved.
    */
   public function entityPresave(EntityInterface $entity) {
-
     if ($entity instanceof ContentEntityInterface && $this->moderationInfo->isModeratableEntity($entity)) {
       // @todo write a test for this.
       if ($entity->moderation_state->entity) {
-        // Regardless of if it's a forward revision or not, the publication
-        // state is determined by the moderation state.
+        // This is *probably* not necessary if configuration is setup correctly,
+        // but it can't hurt.
+        $entity->setNewRevision(TRUE);
         $published_state = $entity->moderation_state->entity->isPublishedState();
-        $entity->isDefaultRevision($published_state);
+        // A newly-created revision is always the default revision, or else
+        // it gets lost.
+        $entity->isDefaultRevision($entity->isNew() || $published_state);
         $entity->setPublished($published_state);
       }
     }
