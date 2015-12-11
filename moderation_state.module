@@ -14,8 +14,6 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\moderation_state\BaseFieldInfo;
 use Drupal\moderation_state\Plugin\Menu\EditTab;
-use Drupal\node\Entity\NodeType;
-use Drupal\node\NodeTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -74,7 +72,16 @@ function moderation_state_entity_presave(EntityInterface $entity) {
  * Implements hook_local_tasks_alter().
  */
 function moderation_state_local_tasks_alter(&$local_tasks) {
-  $local_tasks['entity.node.edit_form']['class'] = EditTab::class;
+  $content_entity_type_ids = array_keys(array_filter(\Drupal::entityTypeManager()->getDefinitions(), function (EntityTypeInterface $entity_type) {
+    return $entity_type->isRevisionable();
+  }));
+
+  foreach ($content_entity_type_ids as $content_entity_type_id) {
+    if (isset($local_tasks["entity.$content_entity_type_id.edit_form"])) {
+      $local_tasks["entity.$content_entity_type_id.edit_form"]['class'] = EditTab::class;
+      $local_tasks["entity.$content_entity_type_id.edit_form"]['entity_type_id'] = $content_entity_type_id;
+    }
+  }
 }
 
 /**

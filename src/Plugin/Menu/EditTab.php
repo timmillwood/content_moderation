@@ -7,11 +7,15 @@
 
 namespace Drupal\moderation_state\Plugin\Menu;
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Menu\LocalTaskDefault;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\moderation_state\LatestRevisionTrait;
+use Drupal\moderation_state\ModerationInformation;
 use Drupal\node\NodeStorageInterface;
 use Drupal\node\NodeTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -22,40 +26,28 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterface {
 
   use StringTranslationTrait;
+  use LatestRevisionTrait;
 
   /**
-   * Node storage handler.
+   * The entity type manager.
    *
-   * @var \Drupal\node\NodeStorageInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $nodeStorage;
+  protected $entityTypeManager;
 
   /**
-   * Node type storage handler.
+   * The moderatio information service.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\moderation_state\ModerationInformation
    */
-  protected $nodeTypeStorage;
+  protected $moderationInformation;
 
   /**
-   * Node for route.
+   * The entity.
    *
-   * @var \Drupal\node\NodeInterface
+   * @var \Drupal\Core\Entity\ContentEntityInterface
    */
-  protected $node;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('entity_type.manager')->getStorage('node'),
-      $container->get('entity_type.manager')->getStorage('node_type')
-    );
-  }
+  protected $entity;
 
   /**
    * Constructs a new EditTab object.
@@ -66,15 +58,29 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
    *   Plugin ID.
    * @param mixed $plugin_definition
    *   Plugin definition.
-   * @param \Drupal\node\NodeStorageInterface $node_storage
-   *   Node storage handler.
-   * @param \Drupal\Core\Entity\EntityStorageInterface $node_type_storage
-   *   Node type storage handler
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\moderation_state\ModerationInformation $moderation_information
+   *   The modertation information.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, NodeStorageInterface $node_storage, EntityStorageInterface $node_type_storage) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ModerationInformation $moderation_information) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->nodeStorage = $node_storage;
-    $this->nodeTypeStorage = $node_type_storage;
+
+    $this->entityTypeManager = $entity_type_manager;
+    $this->moderationInformation = $moderation_information;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity_type.manager'),
+      $container->get('moderation_state.moderation_information')
+    );
   }
 
   /**
@@ -82,7 +88,7 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
    */
   public function getRouteParameters(RouteMatchInterface $route_match) {
     // Override the node here with the latest revision.
-    $this->node = $route_match->getParameter('node');
+    $this->entity = $route_match->getParameter($this->pluginDefinition['entity_type_id']);
     return parent::getRouteParameters($route_match);
   }
 
@@ -90,17 +96,15 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
    * {@inheritdoc}
    */
   public function getTitle() {
-    /* @var NodeTypeInterface $node_type */
-    // @todo write a test for this.
-    $node_type = $this->nodeTypeStorage->load($this->node->bundle());
-    if (!$node_type->getThirdPartySetting('moderation_state', 'enabled', FALSE)) {
+    if (!$this->moderationInformation->isModeratableEntity($this->entity)) {
       // Moderation isn't enabled.
       return parent::getTitle();
     }
-    $revision_ids = $this->nodeStorage->revisionIds($this->node);
-    sort($revision_ids);
-    $latest = end($revision_ids);
-    if ($this->node->getRevisionId() === $latest && $this->node->isDefaultRevision() && $this->node->moderation_state->entity && $this->node->moderation_state->entity->isPublishedState()) {
+
+    // @todo write a test for this.
+    /** @var ContentEntityInterface $latest */
+    $latest = $this->getLatestRevision($this->entity->getEntityTypeId(), $this->entity->id());
+    if ($this->entity->getRevisionId() === $latest->getRevisionId() && $this->entity->isDefaultRevision() && $this->entity->moderation_state->entity && $this->entity->moderation_state->entity->isPublishedState()) {
       // @todo write a test for this.
       return $this->t('New draft');
     }
@@ -117,8 +121,8 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
     // @todo write a test for this.
     $tags = parent::getCacheTags();
     // Tab changes if node or node-type is modified.
-    $tags[] = 'node:' . $this->node->id();
-    $tags[] = 'node_type:' . $this->node->bundle();
+    $tags = array_merge($tags, $this->entity->getCacheTags());
+    $tags[] = $this->entity->getEntityType()->getBundleEntityType() . ':' . $this->entity->bundle();
     return $tags;
   }
 
