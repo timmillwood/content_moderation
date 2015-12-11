@@ -11,14 +11,13 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\BundleEntityFormBase;
 use Drupal\Core\Entity\ContentEntityFormInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\node\Entity\NodeType;
-use Drupal\node\NodeTypeInterface;
 
 /**
  * General service for moderation-related questions about Entity API.
@@ -50,43 +49,46 @@ class ModerationInformation {
    *   TRUE if this is an entity that we should act upon, FALSE otherwise.
    */
   public function isModeratableEntity(EntityInterface $entity) {
-    if (!$entity->getEntityType() instanceof ContentEntityTypeInterface) {
+    if (!$entity instanceof ContentEntityInterface) {
       return FALSE;
     }
 
-    if ($bundle_entity_type_id = $entity->getEntityType()->getBundleEntityType()) {
-      /** @var ConfigEntityInterface $bundle_entity */
-      $bundle_entity = $this->entityTypeManager->getStorage($bundle_entity_type_id)->load($entity->bundle());
-      return $bundle_entity->getThirdPartySetting('moderation_state', 'enabled', FALSE);
-    }
-
-    return FALSE;
+    return $this->isModeratableBundle($entity->getEntityType(), $entity->bundle());
   }
 
+  /**
+   * Loads a specific bundle entity.
+   *
+   * @param string $bundle_entity_type_id
+   *   The bundle entity type ID.
+   * @param string $bundle_id
+   *   The bundle ID.
+   *
+   * @return \Drupal\Core\Config\Entity\ConfigEntityInterface|null
+   */
+  protected function loadBundleEntity($bundle_entity_type_id, $bundle_id) {
+    if ($bundle_entity_type_id) {
+      return $this->entityTypeManager->getStorage($bundle_entity_type_id)->load($bundle_id);
+    }
+  }
 
   /**
    * Determines if an entity type/bundle is one that will be moderated.
-   *
-   * @todo Generalize this to not be Node-specific.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type definition to check.
    * @param string $bundle
    *   The bundle to check.
+   *
    * @return bool
    *   TRUE if this is a bundle we want to moderate, FALSE otherwise.
    */
   public function isModeratableBundle(EntityTypeInterface $entity_type, $bundle) {
-    if ($entity_type->id() === 'node' && !empty($fields['moderation_state'])) {
-      /* @var NodeTypeInterface $node_type */
-      $node_type = NodeType::load($bundle);
-      if ($node_type->getThirdPartySetting('moderation_state', 'enabled', FALSE)) {
-        return TRUE;
-      }
+    if ($bundle_entity = $this->loadBundleEntity($entity_type->getBundleEntityType(), $bundle)) {
+      return $bundle_entity->getThirdPartySetting('moderation_state', 'enabled', FALSE);
     }
     return FALSE;
   }
-
 
   /**
    * Filters an entity list to just bundle definitions for revisionable entities.
