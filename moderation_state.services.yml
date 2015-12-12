@@ -6,11 +6,9 @@ services:
     arguments: ['@entity.manager']
   moderation_state.moderation_information:
     class: Drupal\moderation_state\ModerationInformation
-    tags:
     arguments: ['@entity_type.manager', '@current_user']
   moderation_state.entity_type:
     class: Drupal\moderation_state\EntityTypeInfo
-    tags:
     arguments: ['@string_translation', '@moderation_state.moderation_information']
   moderation_state.entity_operations:
     class: Drupal\moderation_state\EntityOperations

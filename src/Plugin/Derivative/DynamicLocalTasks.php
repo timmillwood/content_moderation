@@ -17,6 +17,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface {
+
   use StringTranslationTrait;
 
   /**
@@ -27,6 +28,8 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   protected $basePluginId;
 
   /**
+   * The entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
@@ -87,7 +90,7 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
     $entity_types = $this->entityTypeManager->getDefinitions();
 
     return array_filter($entity_types, function (EntityTypeInterface $type) use ($entity_types) {
-      return ($type instanceof ConfigEntityTypeInterface) && $type->get('bundle_of') && $entity_types[$type->get('bundle_of')]->isRevisionable();
+      return ($type instanceof ConfigEntityTypeInterface) && ($bundle_of = $type->get('bundle_of')) && $entity_types[$bundle_of]->isRevisionable();
     });
   }
 }

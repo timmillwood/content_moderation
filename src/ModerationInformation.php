@@ -20,14 +20,18 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * General service for moderation-related questions about Entity API.
  */
-class ModerationInformation {
+class ModerationInformation implements ModerationInformationInterface {
 
   /**
+   * The entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
+   * The current user.
+   *
    * @var \Drupal\Core\Session\AccountInterface
    */
   protected $currentUser;
@@ -38,13 +42,7 @@ class ModerationInformation {
   }
 
   /**
-   * Determines if an entity is one we should be moderating.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity we may be moderating.
-   *
-   * @return bool
-   *   TRUE if this is an entity that we should act upon, FALSE otherwise.
+   * {@inheritdoc}
    */
   public function isModeratableEntity(EntityInterface $entity) {
     if (!$entity instanceof ContentEntityInterface) {
@@ -71,15 +69,7 @@ class ModerationInformation {
   }
 
   /**
-   * Determines if an entity type/bundle is one that will be moderated.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
-   *   The entity type definition to check.
-   * @param string $bundle
-   *   The bundle to check.
-   *
-   * @return bool
-   *   TRUE if this is a bundle we want to moderate, FALSE otherwise.
+   * {@inheritdoc}
    */
   public function isModeratableBundle(EntityTypeInterface $entity_type, $bundle) {
     if ($bundle_entity = $this->loadBundleEntity($entity_type->getBundleEntityType(), $bundle)) {
@@ -89,54 +79,31 @@ class ModerationInformation {
   }
 
   /**
-   * Filters an entity list to just bundle definitions for revisionable entities.
-   *
-   * @param EntityTypeInterface[] $entity_types
-   *   The master entity type list filter.
-   * @return array
-   *   An array of only the config entities we want to modify.
+   * {@inheritdoc}
    */
   public function selectRevisionableEntityTypes(array $entity_types) {
     return array_filter($entity_types, function (EntityTypeInterface $type) use ($entity_types) {
       return ($type instanceof ConfigEntityTypeInterface)
-      && $type->get('bundle_of')
-      && $entity_types[$type->get('bundle_of')]->isRevisionable();
+      && ($bundle_of = $type->get('bundle_of'))
+      && $entity_types[$bundle_of]->isRevisionable();
     });
   }
 
   /**
-   * Determines if a config entity is a bundle for entities that may be moderated.
-   *
-   * This is the same check as exists in selectRevisionableEntityTypes(), but
-   * that one cannot use the entity manager due to recursion and this one
-   * doesn't have the entity list otherwise so must use the entity manager. The
-   * alternative would be to call getDefinitions() on entityTypeManager and use
-   * that in a sub-call, but that would be unnecessarily memory intensive.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity to check.
-   * @return bool
-   *   TRUE if we want to add a Moderation operation to this entity, FALSE
-   *   otherwise.
+   * {@inheritdoc}
    */
   public function isBundleForModeratableEntity(EntityInterface $entity) {
     $type = $entity->getEntityType();
 
     return
       $type instanceof ConfigEntityTypeInterface
-      && $type->get('bundle_of')
-      && $this->entityTypeManager->getDefinition($type->get('bundle_of'))->isRevisionable()
+      && ($bundle_of = $type->get('bundle_of'))
+      && $this->entityTypeManager->getDefinition($bundle_of)->isRevisionable()
       && $this->currentUser->hasPermission('administer moderation state');
   }
 
   /**
-   * Determines if this form is for a moderated entity.
-   *
-   * @param \Drupal\Core\Form\FormInterface $form_object
-   *   The form definition object for this form.
-   * @return bool
-   *   TRUE if the form is for an entity that is subject to moderation, FALSe
-   *   otherwise.
+   * {@inheritdoc}
    */
   public function isModeratedEntityForm(FormInterface $form_object) {
     return $form_object instanceof ContentEntityFormInterface
@@ -144,16 +111,7 @@ class ModerationInformation {
   }
 
   /**
-   * Determines if the form is the bundle edit of a revisionable entity.
-   *
-   * The logic here is not entirely clear, but seems to work. The form- and
-   * entity-dereference chaining seems excessive but is what works.
-   *
-   * @param \Drupal\Core\Form\FormInterface $form_object
-   *   The form definition object for this form.
-   * @return bool
-   *   True if the form is the bundle edit form for an entity type that supports
-   *   revisions, false otherwise.
+   * {@inheritdoc}
    */
   public function isRevisionableBundleForm(FormInterface $form_object) {
     // We really shouldn't be checking for a base class, but core lacks an

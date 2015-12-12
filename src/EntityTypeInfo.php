@@ -25,11 +25,14 @@ use Drupal\node\Entity\NodeType;
 /**
  * Service class for manipulating entity type information.
  */
-class EntityTypeInfo {
+class EntityTypeInfo implements EntityTypeInfoInterface{
+
   use StringTranslationTrait;
 
   /**
-   * @var \Drupal\moderation_state\ModerationInformation
+   * The moderation information service.
+   *
+   * @var \Drupal\moderation_state\ModerationInformationInterface
    */
   protected $moderationInfo;
 
@@ -37,23 +40,16 @@ class EntityTypeInfo {
    * EntityTypeInfo constructor.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $translation
    *   The translation service. for form alters.
-   * @param \Drupal\moderation_state\ModerationInformation $moderation_information
+   * @param \Drupal\moderation_state\ModerationInformationInterface $moderation_information
    *   The moderation information service.
    */
-  public function __construct(TranslationInterface $translation, ModerationInformation $moderation_information) {
+  public function __construct(TranslationInterface $translation, ModerationInformationInterface $moderation_information) {
     $this->stringTranslation = $translation;
     $this->moderationInfo = $moderation_information;
   }
 
   /**
-   * Adds Moderation configuration to appropriate entity types.
-   *
-   * This is an alter hook bridge.
-   *
-   * @see hook_entity_type_alter().
-   *
-   * @param EntityTypeInterface[] $entity_types
-   *   The master entity type list to alter.
+   * {@inheritdoc}
    */
   public function entityTypeAlter(array &$entity_types) {
     foreach ($this->moderationInfo->selectRevisionableEntityTypes($entity_types) as $type_name => $type) {
@@ -69,6 +65,7 @@ class EntityTypeInfo {
    *
    * @param \Drupal\Core\Config\Entity\ConfigEntityTypeInterface $type
    *   The config entity definition to modify.
+   *
    * @return \Drupal\Core\Config\Entity\ConfigEntityTypeInterface
    *   The modified config entity definition.
    */
@@ -89,15 +86,7 @@ class EntityTypeInfo {
   }
 
   /**
-   * Adds an operation on bundles that should have a Moderation form.
-   *
-   * @see hook_entity_operation().
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity on which to define an operation.
-   *
-   * @return array
-   *   An array of operation definitions.
+   * {@inheritdoc}
    */
   public function entityOperation(EntityInterface $entity) {
     $operations = [];
@@ -115,26 +104,16 @@ class EntityTypeInfo {
   }
 
   /**
-   * Force moderatable bundles to have a moderation_state field.
-   *
-   * @see hook_entity_bundle_field_info_alter();
-   *
-   * @param array $fields
-   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
-   * @param string $bundle
+   * {@inheritdoc}
    */
   public function entityBundleFieldInfoAlter(&$fields, EntityTypeInterface $entity_type, $bundle) {
     if ($this->moderationInfo->isModeratableBundle($entity_type, $bundle) && !empty($fields['moderation_state'])) {
       $fields['moderation_state']->addConstraint('ModerationState', []);
     }
-
-    return;
   }
 
   /**
-   * Alters bundle forms to enforce revision handling.
-   *
-   * @see hook_form_alter()
+   * {@inheritdoc}
    */
   public function bundleFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
     if ($this->moderationInfo->isRevisionableBundleForm($form_state->getFormObject())) {
@@ -153,11 +132,14 @@ class EntityTypeInfo {
    * code form changes for core's entity types. Suggestions for a better
    * approach are welcome.
    *
-   * @see hook_form_alter()
-   *
-   * @param $form
+   * @param array $form
+   *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
-   * @param $form_id
+   *   The current state of the form.
+   * @param string $form_id
+   *   The form id.
+   *
+   * @see hook_form_alter()
    */
   protected function enforceRevisionsEntityFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
     $entity = $form_state->getFormObject()->getEntity();
@@ -183,11 +165,14 @@ class EntityTypeInfo {
    * code form changes for core's entity types. Suggestions for a better
    * approach are welcome.
    *
-   * @see hook_form_alter()
-   *
-   * @param $form
+   * @param array $form
+   *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
-   * @param $form_id
+   *   The current state of the form.
+   * @param string $form_id
+   *   The form id.
+   *
+   * @see hook_form_alter()
    */
   protected function enforceRevisionsBundleFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
     $entity = $form_state->getFormObject()->getEntity();

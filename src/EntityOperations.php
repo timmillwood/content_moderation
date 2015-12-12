@@ -8,36 +8,30 @@
 namespace Drupal\moderation_state;
 
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
 
 /**
  * Defines a class for reacting to entity events.
  */
-class EntityOperations {
+class EntityOperations implements EntityOperationsInterface{
 
   /**
-   * @var \Drupal\moderation_state\ModerationInformation
+   * @var \Drupal\moderation_state\ModerationInformationInterface
    */
   protected $moderationInfo;
 
   /**
    * Constructs a new EntityOperations object.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   * @param \Drupal\moderation_state\ModerationInformationInterface $moderation_info
    *   Entity type manager service.
    */
-  public function __construct(ModerationInformation $moderation_info) {
+  public function __construct(ModerationInformationInterface $moderation_info) {
     $this->moderationInfo = $moderation_info;
   }
 
   /**
-   * Acts on an entity and set the published status based on the moderation state.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity being saved.
+   * {@inheritdoc}
    */
   public function entityPresave(EntityInterface $entity) {
     if ($entity instanceof ContentEntityInterface && $this->moderationInfo->isModeratableEntity($entity)) {
@@ -54,4 +48,5 @@ class EntityOperations {
       }
     }
   }
+
 }

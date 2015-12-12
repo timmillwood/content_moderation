@@ -61,7 +61,7 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\moderation_state\ModerationInformation $moderation_information
-   *   The modertation information.
+   *   The moderation information.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ModerationInformation $moderation_information) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
