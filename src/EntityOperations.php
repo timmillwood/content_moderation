@@ -13,7 +13,7 @@ use Drupal\Core\Entity\EntityInterface;
 /**
  * Defines a class for reacting to entity events.
  */
-class EntityOperations implements EntityOperationsInterface{
+class EntityOperations {
 
   /**
    * @var \Drupal\moderation_state\ModerationInformationInterface
@@ -31,7 +31,10 @@ class EntityOperations implements EntityOperationsInterface{
   }
 
   /**
-   * {@inheritdoc}
+   * Acts on an entity and set published status based on the moderation state.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity being saved.
    */
   public function entityPresave(EntityInterface $entity) {
     if ($entity instanceof ContentEntityInterface && $this->moderationInfo->isModeratableEntity($entity)) {
