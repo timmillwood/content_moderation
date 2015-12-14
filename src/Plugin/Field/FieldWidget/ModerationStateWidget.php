@@ -267,11 +267,15 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
     // Convert the field value into expected array format.
     $values = $form_state->getValues();
     $value = NestedArray::getValue($values, $path, $key_exists);
+    if (empty($value)) {
+      parent::extractFormValues($items, $form, $form_state);
+      return;
+    }
     if (!isset($value[0]['target_id'])) {
       NestedArray::setValue($values, $path, [['target_id' => reset($value)]]);
       $form_state->setValues($values);
     }
-    return parent::extractFormValues($items, $form, $form_state);
+    parent::extractFormValues($items, $form, $form_state);
   }
 
 
