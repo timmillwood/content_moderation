@@ -35,6 +35,22 @@ class ModerationStateNodeTest extends ModerationStateTestBase {
     $this->drupalPostForm('node/add/moderated_content', [
       'title[0][value]' => 'moderated content',
     ], t('Save as Draft'));
+    $nodes = \Drupal::entityTypeManager()
+      ->getStorage('node')
+      ->loadByProperties([
+        'title' => 'moderated content',
+      ]);
+    $node = reset($nodes);
+
+    $path = 'node/' . $node->id() . '/edit';
+    // Set up needs review revision.
+    $this->drupalPostForm($path, [], t('Save and transition to Needs Review'));
+    // Set up published revision.
+    $this->drupalPostForm($path, [], t('Save and transition to Published'));
+    \Drupal::entityTypeManager()->getStorage('node')->resetCache([$node->id()]);
+    /* @var \Drupal\node\NodeInterface $node */
+    $node = \Drupal::entityTypeManager()->getStorage('node')->load($node->id());
+    $this->assertTrue($node->isPublished());
   }
 
 }
