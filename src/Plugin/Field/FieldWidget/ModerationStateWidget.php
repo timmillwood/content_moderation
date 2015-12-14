@@ -7,6 +7,7 @@
 
 namespace Drupal\moderation_state\Plugin\Field\FieldWidget;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
@@ -253,4 +254,25 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
   public static function isApplicable(FieldDefinitionInterface $field_definition) {
     return parent::isApplicable($field_definition) && $field_definition->getName() === 'moderation_state' && $field_definition->getTargetEntityTypeId() === 'node';
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function extractFormValues(FieldItemListInterface $items, array $form, FormStateInterface $form_state) {
+    $field_name = $this->fieldDefinition->getName();
+
+    // Extract the values from $form_state->getValues().
+    $path = array_merge($form['#parents'], array($field_name));
+    $key_exists = NULL;
+    // Convert the field value into expected array format.
+    $values = $form_state->getValues();
+    $value = NestedArray::getValue($values, $path, $key_exists);
+    if (!isset($value[0]['target_id'])) {
+      NestedArray::setValue($values, $path, [['target_id' => reset($value)]]);
+      $form_state->setValues($values);
+    }
+    return parent::extractFormValues($items, $form, $form_state);
+  }
+
+
 }
