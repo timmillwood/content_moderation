@@ -145,7 +145,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       /* @var \Drupal\moderation_state\ModerationStateTransitionInterface $transition */
       foreach ($this->moderationStateTransitionStorage->loadMultiple($from) as $id => $transition) {
         $to_state = $transition->getToState();
-        if ($this->currentUser->hasPermission('use ' . $id . 'transition') && in_array($to_state, $allowed, TRUE)) {
+        if ($this->currentUser->hasPermission('use ' . $id . ' transition') && in_array($to_state, $allowed, TRUE)) {
           $to[$to_state] = $to_state;
         }
       }
@@ -277,6 +277,5 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
     }
     parent::extractFormValues($items, $form, $form_state);
   }
-
 
 }
