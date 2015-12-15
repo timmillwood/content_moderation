@@ -3,11 +3,13 @@
 namespace Drupal\moderation_state\Form;
 
 
+use Drupal\block_content\Entity\BlockContentType;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\moderation_state\Entity\ModerationState;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\node\Plugin\Condition\NodeType;
 
 /**
  * Form for configuring moderation usage on a given entity bundle.
@@ -136,8 +138,18 @@ class EntityModerationForm extends EntityForm {
     if($form_state->getValue('enable_moderation_state')) {
       /* @var ConfigEntityTypeInterface $bundle */
       $bundle = $form_state->getFormObject()->getEntity();
-      $bundle->setNewRevision(TRUE);
-      $bundle->save();
+
+      // Config entities that define bundles don't have any standard way
+      // to determine what they are. Node has it all. That means we have to
+      // fall back on RTTI. Blech.
+      if ($bundle instanceof NodeType) {
+        $bundle->setNewRevision(TRUE);
+        $bundle->save();
+      }
+      elseif ($bundle instanceof BlockContentType) {
+        $bundle->set('revision', TRUE);
+        $bundle->save();
+      }
     }
 
     parent::submitForm( $form, $form_state);

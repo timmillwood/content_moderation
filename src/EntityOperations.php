@@ -9,6 +9,7 @@ namespace Drupal\moderation_state;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\Entity\Node;
 
 /**
  * Defines a class for reacting to entity events.
@@ -47,9 +48,12 @@ class EntityOperations {
         // A newly-created revision is always the default revision, or else
         // it gets lost.
         $entity->isDefaultRevision($entity->isNew() || $published_state);
-        $entity->setPublished($published_state);
+        // Only nodes have a concept of published.
+        // @todo This should also get split off to a per-entity tagged service.
+        if ($entity instanceof Node) {
+          $entity->setPublished($published_state);
+        }
       }
     }
   }
-
 }
