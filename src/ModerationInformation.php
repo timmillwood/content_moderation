@@ -36,6 +36,14 @@ class ModerationInformation implements ModerationInformationInterface {
    */
   protected $currentUser;
 
+  /**
+   * Creates a new ModerationInformation instance.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
+   */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, AccountInterface $current_user) {
     $this->entityTypeManager = $entity_type_manager;
     $this->currentUser = $current_user;

@@ -95,7 +95,7 @@ class EntityModerationForm extends EntityForm {
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     // @todo write a test for this.

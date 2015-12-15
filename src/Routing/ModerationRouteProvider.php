@@ -20,7 +20,7 @@ class ModerationRouteProvider implements EntityRouteProviderInterface, EntityHan
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getRoutes(EntityTypeInterface $entity_type) {
     $collection = new RouteCollection();
