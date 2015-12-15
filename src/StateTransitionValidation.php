@@ -47,12 +47,12 @@ class StateTransitionValidation {
     }
     $transitions = $this->transitionStorage->loadMultiple();
 
-    $this->transitionStorage = [];
+    $this->possibleTransitions = [];
     foreach ($transitions as $transition) {
       /** @var \Drupal\moderation_state\ModerationStateTransitionInterface $transition */
-      $this->transitionStorage[$transition->getFromState()][] = $transition->getToState();
+      $this->possibleTransitions[$transition->getFromState()][] = $transition->getToState();
     }
-    return $this->transitionStorage;
+    return $this->possibleTransitions;
   }
 
   /**

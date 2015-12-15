@@ -85,12 +85,16 @@ abstract class ModerationStateTestBase extends WebTestBase {
   protected function createContentTypeFromUI($content_type_name, $content_type_id, $moderated = FALSE, $allowed_states = [], $default_state = NULL) {
     $this->drupalGet('admin/structure/types');
     $this->clickLink('Add content type');
-    $this->assertFieldByName('enable_moderation_state');
-    $this->assertNoFieldChecked('edit-enable-moderation-state');
     $edit = [
       'name' => $content_type_name,
       'type' => $content_type_id,
     ];
+    $this->drupalPostForm(NULL, $edit, t('Save content type'));
+
+    $this->drupalGet('admin/structure/types/manage/' . $content_type_id . '/moderation');
+    $this->assertFieldByName('enable_moderation_state');
+    $this->assertNoFieldChecked('edit-enable-moderation-state');
+    $edit = [];
     if ($moderated) {
       $edit['enable_moderation_state'] = 1;
       foreach ($allowed_states as $state) {
@@ -98,7 +102,7 @@ abstract class ModerationStateTestBase extends WebTestBase {
       }
       $edit['default_moderation_state'] = $default_state;
     }
-    $this->drupalPostForm(NULL, $edit, t('Save content type'));
+    $this->drupalPostForm(NULL, $edit, t('Save'));
   }
 
   /**
