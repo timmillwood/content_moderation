@@ -9,7 +9,6 @@ namespace Drupal\moderation_state\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\moderation_state\ModerationInformation;
 use Drupal\moderation_state\ModerationInformationInterface;
 use Drupal\moderation_state\StateTransitionValidation;
 use Symfony\Component\DependencyInjection\ContainerInterface;

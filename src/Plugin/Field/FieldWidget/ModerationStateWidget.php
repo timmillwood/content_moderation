@@ -7,8 +7,8 @@
 
 namespace Drupal\moderation_state\Plugin\Field\FieldWidget;
 
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;

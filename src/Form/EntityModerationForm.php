@@ -4,11 +4,11 @@ namespace Drupal\moderation_state\Form;
 
 
 use Drupal\block_content\Entity\BlockContentType;
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\moderation_state\Entity\ModerationState;
-use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\node\Plugin\Condition\NodeType;
 
 /**
