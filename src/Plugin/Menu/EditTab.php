@@ -89,7 +89,7 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
     }
 
     // @todo write a test for this.
-    return $this->moderationInfo->isLive($this->entity)
+    return $this->moderationInfo->isLiveRevision($this->entity)
       ? $this->t('New draft')
       : $this->t('Edit draft');
   }
