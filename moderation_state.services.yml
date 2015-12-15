@@ -9,7 +9,6 @@ services:
     class: \Drupal\moderation_state\StateTransitionValidation
     factory: \Drupal\moderation_state\StateTransitionValidation::create
     arguments: ['@entity_type.manager']
-
   moderation_state.moderation_information:
     class: Drupal\moderation_state\ModerationInformation
     arguments: ['@entity_type.manager', '@current_user']
@@ -18,4 +17,22 @@ services:
     arguments: ['@string_translation', '@moderation_state.moderation_information']
   moderation_state.entity_operations:
     class: Drupal\moderation_state\EntityOperations
-    arguments: ['@moderation_state.moderation_information']
+    arguments: ['@moderation_state.moderation_information', '@moderation_state.entity_customizations']
+  moderation_state.entity_customizations:
+    class: Drupal\moderation_state\EntityCustomizations
+    calls:
+      - [setDefaultCustomization, ['@moderation_state.default_customizations']]
+    tags:
+      - { name: service_collector, tag: moderation_state_customizations, call: addEntityCustomization }
+  moderation_state.default_customizations:
+    class: Drupal\moderation_state\GenericCustomizations
+    tags:
+      - { name: moderation_state_customizations }
+  moderation_state.node_customizations:
+    class: Drupal\moderation_state\NodeCustomizations
+    tags:
+      - { name: moderation_state_customizations }
+  moderation_state.block_customizations:
+    class: Drupal\moderation_state\BlockContentCustomizations
+    tags:
+      - { name: moderation_state_customizations }

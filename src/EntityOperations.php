@@ -22,13 +22,21 @@ class EntityOperations {
   protected $moderationInfo;
 
   /**
+   * @var \Drupal\moderation_state\EntityCustomizationInterface
+   */
+  protected $customizations;
+
+  /**
    * Constructs a new EntityOperations object.
    *
    * @param \Drupal\moderation_state\ModerationInformationInterface $moderation_info
    *   Entity type manager service.
+   * @param \Drupal\moderation_state\EntityCustomizationInterface $customizations
+   *   Entity customizations service.
    */
-  public function __construct(ModerationInformationInterface $moderation_info) {
+  public function __construct(ModerationInformationInterface $moderation_info, EntityCustomizationInterface $customizations) {
     $this->moderationInfo = $moderation_info;
+    $this->customizations = $customizations;
   }
 
   /**
@@ -41,18 +49,8 @@ class EntityOperations {
     if ($entity instanceof ContentEntityInterface && $this->moderationInfo->isModeratableEntity($entity)) {
       // @todo write a test for this.
       if ($entity->moderation_state->entity) {
-        // This is *probably* not necessary if configuration is setup correctly,
-        // but it can't hurt.
-        $entity->setNewRevision(TRUE);
         $published_state = $entity->moderation_state->entity->isPublishedState();
-        // A newly-created revision is always the default revision, or else
-        // it gets lost.
-        $entity->isDefaultRevision($entity->isNew() || $published_state);
-        // Only nodes have a concept of published.
-        // @todo This should also get split off to a per-entity tagged service.
-        if ($entity instanceof Node) {
-          $entity->setPublished($published_state);
-        }
+        $this->customizations->onPresave($entity, $published_state);
       }
     }
   }
