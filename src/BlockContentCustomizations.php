@@ -14,7 +14,7 @@ class BlockContentCustomizations extends GenericCustomizations {
   /**
    * {@inheritdoc}
    */
-  function getEntityType() {
+  function getEntityTypeId() {
     return 'block_content';
   }
 

@@ -38,7 +38,7 @@ class EntityCustomizations implements EntityCustomizationInterface {
    * @return static
    */
   public function addEntityCustomization(EntityCustomizationInterface $customization) {
-    $this->customizations[$customization->getEntityType()] = $customization;
+    $this->customizations[$customization->getEntityTypeId()] = $customization;
 
     return $this;
   }
@@ -76,7 +76,7 @@ class EntityCustomizations implements EntityCustomizationInterface {
   /**
    * {@inheritdoc}
    */
-  public function getEntityType() {
+  public function getEntityTypeId() {
     return NULL;
   }
 

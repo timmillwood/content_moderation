@@ -19,7 +19,7 @@ class GenericCustomizations implements EntityCustomizationInterface {
   /**
    * {@inheritdoc}
    */
-  function getEntityType() {
+  function getEntityTypeId() {
     return NULL;
   }
 

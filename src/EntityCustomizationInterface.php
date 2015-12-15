@@ -23,7 +23,9 @@ interface EntityCustomizationInterface {
    *
    * @return string
    */
-  public function getEntityType();
+  public function getEntityTypeId();
+
+
 
   /**
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity

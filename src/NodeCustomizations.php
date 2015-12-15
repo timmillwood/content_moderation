@@ -18,7 +18,7 @@ class NodeCustomizations extends GenericCustomizations {
   /**
    * {@inheritdoc}
    */
-  function getEntityType() {
+  function getEntityTypeId() {
     return 'node';
   }
 
