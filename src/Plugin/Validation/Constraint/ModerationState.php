@@ -20,4 +20,6 @@ use Symfony\Component\Validator\Constraint;
  */
 class ModerationState extends Constraint {
 
+  public $message = 'Invalid state transition from %from to %to';
+
 }

@@ -47,6 +47,7 @@ class BaseFieldInfo {
           'weight' => 5,
           'settings' => [],
         ])
+        ->addConstraint('ModerationState', [])
         ->setDisplayConfigurable('form', FALSE)
         ->setDisplayConfigurable('view', TRUE);
       return $fields;

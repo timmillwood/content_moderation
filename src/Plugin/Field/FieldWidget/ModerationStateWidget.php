@@ -8,6 +8,7 @@
 namespace Drupal\moderation_state\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -158,7 +159,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       /* @var \Drupal\moderation_state\ModerationStateTransitionInterface $transition */
       foreach ($this->moderationStateTransitionStorage->loadMultiple($from) as $id => $transition) {
         $to_state = $transition->getToState();
-        if ($this->currentUser->hasPermission('use ' . $id . 'transition') && in_array($to_state, $allowed, TRUE)) {
+        if ($this->currentUser->hasPermission('use ' . $id . ' transition') && in_array($to_state, $allowed, TRUE)) {
           $to[$to_state] = $to_state;
         }
       }
@@ -276,4 +277,28 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
   public static function isApplicable(FieldDefinitionInterface $field_definition) {
     return parent::isApplicable($field_definition) && $field_definition->getName() === 'moderation_state';
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function extractFormValues(FieldItemListInterface $items, array $form, FormStateInterface $form_state) {
+    $field_name = $this->fieldDefinition->getName();
+
+    // Extract the values from $form_state->getValues().
+    $path = array_merge($form['#parents'], array($field_name));
+    $key_exists = NULL;
+    // Convert the field value into expected array format.
+    $values = $form_state->getValues();
+    $value = NestedArray::getValue($values, $path, $key_exists);
+    if (empty($value)) {
+      parent::extractFormValues($items, $form, $form_state);
+      return;
+    }
+    if (!isset($value[0]['target_id'])) {
+      NestedArray::setValue($values, $path, [['target_id' => reset($value)]]);
+      $form_state->setValues($values);
+    }
+    parent::extractFormValues($items, $form, $form_state);
+  }
+
 }

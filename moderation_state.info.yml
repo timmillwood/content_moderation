@@ -3,6 +3,7 @@ type: module
 description: Provides moderation states for content
 core: 8.x
 package: Other
+configure: moderation_state.overview
 dependencies:
   - node
   - views
