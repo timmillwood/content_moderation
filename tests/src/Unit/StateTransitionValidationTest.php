@@ -55,8 +55,11 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
   public function testIsTransitionAllowedWithValidTransition() {
     $state_transition_validation = $this->setupTranslationValidation($this->setupExampleStorage($this->setupExampleStorage()));
     $this->assertTrue($state_transition_validation->isTransitionAllowed('draft', 'needs_review'));
+    $this->assertTrue($state_transition_validation->isTransitionAllowed('draft', 'draft'));
     $this->assertTrue($state_transition_validation->isTransitionAllowed('needs_review', 'staging'));
+    $this->assertTrue($state_transition_validation->isTransitionAllowed('needs_review', 'needs_review'));
     $this->assertTrue($state_transition_validation->isTransitionAllowed('staging', 'published'));
+    $this->assertTrue($state_transition_validation->isTransitionAllowed('staging', 'staging'));
     $this->assertTrue($state_transition_validation->isTransitionAllowed('needs_review', 'draft'));
   }
 
