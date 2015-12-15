@@ -27,7 +27,7 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
    *
    * @var \Drupal\moderation_state\ModerationInformation
    */
-  protected $moderationInformation;
+  protected $moderationInfo;
 
   /**
    * The entity.
@@ -54,7 +54,7 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->stringTranslation = $string_translation;
-    $this->moderationInformation = $moderation_information;
+    $this->moderationInfo = $moderation_information;
   }
 
   /**
@@ -83,13 +83,13 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
    * {@inheritdoc}
    */
   public function getTitle() {
-    if (!$this->moderationInformation->isModeratableEntity($this->entity)) {
+    if (!$this->moderationInfo->isModeratableEntity($this->entity)) {
       // Moderation isn't enabled.
       return parent::getTitle();
     }
 
     // @todo write a test for this.
-    return $this->moderationInformation->isLive($this->entity)
+    return $this->moderationInfo->isLive($this->entity)
       ? $this->t('New draft')
       : $this->t('Edit draft');
   }
