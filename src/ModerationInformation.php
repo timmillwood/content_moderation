@@ -127,16 +127,7 @@ class ModerationInformation implements ModerationInformationInterface {
   }
 
   /**
-   * Loads the latest revision of a specific entity.
-   *
-   * @param string $entity_type_id
-   *   The entity type ID.
-   * @param int $entity_id
-   *   The entity ID.
-   *
-   * @return \Drupal\Core\Entity\EntityInterface|null
-   *   The latest entity revision or NULL, if the entity type / entity doesn't
-   *   exist.
+   * {@inheritdoc}
    */
   public function getLatestRevision($entity_type_id, $entity_id) {
     if ($storage = $this->entityTypeManager->getStorage($entity_type_id)) {
@@ -153,4 +144,24 @@ class ModerationInformation implements ModerationInformationInterface {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @todo There may be a more perfomant way of doing this that doesn't
+   * require loading the full entity revision.
+   */
+  public function isLatestRevision(ContentEntityInterface $entity) {
+    return $this->getLatestRevision($entity->getEntityTypeId(), $entity->id()) == $entity->id();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isLiveRevision(ContentEntityInterface $entity) {
+    return $this->isLatestRevision($entity)
+      && $entity->isDefaultRevision()
+      && $entity->moderation_state->entity
+      && $entity->moderation_state->entity->isPublishedState();
+  }
 }
+

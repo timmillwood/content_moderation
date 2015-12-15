@@ -7,6 +7,7 @@
 
 namespace Drupal\moderation_state;
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormInterface;
@@ -109,4 +110,30 @@ interface ModerationInformationInterface {
    *   exist.
    */
   public function getLatestRevision($entity_type_id, $entity_id);
+
+  /**
+   * Determines if an entity is a latest revision.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   A revisionable Content entity.
+   *
+   * @return bool
+   *   TRUE if the specified object is the latest revision of its entity,
+   *   FALSE otherwise.
+   */
+  public function isLatestRevision(ContentEntityInterface $entity);
+
+  /**
+   * Determines if an entity is "live".
+   *
+   * A "live" entity revision is one whose latest revision is also the default,
+   * and whose moderation state, if any, is a published state.
+   *
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The entity to check.
+   * @return bool
+   *   TRUE if the specified entity is a live revision, FALSE otherwise.
+   */
+  public function isLiveRevision(ContentEntityInterface $entity);
 }

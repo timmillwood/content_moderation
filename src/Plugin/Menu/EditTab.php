@@ -7,7 +7,6 @@
 
 namespace Drupal\moderation_state\Plugin\Menu;
 
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Menu\LocalTaskDefault;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -90,16 +89,9 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
     }
 
     // @todo write a test for this.
-    /** @var ContentEntityInterface $latest */
-    $latest = $this->moderationInformation->getLatestRevision($this->entity->getEntityTypeId(), $this->entity->id());
-    if ($this->entity->getRevisionId() === $latest->getRevisionId() && $this->entity->isDefaultRevision() && $this->entity->moderation_state->entity && $this->entity->moderation_state->entity->isPublishedState()) {
-      // @todo write a test for this.
-      return $this->t('New draft');
-    }
-    else {
-      // @todo write a test for this:
-      return $this->t('Edit draft');
-    }
+    return $this->moderationInformation->isLive($this->entity)
+      ? $this->t('New draft')
+      : $this->t('Edit draft');
   }
 
   /**
