@@ -9,7 +9,7 @@ namespace Drupal\moderation_state\ParamConverter;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\ParamConverter\EntityConverter;
 use Drupal\Core\TypedData\TranslatableInterface;
-use Drupal\moderation_state\LatestRevisionTrait;
+use Drupal\moderation_state\ModerationInformationInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -17,7 +17,26 @@ use Symfony\Component\Routing\Route;
  */
 class EntityRevisionConverter extends EntityConverter {
 
-  use LatestRevisionTrait;
+  /**
+   * @var \Drupal\moderation_state\ModerationInformationInterface
+   */
+  protected $moderationInformation;
+
+  /**
+   * EntityRevisionConverter constructor.
+   *
+   * @todo: If the parent class is ever cleaned up to use EntityTypeManager
+   * instead of Entity manager, this method will also need to be adjusted.
+   *
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   The entity manager, needed by the parent class.
+   * @param \Drupal\moderation_state\ModerationInformationInterface $moderation_info
+   *   The moderation info utility service.
+   */
+  public function __construct(\Drupal\Core\Entity\EntityManagerInterface $entity_manager, ModerationInformationInterface $moderation_info) {
+    parent::__construct($entity_manager);
+    $this->moderationInformation = $moderation_info;
+  }
 
   /**
    * {@inheritdoc}
@@ -38,7 +57,7 @@ class EntityRevisionConverter extends EntityConverter {
    */
   public function convert($value, $definition, $name, array $defaults) {
     $entity_type_id = $this->getEntityTypeFromDefaults($definition, $name, $defaults);
-    if ($entity = $this->getLatestRevision($entity_type_id, $value)) {
+    if ($entity = $this->moderationInformation->getLatestRevision($entity_type_id, $value)) {
       // If the entity type is translatable, ensure we return the proper
       // translation object for the current context.
       if ($entity instanceof EntityInterface && $entity instanceof TranslatableInterface) {

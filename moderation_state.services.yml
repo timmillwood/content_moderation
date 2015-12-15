@@ -1,9 +1,9 @@
 services:
   paramconverter.latest_revision:
     class: Drupal\moderation_state\ParamConverter\EntityRevisionConverter
+    arguments: ['@entity.manager', '@moderation_state.moderation_information']
     tags:
       - { name: paramconverter, priority: 5 }
-    arguments: ['@entity.manager']
   moderation_state.moderation_information:
     class: Drupal\moderation_state\ModerationInformation
     arguments: ['@entity_type.manager', '@current_user']

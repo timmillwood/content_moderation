@@ -125,4 +125,32 @@ class ModerationInformation implements ModerationInformationInterface {
 
     return FALSE;
   }
+
+  /**
+   * Loads the latest revision of a specific entity.
+   *
+   * @param string $entity_type_id
+   *   The entity type ID.
+   * @param int $entity_id
+   *   The entity ID.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface|null
+   *   The latest entity revision or NULL, if the entity type / entity doesn't
+   *   exist.
+   */
+  public function getLatestRevision($entity_type_id, $entity_id) {
+    if ($storage = $this->entityTypeManager->getStorage($entity_type_id)) {
+      $revision_ids = $storage->getQuery()
+        ->allRevisions()
+        ->condition($this->entityTypeManager->getDefinition($entity_type_id)->getKey('id'), $entity_id)
+        ->sort($this->entityTypeManager->getDefinition($entity_type_id)->getKey('revision'), 'DESC')
+        ->pager(1)
+        ->execute();
+      if ($revision_ids) {
+        $revision_id = array_keys($revision_ids)[0];
+        return $storage->loadRevision($revision_id);
+      }
+    }
+  }
+
 }

@@ -8,16 +8,12 @@
 namespace Drupal\moderation_state\Plugin\Menu;
 
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Menu\LocalTaskDefault;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\moderation_state\LatestRevisionTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\moderation_state\ModerationInformation;
-use Drupal\node\NodeStorageInterface;
-use Drupal\node\NodeTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,14 +22,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterface {
 
   use StringTranslationTrait;
-  use LatestRevisionTrait;
-
-  /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
 
   /**
    * The moderatio information service.
@@ -58,15 +46,15 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
    *   Plugin ID.
    * @param mixed $plugin_definition
    *   Plugin definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The translation service.
    * @param \Drupal\moderation_state\ModerationInformation $moderation_information
    *   The moderation information.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ModerationInformation $moderation_information) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, TranslationInterface $string_translation, ModerationInformation $moderation_information) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->entityTypeManager = $entity_type_manager;
+    $this->stringTranslation = $string_translation;
     $this->moderationInformation = $moderation_information;
   }
 
@@ -78,7 +66,7 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity_type.manager'),
+      $container->get('string_translation'),
       $container->get('moderation_state.moderation_information')
     );
   }
@@ -103,7 +91,7 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
 
     // @todo write a test for this.
     /** @var ContentEntityInterface $latest */
-    $latest = $this->getLatestRevision($this->entity->getEntityTypeId(), $this->entity->id());
+    $latest = $this->moderationInformation->getLatestRevision($this->entity->getEntityTypeId(), $this->entity->id());
     if ($this->entity->getRevisionId() === $latest->getRevisionId() && $this->entity->isDefaultRevision() && $this->entity->moderation_state->entity && $this->entity->moderation_state->entity->isPublishedState()) {
       // @todo write a test for this.
       return $this->t('New draft');
