@@ -8,6 +8,7 @@
 namespace Drupal\moderation_state;
 
 
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
@@ -21,7 +22,18 @@ class EntityCustomizations implements EntityCustomizationInterface {
    * This is a keyed array, with the key being the machine name of an entity
    * such as "node" or "block_content".
    */
-  protected $customizations;
+  protected $customizationsByEntityType;
+
+  /**
+   * @var EntityCustomizationInterface[]
+   *
+   * This is a keyed array with the key being the fully qualified class name
+   * of the bundle definition config entity of the entity to be operated upon.
+   * The complexity of that definition highlights the deficiency of the Entity
+   * API's built-in introspection capabilities.
+   *
+   */
+  protected $customizationsByBundleType;
 
   /**
    * @var EntityCustomizationInterface
@@ -38,7 +50,8 @@ class EntityCustomizations implements EntityCustomizationInterface {
    * @return static
    */
   public function addEntityCustomization(EntityCustomizationInterface $customization) {
-    $this->customizations[$customization->getEntityTypeId()] = $customization;
+    $this->customizationsByEntityType[$customization->getEntityTypeId()] = $customization;
+    $this->customizationsByBundleType[$customization->getEntityBundleClass()] = $customization;
 
     return $this;
   }
@@ -69,8 +82,12 @@ class EntityCustomizations implements EntityCustomizationInterface {
    *
    * @return \Drupal\moderation_state\EntityCustomizationInterface
    */
-  protected function getCustomization($type) {
-    return !empty($this->customizations[$type]) ? $this->customizations[$type] : $this->defaultCustomization;
+  protected function getCustomizationByType($type) {
+    return !empty($this->customizationsByEntityType[$type]) ? $this->customizationsByEntityType[$type] : $this->defaultCustomization;
+  }
+
+  protected function getCustomizationByBundleClass($class) {
+    return !empty($this->customizationsByBundleType[$class]) ? $this->customizationsByBundleType[$class] : $this->defaultCustomization;
   }
 
   /**
@@ -83,8 +100,22 @@ class EntityCustomizations implements EntityCustomizationInterface {
   /**
    * {@inheritdoc}
    */
+  public function getEntityBundleClass() {
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function onPresave(ContentEntityInterface $entity, $published_state) {
-    return $this->getCustomization($entity->getEntityTypeId())->onPresave($entity, $published_state);
+    return $this->getCustomizationByType($entity->getEntityTypeId())->onPresave($entity, $published_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onEntityModerationFormSubmit(ConfigEntityInterface $bundle) {
+    return $this->getCustomizationByBundleClass(get_class($bundle))->onEntityModerationFormSubmit($bundle);
   }
 
 }

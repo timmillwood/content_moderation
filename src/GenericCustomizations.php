@@ -7,6 +7,7 @@
 namespace Drupal\moderation_state;
 
 
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
@@ -26,6 +27,13 @@ class GenericCustomizations implements EntityCustomizationInterface {
   /**
    * {@inheritdoc}
    */
+  function getEntityBundleClass() {
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function onPresave(ContentEntityInterface $entity, $published_state) {
     // This is *probably* not necessary if configuration is setup correctly,
     // but it can't hurt.
@@ -34,6 +42,13 @@ class GenericCustomizations implements EntityCustomizationInterface {
     // A newly-created revision is always the default revision, or else
     // it gets lost.
     $entity->isDefaultRevision($entity->isNew() || $published_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onEntityModerationFormSubmit(ConfigEntityInterface $bundle) {
+    return;
   }
 
 }
