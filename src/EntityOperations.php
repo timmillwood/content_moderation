@@ -9,7 +9,6 @@ namespace Drupal\moderation_state;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\node\Entity\Node;
 
 /**
  * Defines a class for reacting to entity events.

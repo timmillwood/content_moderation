@@ -7,7 +7,6 @@
 
 namespace Drupal\moderation_state\Entity;
 
-use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\moderation_state\ModerationStateTransitionInterface;
 

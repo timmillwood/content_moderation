@@ -6,8 +6,6 @@
 
 namespace Drupal\moderation_state;
 
-use Drupal\block_content\Entity\BlockContent;
-use Drupal\block_content\Entity\BlockContentType;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -17,8 +15,6 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\moderation_state\Form\EntityModerationForm;
 use Drupal\moderation_state\Routing\ModerationRouteProvider;
-use Drupal\node\Entity\Node;
-use Drupal\node\Entity\NodeType;
 
 /**
  * Service class for manipulating entity type information.
