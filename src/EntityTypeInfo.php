@@ -35,15 +35,23 @@ class EntityTypeInfo {
   protected $moderationInfo;
 
   /**
+   * @var \Drupal\moderation_state\EntityCustomizationInterface
+   */
+  protected $customizations;
+
+  /**
    * EntityTypeInfo constructor.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $translation
    *   The translation service. for form alters.
    * @param \Drupal\moderation_state\ModerationInformationInterface $moderation_information
    *   The moderation information service.
+   * @param \Drupal\moderation_state\EntityCustomizationInterface $customizations
+   *   Entity-type-specific customizations.
    */
-  public function __construct(TranslationInterface $translation, ModerationInformationInterface $moderation_information) {
+  public function __construct(TranslationInterface $translation, ModerationInformationInterface $moderation_information, EntityCustomizationInterface $customizations) {
     $this->stringTranslation = $translation;
     $this->moderationInfo = $moderation_information;
+    $this->customizations = $customizations;
   }
 
   /**
@@ -148,74 +156,10 @@ class EntityTypeInfo {
    */
   public function bundleFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
     if ($this->moderationInfo->isRevisionableBundleForm($form_state->getFormObject())) {
-      $this->enforceRevisionsBundleFormAlter($form, $form_state, $form_id);
+      $this->customizations->enforceRevisionsBundleFormAlter($form, $form_state, $form_id);
     }
     else if ($this->moderationInfo->isModeratedEntityForm($form_state->getFormObject())) {
-      $this->enforceRevisionsEntityFormAlter($form, $form_state, $form_id);
+      $this->customizations->enforceRevisionsEntityFormAlter($form, $form_state, $form_id);
     }
   }
-
-  /**
-   * Alters entity forms to enforce revision handling.
-   *
-   * Different entity types structure their forms completely differently, so
-   * there's seemingly no way to do this globally. Instead, we'll just hard
-   * code form changes for core's entity types. Suggestions for a better
-   * approach are welcome.
-   *
-   * @param array $form
-   *   An associative array containing the structure of the form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   * @param string $form_id
-   *   The form id.
-   *
-   * @see hook_form_alter()
-   */
-  protected function enforceRevisionsEntityFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
-    $entity = $form_state->getFormObject()->getEntity();
-
-    if ($entity instanceof Node) {
-      $form['revision']['#disabled'] = TRUE;
-      $form['revision']['#default_value'] = TRUE;
-      $form['revision']['#description'] = $this->t('Revisions are required.');
-    }
-    else if ($entity instanceof BlockContent) {
-
-      $form['revision_information']['revision']['#default_value'] = TRUE;
-      $form['revision_information']['revision']['#disabled'] = TRUE;
-      $form['revision_information']['revision']['#description'] = $this->t('Revisions must be required when moderation is enabled.');
-    }
-  }
-
-  /**
-   * Alters bundle forms to enforce revision handling.
-   *
-   * Different entity types structure their forms completely differently, so
-   * there's seemingly no way to do this globally. Instead, we'll just hard
-   * code form changes for core's entity types. Suggestions for a better
-   * approach are welcome.
-   *
-   * @param array $form
-   *   An associative array containing the structure of the form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   * @param string $form_id
-   *   The form id.
-   *
-   * @see hook_form_alter()
-   */
-  protected function enforceRevisionsBundleFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
-    $entity = $form_state->getFormObject()->getEntity();
-
-    if ($entity instanceof NodeType) {
-      $form['workflow']['options']['#default_value']['revision'] = 'revision';
-    }
-    else if ($entity instanceof BlockContentType) {
-      $form['revision']['#default_value'] = 1;
-      $form['revision']['#disabled'] = TRUE;
-      $form['revision']['#description'] = $this->t('Revisions must be required when moderation is enabled.');
-    }
-  }
-
 }

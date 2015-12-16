@@ -9,6 +9,7 @@ namespace Drupal\moderation_state;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Defines operations that need to vary by entity type.
@@ -63,5 +64,33 @@ interface EntityCustomizationInterface {
    * @return mixed
    */
   public function onEntityModerationFormSubmit(ConfigEntityInterface $bundle);
+
+  /**
+   * Alters entity forms to enforce revision handling.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param string $form_id
+   *   The form id.
+   *
+   * @see hook_form_alter()
+   */
+  public function enforceRevisionsEntityFormAlter(array &$form, FormStateInterface $form_state, $form_id);
+
+  /**
+   * Alters bundle forms to enforce revision handling.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param string $form_id
+   *   The form id.
+   *
+   * @see hook_form_alter()
+   */
+  public function enforceRevisionsBundleFormAlter(array &$form, FormStateInterface $form_state, $form_id);
 
 }

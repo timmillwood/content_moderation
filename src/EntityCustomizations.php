@@ -10,6 +10,7 @@ namespace Drupal\moderation_state;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Service collector facade for entity customizations.
@@ -81,11 +82,21 @@ class EntityCustomizations implements EntityCustomizationInterface {
    *   The entity type for which we want the customization set.
    *
    * @return \Drupal\moderation_state\EntityCustomizationInterface
+   *   The appropriate customization service.
    */
   protected function getCustomizationByType($type) {
     return !empty($this->customizationsByEntityType[$type]) ? $this->customizationsByEntityType[$type] : $this->defaultCustomization;
   }
 
+  /**
+   *
+   *
+   * @param $class
+   *   The fully qualified class of the bundle type for this entity.
+   *
+   * @return \Drupal\moderation_state\EntityCustomizationInterface
+   *   The appropriate customization service.
+   */
   protected function getCustomizationByBundleClass($class) {
     return !empty($this->customizationsByBundleType[$class]) ? $this->customizationsByBundleType[$class] : $this->defaultCustomization;
   }
@@ -118,4 +129,21 @@ class EntityCustomizations implements EntityCustomizationInterface {
     return $this->getCustomizationByBundleClass(get_class($bundle))->onEntityModerationFormSubmit($bundle);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function enforceRevisionsEntityFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
+    $entity = $form_state->getFormObject()->getEntity();
+
+    return $this->getCustomizationByType($entity->getEntityTypeId())->enforceRevisionsEntityFormAlter($form, $form_state, $form_id);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function enforceRevisionsBundleFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
+    $entity = $form_state->getFormObject()->getEntity();
+
+    return $this->getCustomizationByBundleClass(get_class($entity))->enforceRevisionsBundleFormAlter($form, $form_state, $form_id);
+  }
 }
