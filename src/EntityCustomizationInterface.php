@@ -28,20 +28,6 @@ interface EntityCustomizationInterface {
   public function getEntityTypeId();
 
   /**
-   * Returns the class of the config entity that defines this type's bundles.
-   *
-   * Config entities that define bundles don't have any standard way to
-   * determine what they are. Node has it all. That means we have to fall back
-   * on class-type RTTI. Blech.  At least breaking it out into tagged services
-   * avoids a switch statement.
-   *
-   * @return string
-   *   The fully qualified class name of the config entity that defines the
-   *   bundles for this entity type.
-   */
-  public function getEntityBundleClass();
-
-  /**
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The entity to modify.
    * @param bool $published_state

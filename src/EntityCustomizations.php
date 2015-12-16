@@ -26,17 +26,6 @@ class EntityCustomizations implements EntityCustomizationInterface {
   protected $customizationsByEntityType;
 
   /**
-   * @var EntityCustomizationInterface[]
-   *
-   * This is a keyed array with the key being the fully qualified class name
-   * of the bundle definition config entity of the entity to be operated upon.
-   * The complexity of that definition highlights the deficiency of the Entity
-   * API's built-in introspection capabilities.
-   *
-   */
-  protected $customizationsByBundleType;
-
-  /**
    * @var EntityCustomizationInterface
    */
   protected $defaultCustomization;
@@ -52,7 +41,6 @@ class EntityCustomizations implements EntityCustomizationInterface {
    */
   public function addEntityCustomization(EntityCustomizationInterface $customization) {
     $this->customizationsByEntityType[$customization->getEntityTypeId()] = $customization;
-    $this->customizationsByBundleType[$customization->getEntityBundleClass()] = $customization;
 
     return $this;
   }
@@ -89,29 +77,9 @@ class EntityCustomizations implements EntityCustomizationInterface {
   }
 
   /**
-   *
-   *
-   * @param $class
-   *   The fully qualified class of the bundle type for this entity.
-   *
-   * @return \Drupal\moderation_state\EntityCustomizationInterface
-   *   The appropriate customization service.
-   */
-  protected function getCustomizationByBundleClass($class) {
-    return !empty($this->customizationsByBundleType[$class]) ? $this->customizationsByBundleType[$class] : $this->defaultCustomization;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function getEntityTypeId() {
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getEntityBundleClass() {
     return NULL;
   }
 
@@ -126,13 +94,14 @@ class EntityCustomizations implements EntityCustomizationInterface {
    * {@inheritdoc}
    */
   public function onEntityModerationFormSubmit(ConfigEntityInterface $bundle) {
-    return $this->getCustomizationByBundleClass(get_class($bundle))->onEntityModerationFormSubmit($bundle);
+    return $this->getCustomizationByType($bundle->getEntityType()->getBundleOf())->onEntityModerationFormSubmit($bundle);
   }
 
   /**
    * {@inheritdoc}
    */
   public function enforceRevisionsEntityFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
+    /** @var ConfigEntityInterface $entity */
     $entity = $form_state->getFormObject()->getEntity();
 
     return $this->getCustomizationByType($entity->getEntityTypeId())->enforceRevisionsEntityFormAlter($form, $form_state, $form_id);
@@ -142,8 +111,9 @@ class EntityCustomizations implements EntityCustomizationInterface {
    * {@inheritdoc}
    */
   public function enforceRevisionsBundleFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
+    /** @var ConfigEntityInterface $entity */
     $entity = $form_state->getFormObject()->getEntity();
 
-    return $this->getCustomizationByBundleClass(get_class($entity))->enforceRevisionsBundleFormAlter($form, $form_state, $form_id);
+    return $this->getCustomizationByType($entity->getEntityType()->getBundleOf())->enforceRevisionsBundleFormAlter($form, $form_state, $form_id);
   }
 }

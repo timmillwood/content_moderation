@@ -26,13 +26,6 @@ class BlockContentCustomizations extends GenericCustomizations {
   /**
    * {@inheritdoc}
    */
-  function getEntityBundleClass() {
-    return BlockContentType::class;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function onEntityModerationFormSubmit(ConfigEntityInterface $bundle) {
     /** @var BlockContentType $bundle */
     $bundle->set('revision', TRUE);

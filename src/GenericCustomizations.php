@@ -36,13 +36,6 @@ class GenericCustomizations implements EntityCustomizationInterface {
   /**
    * {@inheritdoc}
    */
-  function getEntityBundleClass() {
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function onPresave(ContentEntityInterface $entity, $published_state) {
     // This is *probably* not necessary if configuration is setup correctly,
     // but it can't hurt.
