@@ -97,8 +97,10 @@ class EntityTypeInfo {
    *   The modified content entity definition.
    */
   protected function addModerationToEntity(ContentEntityTypeInterface $type) {
-    $handler_class = !empty($this->moderationHandlers[$type->id()]) ? $this->moderationHandlers[$type->id()] : GenericCustomizations::class;
-    $type->setHandlerClass('moderation', $handler_class);
+    if (!$type->getHandlerClass('moderation')) {
+      $handler_class = !empty($this->moderationHandlers[$type->id()]) ? $this->moderationHandlers[$type->id()] : GenericCustomizations::class;
+      $type->setHandlerClass('moderation', $handler_class);
+    }
 
     return $type;
   }
@@ -117,17 +119,21 @@ class EntityTypeInfo {
    *   The modified config entity definition.
    */
   protected function addModerationToEntityType(ConfigEntityTypeInterface $type) {
-    if ($type->hasLinkTemplate('edit-form')) {
+    if ($type->hasLinkTemplate('edit-form') && !$type->hasLinkTemplate('moderation-form')) {
       $type->setLinkTemplate('moderation-form', $type->getLinkTemplate('edit-form') . '/moderation');
     }
 
-    $type->setFormClass('moderation', EntityModerationForm::class);
+    if (!$type->getFormClass('moderation')) {
+      $type->setFormClass('moderation', EntityModerationForm::class);
+    }
 
     // @todo Core forgot to add a direct way to manipulate route_provider, so
     // we have to do it the sloppy way for now.
     $providers = $type->getHandlerClass('route_provider') ?: [];
-    $providers['moderation'] = ModerationRouteProvider::class;
-    $type->setHandlerClass('route_provider', $providers);
+    if (empty($providers['moderation'])) {
+      $providers['moderation'] = ModerationRouteProvider::class;
+      $type->setHandlerClass('route_provider', $providers);
+    }
 
     return $type;
   }
