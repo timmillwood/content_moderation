@@ -17,9 +17,9 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\moderation_state\Form\EntityModerationForm;
 use Drupal\moderation_state\Routing\ModerationRouteProvider;
-use Drupal\moderation_state\NodeCustomizations;
-use Drupal\moderation_state\BlockContentCustomizations;
-use Drupal\moderation_state\GenericCustomizations;
+use Drupal\moderation_state\Entity\Handler\NodeModerationHandler;
+use Drupal\moderation_state\Entity\Handler\BlockContentModerationHandler;
+use Drupal\moderation_state\Entity\Handler\ModerationHandler;
 use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
@@ -48,8 +48,8 @@ class EntityTypeInfo {
    * @var array
    */
   protected $moderationHandlers = [
-    'node' => NodeCustomizations::class,
-    'block_content' => BlockContentCustomizations::class,
+    'node' => NodeModerationHandler::class,
+    'block_content' => BlockContentModerationHandler::class,
   ];
 
   /**
@@ -58,8 +58,8 @@ class EntityTypeInfo {
    *   The translation service. for form alters.
    * @param \Drupal\moderation_state\ModerationInformationInterface $moderation_information
    *   The moderation information service.
-   * @param \Drupal\moderation_state\EntityCustomizationInterface $customizations
-   *   Entity-type-specific customizations.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity type manager.
    */
   public function __construct(TranslationInterface $translation, ModerationInformationInterface $moderation_information, EntityTypeManagerInterface $entity_type_manager) {
     $this->stringTranslation = $translation;
@@ -98,7 +98,7 @@ class EntityTypeInfo {
    */
   protected function addModerationToEntity(ContentEntityTypeInterface $type) {
     if (!$type->getHandlerClass('moderation')) {
-      $handler_class = !empty($this->moderationHandlers[$type->id()]) ? $this->moderationHandlers[$type->id()] : GenericCustomizations::class;
+      $handler_class = !empty($this->moderationHandlers[$type->id()]) ? $this->moderationHandlers[$type->id()] : ModerationHandler::class;
       $type->setHandlerClass('moderation', $handler_class);
     }
 

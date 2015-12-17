@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains Drupal\moderation_state\GenericCustomizations.
+ * Contains Drupal\moderation_state\Entity\Handler\GenericCustomizations.
  */
 
-namespace Drupal\moderation_state;
+namespace Drupal\moderation_state\Entity\Handler;
 
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * This class is intended primarily as a base class.
  */
-class GenericCustomizations implements EntityCustomizationInterface, EntityHandlerInterface {
+class ModerationHandler implements ModerationHandlerInterface, EntityHandlerInterface {
 
   use StringTranslationTrait;
 

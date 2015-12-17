@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains Drupal\moderation_state\NodeCustomizations.
+ * Contains Drupal\moderation_state\Entity\Handler\NodeCustomizations.
  */
 
-namespace Drupal\moderation_state;
+namespace Drupal\moderation_state\Entity\Handler;
 
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
@@ -16,7 +16,7 @@ use Drupal\node\Entity\NodeType;
 /**
  * Customizations for node entities.
  */
-class NodeCustomizations extends GenericCustomizations {
+class NodeModerationHandler extends ModerationHandler {
 
   /**
    * {@inheritdoc}

@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains Drupal\moderation_state\BlockContentCustomizations.
+ * Contains Drupal\moderation_state\Entity\Handler\BlockContentCustomizations.
  */
 
-namespace Drupal\moderation_state;
+namespace Drupal\moderation_state\Entity\Handler;
 
 use Drupal\block_content\Entity\BlockContentType;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
@@ -14,7 +14,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Customizations for block content entities.
  */
-class BlockContentCustomizations extends GenericCustomizations {
+class BlockContentModerationHandler extends ModerationHandler {
 
   /**
    * {@inheritdoc}

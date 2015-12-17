@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains Drupal\moderation_state\EntityCustomizationInterface.
+ * Contains Drupal\moderation_state\Entity\Handler\EntityCustomizationInterface.
  */
 
-namespace Drupal\moderation_state;
+namespace Drupal\moderation_state\Entity\Handler;
 
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
@@ -14,11 +14,11 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Defines operations that need to vary by entity type.
  *
- * The existence of this interface and implementations of it are a symptom of
- * design flaws in core's Entity API. Ideally, over time it will get removed
- * as core becomes more standardized.
+ * Much of the logic contained in this handler is an indication of flaws
+ * in the Entity API that are insufficiently standardized between entity types.
+ * Hopefully over time functionality can be removed from this interface.
  */
-interface EntityCustomizationInterface {
+interface ModerationHandlerInterface {
 
   /**
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
