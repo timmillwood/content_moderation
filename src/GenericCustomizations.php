@@ -9,21 +9,31 @@ namespace Drupal\moderation_state;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityHandlerInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Common customizations for most/all entities.
  *
  * This class is intended primarily as a base class.
  */
-class GenericCustomizations implements EntityCustomizationInterface {
+class GenericCustomizations implements EntityCustomizationInterface, EntityHandlerInterface {
 
   use StringTranslationTrait;
 
   public function __construct(TranslationInterface $translation) {
     $this->stringTranslation = $translation;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    return new static($container->get('string_translation'));
   }
 
   /**

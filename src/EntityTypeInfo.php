@@ -7,14 +7,20 @@
 namespace Drupal\moderation_state;
 
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\moderation_state\Form\EntityModerationForm;
 use Drupal\moderation_state\Routing\ModerationRouteProvider;
+use Drupal\moderation_state\NodeCustomizations;
+use Drupal\moderation_state\BlockContentCustomizations;
+use Drupal\moderation_state\GenericCustomizations;
+use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
  * Service class for manipulating entity type information.
@@ -31,9 +37,20 @@ class EntityTypeInfo {
   protected $moderationInfo;
 
   /**
-   * @var \Drupal\moderation_state\EntityCustomizationInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $customizations;
+  protected $entityTypeManager;
+
+  /**
+   * A keyed array of custom moderation handlers for given entity types.
+   * Any entity not specified will use a common default.
+   *
+   * @var array
+   */
+  protected $moderationHandlers = [
+    'node' => NodeCustomizations::class,
+    'block_content' => BlockContentCustomizations::class,
+  ];
 
   /**
    * EntityTypeInfo constructor.
@@ -44,10 +61,10 @@ class EntityTypeInfo {
    * @param \Drupal\moderation_state\EntityCustomizationInterface $customizations
    *   Entity-type-specific customizations.
    */
-  public function __construct(TranslationInterface $translation, ModerationInformationInterface $moderation_information, EntityCustomizationInterface $customizations) {
+  public function __construct(TranslationInterface $translation, ModerationInformationInterface $moderation_information, EntityTypeManagerInterface $entity_type_manager) {
     $this->stringTranslation = $translation;
     $this->moderationInfo = $moderation_information;
-    $this->customizations = $customizations;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -62,15 +79,36 @@ class EntityTypeInfo {
    */
   public function entityTypeAlter(array &$entity_types) {
     foreach ($this->moderationInfo->selectRevisionableEntityTypes($entity_types) as $type_name => $type) {
-      $entity_types[$type_name] = $this->addModeration($type);
+      $entity_types[$type_name] = $this->addModerationToEntityType($type);
+      $entity_types[$type->get('bundle_of')] = $this->addModerationToEntity($entity_types[$type->get('bundle_of')]);
     }
   }
 
   /**
-   * Modifies an entity type to include moderation configuration support.
+   * Modifies an entity definition to include moderation support.
+   *
+   * This primarily just means an extra handler. A Generic one is provided,
+   * but individual entity types can provide their own as appropriate.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityTypeInterface $type
+   *   The content entity definition to modify.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityTypeInterface
+   *   The modified content entity definition.
+   */
+  protected function addModerationToEntity(ContentEntityTypeInterface $type) {
+    $handler_class = !empty($this->moderationHandlers[$type->id()]) ? $this->moderationHandlers[$type->id()] : GenericCustomizations::class;
+    $type->setHandlerClass('moderation', $handler_class);
+
+    return $type;
+  }
+
+  /**
+   * Modifies an entity type definition to include moderation configuration support.
    *
    * That "configuration support" includes a configuration form, a hypermedia
-   * link, and a route provider to tie it all together.
+   * link, and a route provider to tie it all together. There's also a
+   * moderation handler for per-entity-type variation.
    *
    * @param \Drupal\Core\Config\Entity\ConfigEntityTypeInterface $type
    *   The config entity definition to modify.
@@ -78,7 +116,7 @@ class EntityTypeInfo {
    * @return \Drupal\Core\Config\Entity\ConfigEntityTypeInterface
    *   The modified config entity definition.
    */
-  protected function addModeration(ConfigEntityTypeInterface $type) {
+  protected function addModerationToEntityType(ConfigEntityTypeInterface $type) {
     if ($type->hasLinkTemplate('edit-form')) {
       $type->setLinkTemplate('moderation-form', $type->getLinkTemplate('edit-form') . '/moderation');
     }
@@ -152,10 +190,16 @@ class EntityTypeInfo {
    */
   public function bundleFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
     if ($this->moderationInfo->isRevisionableBundleForm($form_state->getFormObject())) {
-      $this->customizations->enforceRevisionsBundleFormAlter($form, $form_state, $form_id);
+      /* @var ConfigEntityTypeInterface $bundle */
+      $bundle = $form_state->getFormObject()->getEntity();
+
+      $this->entityTypeManager->getHandler($bundle->getEntityType()->getBundleOf(), 'moderation')->enforceRevisionsBundleFormAlter($form, $form_state, $form_id);
     }
     else if ($this->moderationInfo->isModeratedEntityForm($form_state->getFormObject())) {
-      $this->customizations->enforceRevisionsEntityFormAlter($form, $form_state, $form_id);
+      /* @var ContentEntityInterface $entity */
+      $entity = $form_state->getFormObject()->getEntity();
+
+      $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->enforceRevisionsEntityFormAlter($form, $form_state, $form_id);
     }
   }
 }

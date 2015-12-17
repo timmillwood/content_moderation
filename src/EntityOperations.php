@@ -9,6 +9,7 @@ namespace Drupal\moderation_state;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Defines a class for reacting to entity events.
@@ -21,9 +22,9 @@ class EntityOperations {
   protected $moderationInfo;
 
   /**
-   * @var \Drupal\moderation_state\EntityCustomizationInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $customizations;
+  protected $entityTypeManager;
 
   /**
    * Constructs a new EntityOperations object.
@@ -33,9 +34,9 @@ class EntityOperations {
    * @param \Drupal\moderation_state\EntityCustomizationInterface $customizations
    *   Entity customizations service.
    */
-  public function __construct(ModerationInformationInterface $moderation_info, EntityCustomizationInterface $customizations) {
+  public function __construct(ModerationInformationInterface $moderation_info, EntityTypeManagerInterface $entity_type_manager) {
     $this->moderationInfo = $moderation_info;
-    $this->customizations = $customizations;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -49,7 +50,7 @@ class EntityOperations {
       // @todo write a test for this.
       if ($entity->moderation_state->entity) {
         $published_state = $entity->moderation_state->entity->isPublishedState();
-        $this->customizations->onPresave($entity, $published_state);
+        $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->onPresave($entity, $published_state);
       }
     }
   }

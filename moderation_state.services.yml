@@ -14,28 +14,16 @@ services:
     arguments: ['@entity_type.manager', '@current_user']
   moderation_state.entity_type:
     class: Drupal\moderation_state\EntityTypeInfo
-    arguments: ['@string_translation', '@moderation_state.moderation_information', '@moderation_state.entity_customizations']
+    arguments: ['@string_translation', '@moderation_state.moderation_information', '@entity_type.manager']
   moderation_state.entity_operations:
     class: Drupal\moderation_state\EntityOperations
-    arguments: ['@moderation_state.moderation_information', '@moderation_state.entity_customizations']
-  moderation_state.entity_customizations:
-    class: Drupal\moderation_state\EntityCustomizations
-    calls:
-      - [setDefaultCustomization, ['@moderation_state.default_customizations']]
-    tags:
-      - { name: service_collector, tag: moderation_state_customizations, call: addEntityCustomization }
+    arguments: ['@moderation_state.moderation_information', '@entity_type.manager']
   moderation_state.default_customizations:
     class: Drupal\moderation_state\GenericCustomizations
     arguments: ['@string_translation']
-    tags:
-      - { name: moderation_state_customizations }
   moderation_state.node_customizations:
     class: Drupal\moderation_state\NodeCustomizations
     arguments: ['@string_translation']
-    tags:
-      - { name: moderation_state_customizations }
   moderation_state.block_customizations:
     class: Drupal\moderation_state\BlockContentCustomizations
     arguments: ['@string_translation']
-    tags:
-      - { name: moderation_state_customizations }

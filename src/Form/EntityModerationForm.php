@@ -6,9 +6,9 @@ namespace Drupal\moderation_state\Form;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\moderation_state\Entity\ModerationState;
-use Drupal\moderation_state\EntityCustomizationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -17,22 +17,22 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EntityModerationForm extends EntityForm {
 
   /**
-   * @var \Drupal\moderation_state\EntityCustomizationInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $customizations;
+  protected $entityTypeManager;
 
   /**
    * @inheritDoc
    */
-  public function __construct(EntityCustomizationInterface $customizations) {
-    $this->customizations = $customizations;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
    * @inheritDoc
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('moderation_state.entity_customizations'));
+    return new static($container->get('entity_type.manager'));
   }
 
   /**
@@ -157,7 +157,8 @@ class EntityModerationForm extends EntityForm {
     if($form_state->getValue('enable_moderation_state')) {
       /* @var ConfigEntityTypeInterface $bundle */
       $bundle = $form_state->getFormObject()->getEntity();
-      $this->customizations->onEntityModerationFormSubmit($bundle);
+
+      $this->entityTypeManager->getHandler($bundle->getEntityType()->getBundleOf(), 'moderation')->onEntityModerationFormSubmit($bundle);
     }
 
     parent::submitForm( $form, $form_state);
