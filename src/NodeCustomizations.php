@@ -21,13 +21,6 @@ class NodeCustomizations extends GenericCustomizations {
   /**
    * {@inheritdoc}
    */
-  function getEntityTypeId() {
-    return 'node';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function onPresave(ContentEntityInterface $entity, $published_state) {
     parent::onPresave($entity, $published_state);
 

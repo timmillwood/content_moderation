@@ -39,13 +39,6 @@ class GenericCustomizations implements EntityCustomizationInterface, EntityHandl
   /**
    * {@inheritdoc}
    */
-  function getEntityTypeId() {
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function onPresave(ContentEntityInterface $entity, $published_state) {
     // This is *probably* not necessary if configuration is setup correctly,
     // but it can't hurt.

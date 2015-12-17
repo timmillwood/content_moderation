@@ -21,13 +21,6 @@ use Drupal\Core\Form\FormStateInterface;
 interface EntityCustomizationInterface {
 
   /**
-   * Returns the machine name of the entity type this customization set is for.
-   *
-   * @return string
-   */
-  public function getEntityTypeId();
-
-  /**
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The entity to modify.
    * @param bool $published_state
