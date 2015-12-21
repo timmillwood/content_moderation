@@ -39,11 +39,26 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
     $state_transition3->getFromState()->willReturn('needs_review');
     $state_transition3->getToState()->willReturn('draft');
 
+    $state_transition4 = $this->prophesize(ModerationStateTransitionInterface::class);
+    $state_transition4->getFromState()->willReturn('draft');
+    $state_transition4->getToState()->willReturn('draft');
+
+    $state_transition5 = $this->prophesize(ModerationStateTransitionInterface::class);
+    $state_transition5->getFromState()->willReturn('needs_review');
+    $state_transition5->getToState()->willReturn('needs_review');
+
+    $state_transition6 = $this->prophesize(ModerationStateTransitionInterface::class);
+    $state_transition6->getFromState()->willReturn('published');
+    $state_transition6->getToState()->willReturn('published');
+
     $entity_storage->loadMultiple()->willReturn([
       'draf__needs_review' => $state_transition0->reveal(),
       'needs_review__staging' => $state_transition1->reveal(),
       'staging__published' => $state_transition2->reveal(),
       'needs_review__draft' => $state_transition3->reveal(),
+      'draft_draft' => $state_transition4->reveal(),
+      'needs_review__needs_review' => $state_transition5->reveal(),
+      'published__published' => $state_transition6->reveal(),
     ]);
     return $entity_storage->reveal();
   }
@@ -54,12 +69,12 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
    */
   public function testIsTransitionAllowedWithValidTransition() {
     $state_transition_validation = $this->setupTranslationValidation($this->setupExampleStorage($this->setupExampleStorage()));
-    $this->assertTrue($state_transition_validation->isTransitionAllowed('draft', 'needs_review'));
     $this->assertTrue($state_transition_validation->isTransitionAllowed('draft', 'draft'));
-    $this->assertTrue($state_transition_validation->isTransitionAllowed('needs_review', 'staging'));
+    $this->assertTrue($state_transition_validation->isTransitionAllowed('draft', 'needs_review'));
     $this->assertTrue($state_transition_validation->isTransitionAllowed('needs_review', 'needs_review'));
-    $this->assertTrue($state_transition_validation->isTransitionAllowed('staging', 'published'));
+    $this->assertTrue($state_transition_validation->isTransitionAllowed('needs_review', 'staging'));
     $this->assertTrue($state_transition_validation->isTransitionAllowed('staging', 'staging'));
+    $this->assertTrue($state_transition_validation->isTransitionAllowed('staging', 'published'));
     $this->assertTrue($state_transition_validation->isTransitionAllowed('needs_review', 'draft'));
   }
 

@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - moderation_state.moderation_state.published
+id: needs_review_published
+label: 'Published » Published'
+stateFrom: published
+stateTo: published

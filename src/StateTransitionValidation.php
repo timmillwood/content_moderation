@@ -52,11 +52,6 @@ class StateTransitionValidation {
       /** @var \Drupal\moderation_state\ModerationStateTransitionInterface $transition */
       $this->possibleTransitions[$transition->getFromState()][] = $transition->getToState();
     }
-
-    foreach (array_keys($this->possibleTransitions) as $transition) {
-      $this->possibleTransitions[$transition][] = $transition;
-    }
-
     return $this->possibleTransitions;
   }
 
