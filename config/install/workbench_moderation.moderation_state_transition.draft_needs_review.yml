@@ -2,8 +2,8 @@ langcode: en
 status: true
 dependencies:
   config:
-    - moderation_state.moderation_state.draft
-    - moderation_state.moderation_state.needs_review
+    - workbench_moderation.moderation_state.draft
+    - workbench_moderation.moderation_state.needs_review
 id: draft_needs_review
 label: 'Draft » Needs review'
 stateFrom: draft

@@ -1,4 +1,4 @@
-moderation_state.moderation_state.*:
+workbench_moderation.moderation_state.*:
   type: config_entity
   label: 'Moderation state config'
   mapping:

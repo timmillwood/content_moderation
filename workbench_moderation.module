@@ -12,8 +12,8 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\moderation_state\BaseFieldInfo;
-use Drupal\moderation_state\Plugin\Menu\EditTab;
+use Drupal\workbench_moderation\BaseFieldInfo;
+use Drupal\workbench_moderation\Plugin\Menu\EditTab;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
