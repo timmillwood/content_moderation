@@ -66,7 +66,7 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
       $plugin_id,
       $plugin_definition,
       $container->get('string_translation'),
-      $container->get('moderation_state.moderation_information')
+      $container->get('workbench_moderation.moderation_information')
     );
   }
 

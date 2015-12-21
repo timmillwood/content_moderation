@@ -22,10 +22,10 @@ use Drupal\Core\Form\FormStateInterface;
 function workbench_moderation_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
     // Main module help for the moderation_state module.
-    case 'help.page.moderation_state':
+    case 'help.page.workbench_moderation':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Provides moderation states for content') . '</p>';
+      $output .= '<p>' . t('Provides basic moderation for content') . '</p>';
       return $output;
 
     default:
@@ -44,28 +44,28 @@ function workbench_moderation_entity_base_field_info(EntityTypeInterface $entity
  * Implements hook_entity_type_alter().
  */
 function workbench_moderation_entity_type_alter(array &$entity_types) {
-  \Drupal::service('moderation_state.entity_type')->entityTypeAlter($entity_types);
+  \Drupal::service('workbench_moderation.entity_type')->entityTypeAlter($entity_types);
 }
 
 /**
  * Implements hook_entity_operation().
  */
 function workbench_moderation_entity_operation(EntityInterface $entity) {
-  return \Drupal::service('moderation_state.entity_type')->entityOperation($entity);
+  return \Drupal::service('workbench_moderation.entity_type')->entityOperation($entity);
 }
 
 /**
  * Sets required flag based on enabled state.
  */
 function workbench_moderation_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
-  return \Drupal::service('moderation_state.entity_type')->entityBundleFieldInfoAlter($fields, $entity_type, $bundle);
+  return \Drupal::service('workbench_moderation.entity_type')->entityBundleFieldInfoAlter($fields, $entity_type, $bundle);
 }
 
 /**
  * Implements hook_entity_presave().
  */
 function workbench_moderation_entity_presave(EntityInterface $entity) {
-  return \Drupal::service('moderation_state.entity_operations')->entityPresave($entity);
+  return \Drupal::service('workbench_moderation.entity_operations')->entityPresave($entity);
 }
 
 /**
@@ -88,5 +88,5 @@ function workbench_moderation_local_tasks_alter(&$local_tasks) {
  * Implements hook_form_alter().
  */
 function workbench_moderation_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  return \Drupal::service('moderation_state.entity_type')->bundleFormAlter($form, $form_state, $form_id);
+  return \Drupal::service('workbench_moderation.entity_type')->bundleFormAlter($form, $form_state, $form_id);
 }

@@ -55,8 +55,8 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity_type.manager'),
-      $container->get('moderation_state.state_transition_validation'),
-      $container->get('moderation_state.moderation_information')
+      $container->get('workbench_moderation.state_transition_validation'),
+      $container->get('workbench_moderation.moderation_information')
     );
   }
 

@@ -121,7 +121,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       $container->get('entity_type.manager')->getStorage('moderation_state'),
       $container->get('entity_type.manager')->getStorage('moderation_state_transition'),
       $container->get('entity.query')->get('moderation_state_transition', 'AND'),
-      $container->get('moderation_state.moderation_information')
+      $container->get('workbench_moderation.moderation_information')
     );
   }
 
