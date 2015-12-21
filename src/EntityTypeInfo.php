@@ -16,7 +16,8 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\workbench_moderation\Form\EntityModerationForm;
-use Drupal\workbench_moderation\Routing\ModerationRouteProvider;
+use Drupal\workbench_moderation\Routing\EntityModerationRouteProvider;
+use Drupal\workbench_moderation\Routing\EntityTypeModerationRouteProvider;
 use Drupal\workbench_moderation\Entity\Handler\NodeModerationHandler;
 use Drupal\workbench_moderation\Entity\Handler\BlockContentModerationHandler;
 use Drupal\workbench_moderation\Entity\Handler\ModerationHandler;
@@ -102,6 +103,18 @@ class EntityTypeInfo {
       $type->setHandlerClass('moderation', $handler_class);
     }
 
+    if (!$type->hasLinkTemplate('latest-version')) {
+      $type->setLinkTemplate('latest-version', $type->getLinkTemplate('canonical') . '/latest');
+    }
+
+    // @todo Core forgot to add a direct way to manipulate route_provider, so
+    // we have to do it the sloppy way for now.
+    $providers = $type->getRouteProviderClasses() ?: [];
+    if (empty($providers['moderation'])) {
+      $providers['moderation'] = EntityModerationRouteProvider::class;
+      $type->setHandlerClass('route_provider', $providers);
+    }
+
     return $type;
   }
 
@@ -129,9 +142,9 @@ class EntityTypeInfo {
 
     // @todo Core forgot to add a direct way to manipulate route_provider, so
     // we have to do it the sloppy way for now.
-    $providers = $type->getHandlerClass('route_provider') ?: [];
+    $providers = $type->getRouteProviderClasses() ?: [];
     if (empty($providers['moderation'])) {
-      $providers['moderation'] = ModerationRouteProvider::class;
+      $providers['moderation'] = EntityTypeModerationRouteProvider::class;
       $type->setHandlerClass('route_provider', $providers);
     }
 

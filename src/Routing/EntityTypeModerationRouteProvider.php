@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains Drupal\workbench_moderation\Routing\EntityTypeModerationRouteProvider.
+ */
+
 namespace Drupal\workbench_moderation\Routing;
 
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -10,7 +15,7 @@ use Symfony\Component\Routing\RouteCollection;
 /**
  * Provides the moderation configuration routes for config entities.
  */
-class ModerationRouteProvider implements EntityRouteProviderInterface  {
+class EntityTypeModerationRouteProvider implements EntityRouteProviderInterface {
 
   /**
    * {@inheritdoc}
