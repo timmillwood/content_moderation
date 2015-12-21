@@ -19,7 +19,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Implements hook_help().
  */
-function moderation_state_help($route_name, RouteMatchInterface $route_match) {
+function workbench_moderation_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
     // Main module help for the moderation_state module.
     case 'help.page.moderation_state':
@@ -35,7 +35,7 @@ function moderation_state_help($route_name, RouteMatchInterface $route_match) {
 /**
  * Implements hook_entity_base_field_info().
  */
-function moderation_state_entity_base_field_info(EntityTypeInterface $entity_type) {
+function workbench_moderation_entity_base_field_info(EntityTypeInterface $entity_type) {
   $base_field_info = new BaseFieldInfo();
   return $base_field_info->entityBaseFieldInfo($entity_type);
 }
@@ -43,35 +43,35 @@ function moderation_state_entity_base_field_info(EntityTypeInterface $entity_typ
 /**
  * Implements hook_entity_type_alter().
  */
-function moderation_state_entity_type_alter(array &$entity_types) {
+function workbench_moderation_entity_type_alter(array &$entity_types) {
   \Drupal::service('moderation_state.entity_type')->entityTypeAlter($entity_types);
 }
 
 /**
  * Implements hook_entity_operation().
  */
-function moderation_state_entity_operation(EntityInterface $entity) {
+function workbench_moderation_entity_operation(EntityInterface $entity) {
   return \Drupal::service('moderation_state.entity_type')->entityOperation($entity);
 }
 
 /**
  * Sets required flag based on enabled state.
  */
-function moderation_state_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
+function workbench_moderation_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
   return \Drupal::service('moderation_state.entity_type')->entityBundleFieldInfoAlter($fields, $entity_type, $bundle);
 }
 
 /**
  * Implements hook_entity_presave().
  */
-function moderation_state_entity_presave(EntityInterface $entity) {
+function workbench_moderation_entity_presave(EntityInterface $entity) {
   return \Drupal::service('moderation_state.entity_operations')->entityPresave($entity);
 }
 
 /**
  * Implements hook_local_tasks_alter().
  */
-function moderation_state_local_tasks_alter(&$local_tasks) {
+function workbench_moderation_local_tasks_alter(&$local_tasks) {
   $content_entity_type_ids = array_keys(array_filter(\Drupal::entityTypeManager()->getDefinitions(), function (EntityTypeInterface $entity_type) {
     return $entity_type->isRevisionable();
   }));
@@ -87,6 +87,6 @@ function moderation_state_local_tasks_alter(&$local_tasks) {
 /**
  * Implements hook_form_alter().
  */
-function moderation_state_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function workbench_moderation_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   return \Drupal::service('moderation_state.entity_type')->bundleFormAlter($form, $form_state, $form_id);
 }
