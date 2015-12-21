@@ -66,6 +66,9 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
   public function validate($value, Constraint $constraint) {
     /** @var \Drupal\Core\Entity\EntityInterface $entity */
     $entity = $value->getEntity();
+    if (!$this->moderationInformation->isModeratableEntity($entity)) {
+      return;
+    }
     if (!$entity->isNew()) {
       $original_entity = $this->moderationInformation->getLatestRevision($entity->getEntityTypeId(), $entity->id());
       $next_moderation_state_id = $entity->moderation_state->target_id;
