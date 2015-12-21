@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\moderation_state\Form\ModerationStateForm.
+ * Contains \Drupal\workbench_moderation\Form\ModerationStateForm.
  */
 
-namespace Drupal\moderation_state\Form;
+namespace Drupal\workbench_moderation\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
@@ -13,7 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Class ModerationStateForm.
  *
- * @package Drupal\moderation_state\Form
+ * @package Drupal\workbench_moderation\Form
  */
 class ModerationStateForm extends EntityForm {
   /**
@@ -22,7 +22,7 @@ class ModerationStateForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    /* @var \Drupal\moderation_state\ModerationStateInterface $moderation_state */
+    /* @var \Drupal\workbench_moderation\ModerationStateInterface $moderation_state */
     $moderation_state = $this->entity;
     $form['label'] = array(
       '#type' => 'textfield',
@@ -37,7 +37,7 @@ class ModerationStateForm extends EntityForm {
       '#type' => 'machine_name',
       '#default_value' => $moderation_state->id(),
       '#machine_name' => array(
-        'exists' => '\Drupal\moderation_state\Entity\ModerationState::load',
+        'exists' => '\Drupal\workbench_moderation\Entity\ModerationState::load',
       ),
       '#disabled' => !$moderation_state->isNew(),
     );

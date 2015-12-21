@@ -2,15 +2,15 @@
 
 /**
  * @file
- * Contains \Drupal\moderation_state\Plugin\Validation\Constraint\ModerationStateValidator.
+ * Contains \Drupal\workbench_moderation\Plugin\Validation\Constraint\ModerationStateValidator.
  */
 
-namespace Drupal\moderation_state\Plugin\Validation\Constraint;
+namespace Drupal\workbench_moderation\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\moderation_state\ModerationInformationInterface;
-use Drupal\moderation_state\StateTransitionValidation;
+use Drupal\workbench_moderation\ModerationInformationInterface;
+use Drupal\workbench_moderation\StateTransitionValidation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -20,7 +20,7 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
   /**
    * The state transition validation.
    *
-   * @var \Drupal\moderation_state\StateTransitionValidation
+   * @var \Drupal\workbench_moderation\StateTransitionValidation
    */
   protected $validation;
 
@@ -32,7 +32,7 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
   /**
    * The moderation info.
    *
-   * @var \Drupal\moderation_state\ModerationInformationInterface
+   * @var \Drupal\workbench_moderation\ModerationInformationInterface
    */
   protected $moderationInformation;
 
@@ -41,9 +41,9 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\moderation_state\StateTransitionValidation $validation
+   * @param \Drupal\workbench_moderation\StateTransitionValidation $validation
    *   The state transition validation.
-   * @param \Drupal\moderation_state\ModerationInformationInterface $moderation_information
+   * @param \Drupal\workbench_moderation\ModerationInformationInterface $moderation_information
    *   The moderation information.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, StateTransitionValidation $validation, ModerationInformationInterface $moderation_information) {

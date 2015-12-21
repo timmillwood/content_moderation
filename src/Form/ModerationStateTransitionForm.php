@@ -2,19 +2,19 @@
 
 /**
  * @file
- * Contains \Drupal\moderation_state\Form\ModerationStateTransitionForm.
+ * Contains \Drupal\workbench_moderation\Form\ModerationStateTransitionForm.
  */
 
-namespace Drupal\moderation_state\Form;
+namespace Drupal\workbench_moderation\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\moderation_state\Entity\ModerationState;
+use Drupal\workbench_moderation\Entity\ModerationState;
 
 /**
  * Class ModerationStateTransitionForm.
  *
- * @package Drupal\moderation_state\Form
+ * @package Drupal\workbench_moderation\Form
  */
 class ModerationStateTransitionForm extends EntityForm {
   /**
@@ -23,7 +23,7 @@ class ModerationStateTransitionForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    /* @var \Drupal\moderation_state\ModerationStateTransitionInterface $moderation_state_transition */
+    /* @var \Drupal\workbench_moderation\ModerationStateTransitionInterface $moderation_state_transition */
     $moderation_state_transition = $this->entity;
     $form['label'] = [
       '#type' => 'textfield',
@@ -38,7 +38,7 @@ class ModerationStateTransitionForm extends EntityForm {
       '#type' => 'machine_name',
       '#default_value' => $moderation_state_transition->id(),
       '#machine_name' => [
-        'exists' => '\Drupal\moderation_state\Entity\ModerationStateTransition::load',
+        'exists' => '\Drupal\workbench_moderation\Entity\ModerationStateTransition::load',
       ],
       '#disabled' => !$moderation_state_transition->isNew(),
     ];

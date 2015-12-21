@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\moderation_state\ModerationStateInterface.
+ * Contains \Drupal\workbench_moderation\ModerationStateInterface.
  */
 
-namespace Drupal\moderation_state;
+namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 

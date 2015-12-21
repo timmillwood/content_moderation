@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\moderation_state\EntityOperations.
+ * Contains \Drupal\workbench_moderation\EntityOperations.
  */
 
-namespace Drupal\moderation_state;
+namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -17,7 +17,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 class EntityOperations {
 
   /**
-   * @var \Drupal\moderation_state\ModerationInformationInterface
+   * @var \Drupal\workbench_moderation\ModerationInformationInterface
    */
   protected $moderationInfo;
 
@@ -29,7 +29,7 @@ class EntityOperations {
   /**
    * Constructs a new EntityOperations object.
    *
-   * @param \Drupal\moderation_state\ModerationInformationInterface $moderation_info
+   * @param \Drupal\workbench_moderation\ModerationInformationInterface $moderation_info
    *   Moderation information service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity type manager service.

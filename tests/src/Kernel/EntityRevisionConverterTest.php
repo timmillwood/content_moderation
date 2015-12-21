@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\moderation_state\Kernel\EntityRevisionConverterTest.
+ * Contains \Drupal\Tests\workbench_moderation\Kernel\EntityRevisionConverterTest.
  */
 
-namespace Drupal\Tests\moderation_state\Kernel;
+namespace Drupal\Tests\workbench_moderation\Kernel;
 
 use Drupal\entity_test\Entity\EntityTest;
 use Drupal\entity_test\Entity\EntityTestMulRev;
@@ -15,7 +15,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 
 /**
- * @coversDefaultClass \Drupal\moderation_state\ParamConverter\EntityRevisionConverter
+ * @coversDefaultClass \Drupal\workbench_moderation\ParamConverter\EntityRevisionConverter
  * @group moderation_state
  */
 class EntityRevisionConverterTest extends KernelTestBase {

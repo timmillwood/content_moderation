@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\moderation_state\Form\ModerationStateTransitionDeleteForm.
+ * Contains \Drupal\workbench_moderation\Form\ModerationStateTransitionDeleteForm.
  */
 
-namespace Drupal\moderation_state\Form;
+namespace Drupal\workbench_moderation\Form;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;

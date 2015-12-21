@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\moderation_state\BaseFieldInfo.
+ * Contains \Drupal\workbench_moderation\BaseFieldInfo.
  */
 
-namespace Drupal\moderation_state;
+namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;

@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains Drupal\moderation_state\Entity\Handler\BlockContentCustomizations.
+ * Contains Drupal\workbench_moderation\Entity\Handler\BlockContentCustomizations.
  */
 
-namespace Drupal\moderation_state\Entity\Handler;
+namespace Drupal\workbench_moderation\Entity\Handler;
 
 use Drupal\block_content\Entity\BlockContentType;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;

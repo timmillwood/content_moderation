@@ -2,13 +2,13 @@
 
 /**
  * @file
- * Contains \Drupal\moderation_state\Entity\ModerationState.
+ * Contains \Drupal\workbench_moderation\Entity\ModerationState.
  */
 
-namespace Drupal\moderation_state\Entity;
+namespace Drupal\workbench_moderation\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\moderation_state\ModerationStateInterface;
+use Drupal\workbench_moderation\ModerationStateInterface;
 
 /**
  * Defines the Moderation state entity.
@@ -17,11 +17,11 @@ use Drupal\moderation_state\ModerationStateInterface;
  *   id = "moderation_state",
  *   label = @Translation("Moderation state"),
  *   handlers = {
- *     "list_builder" = "Drupal\moderation_state\ModerationStateListBuilder",
+ *     "list_builder" = "Drupal\workbench_moderation\ModerationStateListBuilder",
  *     "form" = {
- *       "add" = "Drupal\moderation_state\Form\ModerationStateForm",
- *       "edit" = "Drupal\moderation_state\Form\ModerationStateForm",
- *       "delete" = "Drupal\moderation_state\Form\ModerationStateDeleteForm"
+ *       "add" = "Drupal\workbench_moderation\Form\ModerationStateForm",
+ *       "edit" = "Drupal\workbench_moderation\Form\ModerationStateForm",
+ *       "delete" = "Drupal\workbench_moderation\Form\ModerationStateDeleteForm"
  *     },
  *   },
  *   config_prefix = "moderation_state",

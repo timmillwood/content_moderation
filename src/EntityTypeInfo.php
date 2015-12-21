@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Contains Drupal\moderation_state\EntityTypeInfo.
+ * Contains Drupal\workbench_moderation\EntityTypeInfo.
  */
 
-namespace Drupal\moderation_state;
+namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
@@ -15,11 +15,11 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\moderation_state\Form\EntityModerationForm;
-use Drupal\moderation_state\Routing\ModerationRouteProvider;
-use Drupal\moderation_state\Entity\Handler\NodeModerationHandler;
-use Drupal\moderation_state\Entity\Handler\BlockContentModerationHandler;
-use Drupal\moderation_state\Entity\Handler\ModerationHandler;
+use Drupal\workbench_moderation\Form\EntityModerationForm;
+use Drupal\workbench_moderation\Routing\ModerationRouteProvider;
+use Drupal\workbench_moderation\Entity\Handler\NodeModerationHandler;
+use Drupal\workbench_moderation\Entity\Handler\BlockContentModerationHandler;
+use Drupal\workbench_moderation\Entity\Handler\ModerationHandler;
 use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
@@ -32,7 +32,7 @@ class EntityTypeInfo {
   /**
    * The moderation information service.
    *
-   * @var \Drupal\moderation_state\ModerationInformationInterface
+   * @var \Drupal\workbench_moderation\ModerationInformationInterface
    */
   protected $moderationInfo;
 
@@ -56,7 +56,7 @@ class EntityTypeInfo {
    * EntityTypeInfo constructor.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $translation
    *   The translation service. for form alters.
-   * @param \Drupal\moderation_state\ModerationInformationInterface $moderation_information
+   * @param \Drupal\workbench_moderation\ModerationInformationInterface $moderation_information
    *   The moderation information service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity type manager.

@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\moderation_state\StateTransitionValidation.
+ * Contains \Drupal\workbench_moderation\StateTransitionValidation.
  */
 
-namespace Drupal\moderation_state;
+namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -49,7 +49,7 @@ class StateTransitionValidation {
 
     $this->possibleTransitions = [];
     foreach ($transitions as $transition) {
-      /** @var \Drupal\moderation_state\ModerationStateTransitionInterface $transition */
+      /** @var \Drupal\workbench_moderation\ModerationStateTransitionInterface $transition */
       $this->possibleTransitions[$transition->getFromState()][] = $transition->getToState();
     }
     return $this->possibleTransitions;

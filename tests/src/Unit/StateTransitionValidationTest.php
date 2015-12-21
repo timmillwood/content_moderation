@@ -2,16 +2,16 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\moderation_state\Unit\StateTransitionValidationTest.
+ * Contains \Drupal\Tests\workbench_moderation\Unit\StateTransitionValidationTest.
  */
 
-namespace Drupal\Tests\moderation_state\Unit;
+namespace Drupal\Tests\workbench_moderation\Unit;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\moderation_state\ModerationStateTransitionInterface;
-use Drupal\moderation_state\StateTransitionValidation;
+use Drupal\workbench_moderation\ModerationStateTransitionInterface;
+use Drupal\workbench_moderation\StateTransitionValidation;
 
 /**
- * @coversDefaultClass \Drupal\moderation_state\StateTransitionValidation
+ * @coversDefaultClass \Drupal\workbench_moderation\StateTransitionValidation
  * @group moderation_state
  */
 class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {

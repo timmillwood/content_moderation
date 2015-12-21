@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\moderation_state\Form;
+namespace Drupal\workbench_moderation\Form;
 
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
@@ -8,7 +8,7 @@ use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\moderation_state\Entity\ModerationState;
+use Drupal\workbench_moderation\Entity\ModerationState;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\moderation_state\Kernel\EntityStateChangeValidationTest.
+ * Contains \Drupal\Tests\workbench_moderation\Kernel\EntityStateChangeValidationTest.
  */
 
-namespace Drupal\Tests\moderation_state\Kernel;
+namespace Drupal\Tests\workbench_moderation\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 
 /**
- * @coversDefaultClass \Drupal\moderation_state\Plugin\Validation\Constraint\ModerationStateValidator
+ * @coversDefaultClass \Drupal\workbench_moderation\Plugin\Validation\Constraint\ModerationStateValidator
  * @group moderation_state
  */
 class EntityStateChangeValidationTest extends KernelTestBase {

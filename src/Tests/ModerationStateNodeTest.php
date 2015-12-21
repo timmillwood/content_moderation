@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\moderation_state\Tests\ModerationStateNodeTest.
+ * Contains \Drupal\workbench_moderation\Tests\ModerationStateNodeTest.
  */
 
-namespace Drupal\moderation_state\Tests;
+namespace Drupal\workbench_moderation\Tests;
 
 /**
  * Tests general content moderation workflow for nodes..

@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains Drupal\moderation_state\ModerationInformation.
+ * Contains Drupal\workbench_moderation\ModerationInformation.
  */
 
-namespace Drupal\moderation_state;
+namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\BundleEntityFormBase;

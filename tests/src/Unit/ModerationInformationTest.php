@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\moderation_state\Unit\ModerationInformationTest.
+ * Contains \Drupal\Tests\workbench_moderation\Unit\ModerationInformationTest.
  */
 
-namespace Drupal\Tests\moderation_state\Unit;
+namespace Drupal\Tests\workbench_moderation\Unit;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\ContentEntityFormInterface;
@@ -15,10 +15,10 @@ use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\moderation_state\ModerationInformation;
+use Drupal\workbench_moderation\ModerationInformation;
 
 /**
- * @coversDefaultClass \Drupal\moderation_state\ModerationInformation
+ * @coversDefaultClass \Drupal\workbench_moderation\ModerationInformation
  * @group moderation_state
  */
 class ModerationInformationTest extends \PHPUnit_Framework_TestCase {

@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\moderation_state\Plugin\Field\FieldWidget\ModerationStateWidget.
+ * Contains \Drupal\workbench_moderation\Plugin\Field\FieldWidget\ModerationStateWidget.
  */
 
-namespace Drupal\moderation_state\Plugin\Field\FieldWidget;
+namespace Drupal\workbench_moderation\Plugin\Field\FieldWidget;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -19,8 +19,8 @@ use Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsSelectWidget;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\moderation_state\Entity\ModerationState;
-use Drupal\moderation_state\ModerationInformation;
+use Drupal\workbench_moderation\Entity\ModerationState;
+use Drupal\workbench_moderation\ModerationInformation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -58,7 +58,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
   protected $moderationStateStorage;
 
   /**
-   * @var \Drupal\moderation_state\ModerationInformation
+   * @var \Drupal\workbench_moderation\ModerationInformation
    */
   protected $moderationInformation;
 
@@ -142,7 +142,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       ->getSettableOptions($this->currentUser);
 
     $default = $items->get($delta)->target_id ?: $bundle_entity->getThirdPartySetting('moderation_state', 'default_moderation_state', FALSE);
-    /** @var \Drupal\moderation_state\ModerationStateInterface $default_state */
+    /** @var \Drupal\workbench_moderation\ModerationStateInterface $default_state */
     $default_state = ModerationState::load($default);
     if (!$default || !$default_state) {
       throw new \UnexpectedValueException(sprintf('The %s bundle has an invalid moderation state configuration, moderation states are enabled but no default is set.', $bundle_entity->label()));
@@ -156,7 +156,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
     // @todo write a test for this.
     $allowed = $bundle_entity->getThirdPartySetting('moderation_state', 'allowed_moderation_states', []);
     if ($from) {
-      /* @var \Drupal\moderation_state\ModerationStateTransitionInterface $transition */
+      /* @var \Drupal\workbench_moderation\ModerationStateTransitionInterface $transition */
       foreach ($this->moderationStateTransitionStorage->loadMultiple($from) as $id => $transition) {
         $to_state = $transition->getToState();
         if ($this->currentUser->hasPermission('use ' . $id . ' transition') && in_array($to_state, $allowed, TRUE)) {

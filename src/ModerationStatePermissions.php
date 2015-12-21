@@ -1,15 +1,15 @@
 <?php
 /**
  * @file
- * Contains \Drupal\moderation_state\ModerationStatePermissions.
+ * Contains \Drupal\workbench_moderation\ModerationStatePermissions.
  */
 
-namespace Drupal\moderation_state;
+namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Routing\UrlGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\moderation_state\Entity\ModerationState;
-use Drupal\moderation_state\Entity\ModerationStateTransition;
+use Drupal\workbench_moderation\Entity\ModerationState;
+use Drupal\workbench_moderation\Entity\ModerationStateTransition;
 
 /**
  * Defines a class for dynamic permisisons based on transitions.
@@ -29,7 +29,7 @@ class ModerationStatePermissions {
     // @todo write a test for this.
     $perms = [];
     $states = ModerationState::loadMultiple();
-    /* @var \Drupal\moderation_state\ModerationStateTransitionInterface $transition */
+    /* @var \Drupal\workbench_moderation\ModerationStateTransitionInterface $transition */
     foreach (ModerationStateTransition::loadMultiple() as $id => $transition) {
       $perms['use ' . $id . ' transition'] = [
         'title' => $this->t('Use the %transition_name transition', [

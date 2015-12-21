@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\moderation_state\Kernel\ModerationStateFieldTest.
+ * Contains \Drupal\Tests\workbench_moderation\Kernel\ModerationStateFieldTest.
  */
 
-namespace Drupal\Tests\moderation_state\Kernel;
+namespace Drupal\Tests\workbench_moderation\Kernel;
 use Drupal\KernelTests\KernelTestBase;
 
 

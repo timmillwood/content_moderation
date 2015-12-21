@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains \Drupal\moderation_state\Plugin\Validation\Constraint\ModerationState.
+ * Contains \Drupal\workbench_moderation\Plugin\Validation\Constraint\ModerationState.
  */
 
-namespace Drupal\moderation_state\Plugin\Validation\Constraint;
+namespace Drupal\workbench_moderation\Plugin\Validation\Constraint;
 
 use Symfony\Component\Validator\Constraint;
 

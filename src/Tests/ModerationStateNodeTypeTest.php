@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains \Drupal\moderation_state\Tests\ModerationStateNodeTypeTest.
+ * Contains \Drupal\workbench_moderation\Tests\ModerationStateNodeTypeTest.
  */
 
-namespace Drupal\moderation_state\Tests;
+namespace Drupal\workbench_moderation\Tests;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\Entity\Role;
 

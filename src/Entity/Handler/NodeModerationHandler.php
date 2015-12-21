@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains Drupal\moderation_state\Entity\Handler\NodeCustomizations.
+ * Contains Drupal\workbench_moderation\Entity\Handler\NodeCustomizations.
  */
 
-namespace Drupal\moderation_state\Entity\Handler;
+namespace Drupal\workbench_moderation\Entity\Handler;
 
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;

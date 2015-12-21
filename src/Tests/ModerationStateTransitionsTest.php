@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains \Drupal\moderation_state\Tests\ModerationStateTransitionsTest.
+ * Contains \Drupal\workbench_moderation\Tests\ModerationStateTransitionsTest.
  */
 
-namespace Drupal\moderation_state\Tests;
+namespace Drupal\workbench_moderation\Tests;
 
 /**
  * Tests moderation state transition config entity.

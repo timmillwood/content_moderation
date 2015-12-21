@@ -2,15 +2,15 @@
 
 /**
  * @file
- * Contains Drupal\Tests\moderation_state\Kernel\EntityOperationsTest.
+ * Contains Drupal\Tests\workbench_moderation\Kernel\EntityOperationsTest.
  */
 
-namespace Drupal\Tests\moderation_state\Kernel;
+namespace Drupal\Tests\workbench_moderation\Kernel;
 
 
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\moderation_state\EntityOperations;
-use Drupal\moderation_state\ModerationInformation;
+use Drupal\workbench_moderation\EntityOperations;
+use Drupal\workbench_moderation\ModerationInformation;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\Tests\UnitTestCase;
@@ -19,7 +19,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 /**
  * Class EntityOperationsTest
  *
- * @coversDefaultClass \Drupal\moderation_state\EntityOperations
+ * @coversDefaultClass \Drupal\workbench_moderation\EntityOperations
  * @group moderation_state
  */
 class EntityOperationsTest extends KernelTestBase {

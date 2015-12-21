@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains Drupal\moderation_state\Plugin\Derivative\DynamicLocalTasks.
+ * Contains Drupal\workbench_moderation\Plugin\Derivative\DynamicLocalTasks.
  */
 
-namespace Drupal\moderation_state\Plugin\Derivative;
+namespace Drupal\workbench_moderation\Plugin\Derivative;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;

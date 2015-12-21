@@ -4,7 +4,7 @@
  * Contains ModerationStateStorage.php
  */
 
-namespace Drupal\moderation_state;
+namespace Drupal\workbench_moderation;
 
 
 use Drupal\Component\Uuid\UuidInterface;
@@ -50,7 +50,7 @@ class ModerationStateTransitionStorage extends ConfigEntityStorage implements En
    * {@inheritdoc}
    */
   protected function doCreate(array $values) {
-    /* @var \Drupal\moderation_state\ModerationStateTransitionInterface $entity */
+    /* @var \Drupal\workbench_moderation\ModerationStateTransitionInterface $entity */
     $entity = parent::doCreate($values);
     return $entity->setModerationStateConfigPrefix($this->entityTypeManager->getDefinition('moderation_state')->getConfigPrefix());
   }
@@ -61,7 +61,7 @@ class ModerationStateTransitionStorage extends ConfigEntityStorage implements En
   protected function mapFromStorageRecords(array $records) {
     $entities = parent::mapFromStorageRecords($records);
     $prefix = $this->entityTypeManager->getDefinition('moderation_state')->getConfigPrefix();
-    /* @var \Drupal\moderation_state\ModerationStateTransitionInterface $entity */
+    /* @var \Drupal\workbench_moderation\ModerationStateTransitionInterface $entity */
     foreach ($entities as &$entity) {
       $entity->setModerationStateConfigPrefix($prefix);
     }

@@ -2,13 +2,13 @@
 
 /**
  * @file
- * Contains \Drupal\moderation_state\Entity\ModerationStateTransition.
+ * Contains \Drupal\workbench_moderation\Entity\ModerationStateTransition.
  */
 
-namespace Drupal\moderation_state\Entity;
+namespace Drupal\workbench_moderation\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\moderation_state\ModerationStateTransitionInterface;
+use Drupal\workbench_moderation\ModerationStateTransitionInterface;
 
 /**
  * Defines the Moderation state transition entity.
@@ -17,13 +17,13 @@ use Drupal\moderation_state\ModerationStateTransitionInterface;
  *   id = "moderation_state_transition",
  *   label = @Translation("Moderation state transition"),
  *   handlers = {
- *     "list_builder" = "Drupal\moderation_state\ModerationStateTransitionListBuilder",
+ *     "list_builder" = "Drupal\workbench_moderation\ModerationStateTransitionListBuilder",
  *     "form" = {
- *       "add" = "Drupal\moderation_state\Form\ModerationStateTransitionForm",
- *       "edit" = "Drupal\moderation_state\Form\ModerationStateTransitionForm",
- *       "delete" = "Drupal\moderation_state\Form\ModerationStateTransitionDeleteForm"
+ *       "add" = "Drupal\workbench_moderation\Form\ModerationStateTransitionForm",
+ *       "edit" = "Drupal\workbench_moderation\Form\ModerationStateTransitionForm",
+ *       "delete" = "Drupal\workbench_moderation\Form\ModerationStateTransitionDeleteForm"
  *     },
- *     "storage" = "Drupal\moderation_state\ModerationStateTransitionStorage"
+ *     "storage" = "Drupal\workbench_moderation\ModerationStateTransitionStorage"
  *   },
  *   config_prefix = "moderation_state_transition",
  *   admin_permission = "administer moderation state transitions",
