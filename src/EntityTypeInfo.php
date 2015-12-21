@@ -97,7 +97,7 @@ class EntityTypeInfo {
    *   The modified content entity definition.
    */
   protected function addModerationToEntity(ContentEntityTypeInterface $type) {
-    if (!$type->getHandlerClass('moderation')) {
+    if (!$type->hasHandlerClass('moderation')) {
       $handler_class = !empty($this->moderationHandlers[$type->id()]) ? $this->moderationHandlers[$type->id()] : ModerationHandler::class;
       $type->setHandlerClass('moderation', $handler_class);
     }

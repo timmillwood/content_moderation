@@ -25,15 +25,11 @@ class ModerationHandler implements ModerationHandlerInterface, EntityHandlerInte
 
   use StringTranslationTrait;
 
-  public function __construct(TranslationInterface $translation) {
-    $this->stringTranslation = $translation;
-  }
-
   /**
    * @inheritDoc
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
-    return new static($container->get('string_translation'));
+    return new static();
   }
 
   /**
