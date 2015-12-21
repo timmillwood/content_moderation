@@ -19,15 +19,6 @@ class BlockContentModerationHandler extends ModerationHandler {
   /**
    * {@inheritdoc}
    */
-  public function onEntityModerationFormSubmit(ConfigEntityInterface $bundle) {
-    /** @var BlockContentType $bundle */
-    $bundle->set('revision', TRUE);
-    $bundle->save();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function enforceRevisionsEntityFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
     $form['revision_information']['revision']['#default_value'] = TRUE;
     $form['revision_information']['revision']['#disabled'] = TRUE;

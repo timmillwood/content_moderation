@@ -32,15 +32,6 @@ class NodeModerationHandler extends ModerationHandler {
   /**
    * {@inheritdoc}
    */
-  public function onEntityModerationFormSubmit(ConfigEntityInterface $bundle) {
-    /** @var NodeType $bundle */
-    $bundle->setNewRevision(TRUE);
-    $bundle->save();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function enforceRevisionsEntityFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
     $form['revision']['#disabled'] = TRUE;
     $form['revision']['#default_value'] = TRUE;

@@ -49,6 +49,28 @@ class ModerationHandler implements ModerationHandlerInterface, EntityHandlerInte
    * {@inheritdoc}
    */
   public function onEntityModerationFormSubmit(ConfigEntityInterface $bundle) {
+    // The Revisions portion of Entity API is not uniformly applied or consistent.
+    // Until that's fixed in core, we'll make a best-attempt to apply it to
+    // the common entity patterns so as to avoid every entity type needing to
+    // implement this method, although some will still need to do so for now.
+
+    // This is the API that should be universal, but isn't yet. See NodeType
+    // for an example.
+    if (method_exists($bundle, 'setNewRevision')) {
+      $bundle->setNewRevision(TRUE);
+    }
+    // This is the raw property used by NodeType, and likely others.
+    elseif ($bundle->get('new_revision') !== NULL) {
+      $bundle->set('new_revision', TRUE);
+    }
+    // This is the raw property used by BlockContentType, and maybe others.
+    elseif ($bundle->get('revision') !== NULL) {
+      $bundle->set('revision', TRUE);
+    }
+
+
+    $bundle->save();
+
     return;
   }
 
