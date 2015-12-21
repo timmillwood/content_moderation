@@ -30,9 +30,9 @@ class EntityOperations {
    * Constructs a new EntityOperations object.
    *
    * @param \Drupal\moderation_state\ModerationInformationInterface $moderation_info
+   *   Moderation information service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity type manager service.
-   * @param \Drupal\moderation_state\EntityCustomizationInterface $customizations
-   *   Entity customizations service.
    */
   public function __construct(ModerationInformationInterface $moderation_info, EntityTypeManagerInterface $entity_type_manager) {
     $this->moderationInfo = $moderation_info;
