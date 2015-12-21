@@ -9,4 +9,4 @@
   'restrict access': TRUE
 
 permission_callbacks:
-  - \Drupal\moderation_state\ModerationStatePermissions::transitionPermissions
+  - \Drupal\workbench_moderation\ModerationStatePermissions::transitionPermissions

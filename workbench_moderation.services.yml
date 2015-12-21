@@ -1,20 +1,20 @@
 services:
   paramconverter.latest_revision:
-    class: Drupal\moderation_state\ParamConverter\EntityRevisionConverter
-    arguments: ['@entity.manager', '@moderation_state.moderation_information']
+    class: Drupal\workbench_moderation\ParamConverter\EntityRevisionConverter
+    arguments: ['@entity.manager', '@workbench_moderation.moderation_information']
     tags:
       - { name: paramconverter, priority: 5 }
     arguments: ['@entity.manager']
-  moderation_state.state_transition_validation:
-    class: \Drupal\moderation_state\StateTransitionValidation
-    factory: \Drupal\moderation_state\StateTransitionValidation::create
+  workbench_moderation.state_transition_validation:
+    class: \Drupal\workbench_moderation\StateTransitionValidation
+    factory: \Drupal\workbench_moderation\StateTransitionValidation::create
     arguments: ['@entity_type.manager']
-  moderation_state.moderation_information:
-    class: Drupal\moderation_state\ModerationInformation
+  workbench_moderation.moderation_information:
+    class: Drupal\workbench_moderation\ModerationInformation
     arguments: ['@entity_type.manager', '@current_user']
-  moderation_state.entity_type:
-    class: Drupal\moderation_state\EntityTypeInfo
-    arguments: ['@string_translation', '@moderation_state.moderation_information', '@entity_type.manager']
-  moderation_state.entity_operations:
-    class: Drupal\moderation_state\EntityOperations
-    arguments: ['@moderation_state.moderation_information', '@entity_type.manager']
+  workbench_moderation.entity_type:
+    class: Drupal\workbench_moderation\EntityTypeInfo
+    arguments: ['@string_translation', '@workbench_moderation.moderation_information', '@entity_type.manager']
+  workbench_moderation.entity_operations:
+    class: Drupal\workbench_moderation\EntityOperations
+    arguments: ['@workbench_moderation.moderation_information', '@entity_type.manager']
