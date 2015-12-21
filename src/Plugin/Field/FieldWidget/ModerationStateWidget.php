@@ -176,7 +176,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
     ];
     if ($this->currentUser->hasPermission($this->getAdminPermission($entity->getEntityType())) && count($options)) {
       // Use the dropbutton.
-      $element['#process'][] = [$this, 'processActions'];
+      $element['#process'][] = [get_called_class(), 'processActions'];
       // Don't show in sidebar/body.
       $element['#access'] = FALSE;
     }
@@ -217,7 +217,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
-  public function updateStatus($entity_type_id, ContentEntityInterface $entity, array $form, FormStateInterface $form_state) {
+  public static function updateStatus($entity_type_id, ContentEntityInterface $entity, array $form, FormStateInterface $form_state) {
     $element = $form_state->getTriggeringElement();
     if (isset($element['#moderation_state'])) {
       $entity->moderation_state->target_id = $element['#moderation_state'];
@@ -226,7 +226,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
   /**
    * Process callback to alter action buttons.
    */
-  public function processActions($element, FormStateInterface $form_state, array &$form) {
+  public static function processActions($element, FormStateInterface $form_state, array &$form) {
     $default_button = $form['actions']['submit'];
     $default_button['#access'] = TRUE;
     $options = $element['#options'];
@@ -234,7 +234,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       if ($id === $element['#default_value']) {
         if ($element['#published']) {
           $button = [
-            '#value' => $this->t('Save and keep @state', ['@state' => $label]),
+            '#value' => t('Save and keep @state', ['@state' => $label]),
             '#dropbutton' => 'save',
             '#moderation_state' => $id,
             '#weight' => -10,
@@ -242,7 +242,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
         }
         else {
           $button = [
-            '#value' => $this->t('Save as @state', ['@state' => $label]),
+            '#value' => t('Save as @state', ['@state' => $label]),
             '#dropbutton' => 'save',
             '#moderation_state' => $id,
             '#weight' => -10,
@@ -252,9 +252,9 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       else {
         // @todo write a test for this.
         $button = [
-          '#value' => $this->t('Save and @type @state', [
+          '#value' => t('Save and @type @state', [
             '@state' => $label,
-            '@type' => $element['#published'] ? $this->t('create new revision in') : $this->t('transition to'),
+            '@type' => $element['#published'] ? t('create new revision in') : t('transition to'),
           ]),
           '#dropbutton' => 'save',
           '#moderation_state' => $id,
@@ -266,7 +266,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       $form['actions'][$key]['#access'] = FALSE;
       unset($form['actions'][$key]['#dropbutton']);
     }
-    $form['#entity_builders']['update_moderation_state'] = [$this, 'updateStatus'];
+    $form['#entity_builders']['update_moderation_state'] = [get_called_class(), 'updateStatus'];
     return $element;
   }
 
