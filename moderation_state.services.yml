@@ -9,13 +9,12 @@ services:
     class: \Drupal\moderation_state\StateTransitionValidation
     factory: \Drupal\moderation_state\StateTransitionValidation::create
     arguments: ['@entity_type.manager']
-
   moderation_state.moderation_information:
     class: Drupal\moderation_state\ModerationInformation
     arguments: ['@entity_type.manager', '@current_user']
   moderation_state.entity_type:
     class: Drupal\moderation_state\EntityTypeInfo
-    arguments: ['@string_translation', '@moderation_state.moderation_information']
+    arguments: ['@string_translation', '@moderation_state.moderation_information', '@entity_type.manager']
   moderation_state.entity_operations:
     class: Drupal\moderation_state\EntityOperations
-    arguments: ['@moderation_state.moderation_information']
+    arguments: ['@moderation_state.moderation_information', '@entity_type.manager']

@@ -9,7 +9,7 @@ namespace Drupal\moderation_state;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\node\Entity\Node;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Defines a class for reacting to entity events.
@@ -22,13 +22,21 @@ class EntityOperations {
   protected $moderationInfo;
 
   /**
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * Constructs a new EntityOperations object.
    *
    * @param \Drupal\moderation_state\ModerationInformationInterface $moderation_info
+   *   Moderation information service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity type manager service.
    */
-  public function __construct(ModerationInformationInterface $moderation_info) {
+  public function __construct(ModerationInformationInterface $moderation_info, EntityTypeManagerInterface $entity_type_manager) {
     $this->moderationInfo = $moderation_info;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -41,18 +49,8 @@ class EntityOperations {
     if ($entity instanceof ContentEntityInterface && $this->moderationInfo->isModeratableEntity($entity)) {
       // @todo write a test for this.
       if ($entity->moderation_state->entity) {
-        // This is *probably* not necessary if configuration is setup correctly,
-        // but it can't hurt.
-        $entity->setNewRevision(TRUE);
         $published_state = $entity->moderation_state->entity->isPublishedState();
-        // A newly-created revision is always the default revision, or else
-        // it gets lost.
-        $entity->isDefaultRevision($entity->isNew() || $published_state);
-        // Only nodes have a concept of published.
-        // @todo This should also get split off to a per-entity tagged service.
-        if ($entity instanceof Node) {
-          $entity->setPublished($published_state);
-        }
+        $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->onPresave($entity, $published_state);
       }
     }
   }

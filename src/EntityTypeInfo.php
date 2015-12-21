@@ -6,19 +6,21 @@
 
 namespace Drupal\moderation_state;
 
-use Drupal\block_content\Entity\BlockContent;
-use Drupal\block_content\Entity\BlockContentType;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\moderation_state\Form\EntityModerationForm;
 use Drupal\moderation_state\Routing\ModerationRouteProvider;
-use Drupal\node\Entity\Node;
-use Drupal\node\Entity\NodeType;
+use Drupal\moderation_state\Entity\Handler\NodeModerationHandler;
+use Drupal\moderation_state\Entity\Handler\BlockContentModerationHandler;
+use Drupal\moderation_state\Entity\Handler\ModerationHandler;
+use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
  * Service class for manipulating entity type information.
@@ -35,15 +37,34 @@ class EntityTypeInfo {
   protected $moderationInfo;
 
   /**
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * A keyed array of custom moderation handlers for given entity types.
+   * Any entity not specified will use a common default.
+   *
+   * @var array
+   */
+  protected $moderationHandlers = [
+    'node' => NodeModerationHandler::class,
+    'block_content' => BlockContentModerationHandler::class,
+  ];
+
+  /**
    * EntityTypeInfo constructor.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $translation
    *   The translation service. for form alters.
    * @param \Drupal\moderation_state\ModerationInformationInterface $moderation_information
    *   The moderation information service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity type manager.
    */
-  public function __construct(TranslationInterface $translation, ModerationInformationInterface $moderation_information) {
+  public function __construct(TranslationInterface $translation, ModerationInformationInterface $moderation_information, EntityTypeManagerInterface $entity_type_manager) {
     $this->stringTranslation = $translation;
     $this->moderationInfo = $moderation_information;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -58,15 +79,38 @@ class EntityTypeInfo {
    */
   public function entityTypeAlter(array &$entity_types) {
     foreach ($this->moderationInfo->selectRevisionableEntityTypes($entity_types) as $type_name => $type) {
-      $entity_types[$type_name] = $this->addModeration($type);
+      $entity_types[$type_name] = $this->addModerationToEntityType($type);
+      $entity_types[$type->get('bundle_of')] = $this->addModerationToEntity($entity_types[$type->get('bundle_of')]);
     }
   }
 
   /**
-   * Modifies an entity type to include moderation configuration support.
+   * Modifies an entity definition to include moderation support.
+   *
+   * This primarily just means an extra handler. A Generic one is provided,
+   * but individual entity types can provide their own as appropriate.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityTypeInterface $type
+   *   The content entity definition to modify.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityTypeInterface
+   *   The modified content entity definition.
+   */
+  protected function addModerationToEntity(ContentEntityTypeInterface $type) {
+    if (!$type->hasHandlerClass('moderation')) {
+      $handler_class = !empty($this->moderationHandlers[$type->id()]) ? $this->moderationHandlers[$type->id()] : ModerationHandler::class;
+      $type->setHandlerClass('moderation', $handler_class);
+    }
+
+    return $type;
+  }
+
+  /**
+   * Modifies an entity type definition to include moderation configuration support.
    *
    * That "configuration support" includes a configuration form, a hypermedia
-   * link, and a route provider to tie it all together.
+   * link, and a route provider to tie it all together. There's also a
+   * moderation handler for per-entity-type variation.
    *
    * @param \Drupal\Core\Config\Entity\ConfigEntityTypeInterface $type
    *   The config entity definition to modify.
@@ -74,18 +118,22 @@ class EntityTypeInfo {
    * @return \Drupal\Core\Config\Entity\ConfigEntityTypeInterface
    *   The modified config entity definition.
    */
-  protected function addModeration(ConfigEntityTypeInterface $type) {
-    if ($type->hasLinkTemplate('edit-form')) {
+  protected function addModerationToEntityType(ConfigEntityTypeInterface $type) {
+    if ($type->hasLinkTemplate('edit-form') && !$type->hasLinkTemplate('moderation-form')) {
       $type->setLinkTemplate('moderation-form', $type->getLinkTemplate('edit-form') . '/moderation');
     }
 
-    $type->setFormClass('moderation', EntityModerationForm::class);
+    if (!$type->getFormClass('moderation')) {
+      $type->setFormClass('moderation', EntityModerationForm::class);
+    }
 
     // @todo Core forgot to add a direct way to manipulate route_provider, so
     // we have to do it the sloppy way for now.
     $providers = $type->getHandlerClass('route_provider') ?: [];
-    $providers['moderation'] = ModerationRouteProvider::class;
-    $type->setHandlerClass('route_provider', $providers);
+    if (empty($providers['moderation'])) {
+      $providers['moderation'] = ModerationRouteProvider::class;
+      $type->setHandlerClass('route_provider', $providers);
+    }
 
     return $type;
   }
@@ -148,74 +196,16 @@ class EntityTypeInfo {
    */
   public function bundleFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
     if ($this->moderationInfo->isRevisionableBundleForm($form_state->getFormObject())) {
-      $this->enforceRevisionsBundleFormAlter($form, $form_state, $form_id);
+      /* @var ConfigEntityTypeInterface $bundle */
+      $bundle = $form_state->getFormObject()->getEntity();
+
+      $this->entityTypeManager->getHandler($bundle->getEntityType()->getBundleOf(), 'moderation')->enforceRevisionsBundleFormAlter($form, $form_state, $form_id);
     }
     else if ($this->moderationInfo->isModeratedEntityForm($form_state->getFormObject())) {
-      $this->enforceRevisionsEntityFormAlter($form, $form_state, $form_id);
+      /* @var ContentEntityInterface $entity */
+      $entity = $form_state->getFormObject()->getEntity();
+
+      $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->enforceRevisionsEntityFormAlter($form, $form_state, $form_id);
     }
   }
-
-  /**
-   * Alters entity forms to enforce revision handling.
-   *
-   * Different entity types structure their forms completely differently, so
-   * there's seemingly no way to do this globally. Instead, we'll just hard
-   * code form changes for core's entity types. Suggestions for a better
-   * approach are welcome.
-   *
-   * @param array $form
-   *   An associative array containing the structure of the form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   * @param string $form_id
-   *   The form id.
-   *
-   * @see hook_form_alter()
-   */
-  protected function enforceRevisionsEntityFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
-    $entity = $form_state->getFormObject()->getEntity();
-
-    if ($entity instanceof Node) {
-      $form['revision']['#disabled'] = TRUE;
-      $form['revision']['#default_value'] = TRUE;
-      $form['revision']['#description'] = $this->t('Revisions are required.');
-    }
-    else if ($entity instanceof BlockContent) {
-
-      $form['revision_information']['revision']['#default_value'] = TRUE;
-      $form['revision_information']['revision']['#disabled'] = TRUE;
-      $form['revision_information']['revision']['#description'] = $this->t('Revisions must be required when moderation is enabled.');
-    }
-  }
-
-  /**
-   * Alters bundle forms to enforce revision handling.
-   *
-   * Different entity types structure their forms completely differently, so
-   * there's seemingly no way to do this globally. Instead, we'll just hard
-   * code form changes for core's entity types. Suggestions for a better
-   * approach are welcome.
-   *
-   * @param array $form
-   *   An associative array containing the structure of the form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   * @param string $form_id
-   *   The form id.
-   *
-   * @see hook_form_alter()
-   */
-  protected function enforceRevisionsBundleFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
-    $entity = $form_state->getFormObject()->getEntity();
-
-    if ($entity instanceof NodeType) {
-      $form['workflow']['options']['#default_value']['revision'] = 'revision';
-    }
-    else if ($entity instanceof BlockContentType) {
-      $form['revision']['#default_value'] = 1;
-      $form['revision']['#disabled'] = TRUE;
-      $form['revision']['#description'] = $this->t('Revisions must be required when moderation is enabled.');
-    }
-  }
-
 }
