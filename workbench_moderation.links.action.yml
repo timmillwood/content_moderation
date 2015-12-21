@@ -9,4 +9,3 @@ entity.moderation_state_transition.add_form:
   title: 'Add Moderation state transition'
   appears_on:
     - entity.moderation_state_transition.collection
-
