@@ -81,7 +81,7 @@ class EntityModerationRouteProvider implements EntityRouteProviderInterface, Ent
         ->setRequirement('_entity_access', "{$entity_type_id}.update")
         ->setRequirement('_workbench_moderation_latest_version', 'TRUE')
         ->setOption('parameters', [
-          $entity_type_id => ['type' => 'entity:' . $entity_type_id],
+          $entity_type_id => ['type' => 'entity:' . $entity_type_id, 'load_forward_revision' => 1],
         ]);
 
       // Entity types with serial IDs can specify this in their route
