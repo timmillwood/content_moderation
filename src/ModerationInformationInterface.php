@@ -105,7 +105,7 @@ interface ModerationInformationInterface {
    * @param int $entity_id
    *   The entity ID.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|null
+   * @return \Drupal\Core\Entity\ContentEntityInterface|null
    *   The latest entity revision or NULL, if the entity type / entity doesn't
    *   exist.
    */

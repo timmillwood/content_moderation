@@ -159,7 +159,7 @@ class ModerationInformation implements ModerationInformationInterface {
    * require loading the full entity revision.
    */
   public function isLatestRevision(ContentEntityInterface $entity) {
-    return $this->getLatestRevision($entity->getEntityTypeId(), $entity->id()) == $entity->id();
+    return $this->getLatestRevision($entity->getEntityTypeId(), $entity->id())->getRevisionId() == $entity->getRevisionId();
   }
 
   /**
