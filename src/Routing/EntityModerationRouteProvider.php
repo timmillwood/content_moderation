@@ -78,7 +78,8 @@ class EntityModerationRouteProvider implements EntityRouteProviderInterface, Ent
           '_entity_view' => "{$entity_type_id}.full",
           '_title_callback' => '\Drupal\Core\Entity\Controller\EntityController::title',
         ])
-        ->setRequirement('_entity_access', "{$entity_type_id}.view")
+        ->setRequirement('_entity_access', "{$entity_type_id}.update")
+        ->setRequirement('_workbench_moderation_latest_version', 'TRUE')
         ->setOption('parameters', [
           $entity_type_id => ['type' => 'entity:' . $entity_type_id],
         ]);

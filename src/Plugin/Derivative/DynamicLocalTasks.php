@@ -17,6 +17,9 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Generates moderation-related local tasks.
+ */
 class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface {
 
   use StringTranslationTrait;
