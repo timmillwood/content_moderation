@@ -2,22 +2,15 @@
 
 namespace Drupal\workbench_moderation\Routing;
 
-
-use Drupal\Core\Entity\EntityHandlerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Routing\EntityRouteProviderInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
-class ModerationRouteProvider implements EntityRouteProviderInterface, EntityHandlerInterface  {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
-    return new static();
-  }
+/**
+ * Provides the moderation configuration routes for config entities.
+ */
+class ModerationRouteProvider implements EntityRouteProviderInterface  {
 
   /**
    * {@inheritdoc}
