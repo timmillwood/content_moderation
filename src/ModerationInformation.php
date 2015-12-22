@@ -164,6 +164,16 @@ class ModerationInformation implements ModerationInformationInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo This method implicitly assumes that the $entity passed is the
+   * default revision. We should eliminate that assumption.
+   */
+  public function hasForwardRevision(ContentEntityInterface $entity) {
+    return $this->isModeratableEntity($entity) && !$this->isLatestRevision($entity);
+  }
+
+  /**
+   * {@inheritdoc}
    */
   public function isLiveRevision(ContentEntityInterface $entity) {
     return $this->isLatestRevision($entity)

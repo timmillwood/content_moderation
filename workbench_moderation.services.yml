@@ -20,5 +20,6 @@ services:
     arguments: ['@workbench_moderation.moderation_information', '@entity_type.manager']
   access_check.latest_revision:
     class: Drupal\workbench_moderation\Access\LatestRevisionCheck
+    arguments: ['@workbench_moderation.moderation_information']
     tags:
       - { name: access_check, applies_to: _workbench_moderation_latest_version }

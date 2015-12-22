@@ -124,6 +124,17 @@ interface ModerationInformationInterface {
   public function isLatestRevision(ContentEntityInterface $entity);
 
   /**
+   * Determines if a forward revision exists for the specified entity.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The entity which may or may not have a forward revision.
+   *
+   * @return bool
+   *   TRUE if this entity has forward revisions available, FALSE otherwise.
+   */
+  public function hasForwardRevision(ContentEntityInterface $entity);
+
+  /**
    * Determines if an entity is "live".
    *
    * A "live" entity revision is one whose latest revision is also the default,
