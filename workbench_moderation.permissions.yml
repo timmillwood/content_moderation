@@ -1,4 +1,4 @@
-'administer moderation state':
+'administer moderation states':
   title: Administer moderation states
   description: Create and edit moderation states
   'restrict access': TRUE

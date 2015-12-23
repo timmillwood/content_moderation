@@ -18,7 +18,7 @@ entity.moderation_state.collection:
     _admin_route: TRUE
 
 entity.moderation_state.add_form:
-  path: '/admin/structure/moderation-state/states/add'
+  path: '/admin/structure/workbench-moderation/states/add'
   defaults:
     _entity_form: 'moderation_state.add'
     _title: 'Add Moderation state'
