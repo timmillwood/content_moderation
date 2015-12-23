@@ -49,8 +49,9 @@ abstract class ModerationStateTestBase extends WebTestBase {
    * @var array
    */
   public static $modules = [
-    'moderation_state',
+    'workbench_moderation',
     'block',
+    'block_content',
     'node',
     'views',
     'options',
