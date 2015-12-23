@@ -19,6 +19,9 @@ use Drupal\Core\Session\AccountInterface;
 
 /**
  * General service for moderation-related questions about Entity API.
+ *
+ * @todo Much of this code may eventually migrate to the Entity module, and
+ * from there to Drupal core.
  */
 class ModerationInformation implements ModerationInformationInterface {
 
@@ -138,6 +141,15 @@ class ModerationInformation implements ModerationInformationInterface {
    * {@inheritdoc}
    */
   public function getLatestRevision($entity_type_id, $entity_id) {
+    if ($latest_revision_id = $this->getLatestRevisionId($entity_type_id, $entity_id)) {
+      return $this->entityTypeManager->getStorage($entity_type_id)->loadRevision($latest_revision_id);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getLatestRevisionId($entity_type_id, $entity_id) {
     if ($storage = $this->entityTypeManager->getStorage($entity_type_id)) {
       $revision_ids = $storage->getQuery()
         ->allRevisions()
@@ -147,9 +159,19 @@ class ModerationInformation implements ModerationInformationInterface {
         ->execute();
       if ($revision_ids) {
         $revision_id = array_keys($revision_ids)[0];
-        return $storage->loadRevision($revision_id);
+        return $revision_id;
       }
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo Make this more performant.
+   */
+  public function getDefaultRevisionId($entity_type_id, $entity_id) {
+    $storage = $this->entityTypeManager->getStorage($entity_type_id);
+    return $storage->load($entity_id)->getRevisionId();
   }
 
   /**
@@ -159,7 +181,15 @@ class ModerationInformation implements ModerationInformationInterface {
    * require loading the full entity revision.
    */
   public function isLatestRevision(ContentEntityInterface $entity) {
-    return $this->getLatestRevision($entity->getEntityTypeId(), $entity->id()) == $entity->id();
+    return $this->getLatestRevision($entity->getEntityTypeId(), $entity->id())->getRevisionId() == $entity->getRevisionId();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasForwardRevision(ContentEntityInterface $entity) {
+    return $this->isModeratableEntity($entity)
+      && !($this->getLatestRevisionId($entity->getEntityTypeId(), $entity->id()) == $this->getDefaultRevisionId($entity->getEntityTypeId(), $entity->id()));
   }
 
   /**

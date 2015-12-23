@@ -9,6 +9,7 @@ namespace Drupal\workbench_moderation\Plugin\Derivative;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
@@ -16,6 +17,9 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Generates moderation-related local tasks.
+ */
 class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface {
 
   use StringTranslationTrait;
@@ -67,30 +71,54 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   public function getDerivativeDefinitions($base_plugin_definition) {
     $this->derivatives = [];
 
-    foreach ($this->moderatableEntityTypes() as $entity_type_id => $entity_type) {
+    foreach ($this->moderatableEntityTypeDefinitions() as $entity_type_id => $entity_type) {
       $this->derivatives["$entity_type_id.moderation_tab"] = [
-        'route_name' => "entity.$entity_type_id.moderation",
-        'title' => $this->t('Manage moderation'),
+          'route_name' => "entity.$entity_type_id.moderation",
+          'title' => $this->t('Manage moderation'),
           // @todo - are we sure they all have an edit_form?
-        'base_route' => "entity.$entity_type_id.edit_form",
-        'weight' => 30,
-      ] + $base_plugin_definition;
+          'base_route' => "entity.$entity_type_id.edit_form",
+          'weight' => 30,
+        ] + $base_plugin_definition;
+    }
+
+    foreach ($this->moderatableEntityDefinitions() as $entity_type_id => $entity_type) {
+      $this->derivatives["$entity_type_id.latest_version_tab"] = [
+          'route_name' => "entity.$entity_type_id.latest_version",
+          'title' => $this->t('Latest version'),
+          'base_route' => "entity.$entity_type_id.canonical",
+          'weight' => 1,
+        ] + $base_plugin_definition;
     }
 
     return $this->derivatives;
   }
 
   /**
-   * Returns an iterable of the entities to which to attach local tasks.
+   * Returns an array of content entities that are potentially moderateable.
    *
-   * @return array
+   * @return EntityTypeInterface[]
+   *   An array of just those entities we care about.
+   */
+  protected function moderatableEntityDefinitions() {
+    return array_filter($this->entityTypeManager->getDefinitions(), function (EntityTypeInterface $type) {
+      return ($type instanceof ContentEntityTypeInterface)
+        && $type->isRevisionable();
+    });
+  }
+
+  /**
+   * Returns an iterable of the config entities representing moderatable content.
+   *
+   * @return EntityTypeInterface[]
    *   An array of just those entity types we care about.
    */
-  protected function moderatableEntityTypes() {
+  protected function moderatableEntityTypeDefinitions() {
     $entity_types = $this->entityTypeManager->getDefinitions();
 
     return array_filter($entity_types, function (EntityTypeInterface $type) use ($entity_types) {
-      return ($type instanceof ConfigEntityTypeInterface) && ($bundle_of = $type->get('bundle_of')) && $entity_types[$bundle_of]->isRevisionable();
+      return ($type instanceof ConfigEntityTypeInterface)
+        && ($bundle_of = $type->get('bundle_of'))
+        && $entity_types[$bundle_of]->isRevisionable();
     });
   }
 }

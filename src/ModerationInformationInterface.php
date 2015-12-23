@@ -105,11 +105,39 @@ interface ModerationInformationInterface {
    * @param int $entity_id
    *   The entity ID.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|null
+   * @return \Drupal\Core\Entity\ContentEntityInterface|null
    *   The latest entity revision or NULL, if the entity type / entity doesn't
    *   exist.
    */
   public function getLatestRevision($entity_type_id, $entity_id);
+
+  /**
+   * Returns the revision ID of the latest revision of the given entity.
+   *
+   * @param string $entity_type_id
+   *   The entity type ID.
+   * @param int $entity_id
+   *   The entity ID.
+   *
+   * @return int
+   *   The revision ID of the latest revision for the specified entity, or
+   *   NULL if there is no such entity.
+   */
+  public function getLatestRevisionId($entity_type_id, $entity_id);
+
+  /**
+   * Returns the revision ID of the default revision for the specified entity.
+   *
+   * @param string $entity_type_id
+   *   The entity type ID.
+   * @param int $entity_id
+   *   The entity ID.
+   *
+   * @return int
+   *   The revision ID of the default revision, or NULL if the entity was
+   *   not found.
+   */
+  public function getDefaultRevisionId($entity_type_id, $entity_id);
 
   /**
    * Determines if an entity is a latest revision.
@@ -122,6 +150,17 @@ interface ModerationInformationInterface {
    *   FALSE otherwise.
    */
   public function isLatestRevision(ContentEntityInterface $entity);
+
+  /**
+   * Determines if a forward revision exists for the specified entity.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The entity which may or may not have a forward revision.
+   *
+   * @return bool
+   *   TRUE if this entity has forward revisions available, FALSE otherwise.
+   */
+  public function hasForwardRevision(ContentEntityInterface $entity);
 
   /**
    * Determines if an entity is "live".
