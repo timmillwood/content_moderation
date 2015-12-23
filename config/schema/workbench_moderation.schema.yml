@@ -14,7 +14,7 @@ workbench_moderation.moderation_state.*:
     uuid:
       type: string
 
-node.type.*.third_party.moderation_state:
+node.type.*.third_party.workbench_moderation:
   type: mapping
   label: 'Enable moderation states for this node type'
   mapping:

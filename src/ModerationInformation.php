@@ -81,7 +81,7 @@ class ModerationInformation implements ModerationInformationInterface {
    */
   public function isModeratableBundle(EntityTypeInterface $entity_type, $bundle) {
     if ($bundle_entity = $this->loadBundleEntity($entity_type->getBundleEntityType(), $bundle)) {
-      return $bundle_entity->getThirdPartySetting('moderation_state', 'enabled', FALSE);
+      return $bundle_entity->getThirdPartySetting('workbench_moderation', 'enabled', FALSE);
     }
     return FALSE;
   }

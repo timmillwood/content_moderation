@@ -13,14 +13,14 @@ use Drupal\node\Entity\NodeType;
 
 /**
  * @coversDefaultClass \Drupal\workbench_moderation\Plugin\Validation\Constraint\ModerationStateValidator
- * @group moderation_state
+ * @group workbench_moderation
  */
 class EntityStateChangeValidationTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'moderation_state', 'user', 'system'];
+  public static $modules = ['node', 'workbench_moderation', 'user', 'system'];
 
   /**
    * {@inheritdoc}
@@ -30,7 +30,7 @@ class EntityStateChangeValidationTest extends KernelTestBase {
 
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
-    $this->installConfig('moderation_state');
+    $this->installConfig('workbench_moderation');
   }
 
   /**
@@ -63,6 +63,7 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     $node_type = NodeType::create([
       'type' => 'example',
     ]);
+    $node_type->setThirdPartySetting('workbench_moderation', 'enabled', TRUE);
     $node_type->save();
     $node = Node::create([
       'type' => 'example',

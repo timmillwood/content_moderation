@@ -11,14 +11,14 @@ use Drupal\KernelTests\KernelTestBase;
 
 /**
  * Tests moderation state field.
- * @group moderation_state
+ * @group workbench_moderation
  */
 class ModerationStateFieldTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['moderation_state', 'node', 'views', 'options', 'user'];
+  public static $modules = ['workbench_moderation', 'node', 'views', 'options', 'user'];
 
   /**
    * {@inheritdoc}

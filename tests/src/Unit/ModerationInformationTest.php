@@ -19,7 +19,7 @@ use Drupal\workbench_moderation\ModerationInformation;
 
 /**
  * @coversDefaultClass \Drupal\workbench_moderation\ModerationInformation
- * @group moderation_state
+ * @group workbench_moderation
  */
 class ModerationInformationTest extends \PHPUnit_Framework_TestCase {
 
@@ -35,7 +35,7 @@ class ModerationInformationTest extends \PHPUnit_Framework_TestCase {
 
   public function setupModerationEntityManager($status) {
     $bundle = $this->prophesize(ConfigEntityInterface::class);
-    $bundle->getThirdPartySetting('moderation_state', 'enabled', FALSE)->willReturn($status);
+    $bundle->getThirdPartySetting('workbench_moderation', 'enabled', FALSE)->willReturn($status);
 
     $entity_storage = $this->prophesize(EntityStorageInterface::class);
     $entity_storage->load('test_bundle')->willReturn($bundle->reveal());

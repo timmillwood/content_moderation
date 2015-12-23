@@ -16,11 +16,11 @@ use Drupal\node\Entity\NodeType;
 
 /**
  * @coversDefaultClass \Drupal\workbench_moderation\ParamConverter\EntityRevisionConverter
- * @group moderation_state
+ * @group workbench_moderation
  */
 class EntityRevisionConverterTest extends KernelTestBase {
 
-  public static $modules = ['user', 'entity_test', 'system', 'moderation_state', 'node'];
+  public static $modules = ['user', 'entity_test', 'system', 'workbench_moderation', 'node'];
 
   /**
    * {@inheritdoc}
@@ -56,7 +56,7 @@ class EntityRevisionConverterTest extends KernelTestBase {
     $node_type = NodeType::create([
       'type' => 'article',
     ]);
-    $node_type->setThirdPartySetting('moderation_state', 'enabled', TRUE);
+    $node_type->setThirdPartySetting('workbench_moderation', 'enabled', TRUE);
     $node_type->save();
 
     $revision_ids = [];

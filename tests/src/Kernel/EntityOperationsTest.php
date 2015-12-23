@@ -20,14 +20,14 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
  * Class EntityOperationsTest
  *
  * @coversDefaultClass \Drupal\workbench_moderation\EntityOperations
- * @group moderation_state
+ * @group workbench_moderation
  */
 class EntityOperationsTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['moderation_state', 'node', 'views', 'options', 'user', 'system'];
+  public static $modules = ['workbench_moderation', 'node', 'views', 'options', 'user', 'system'];
 
   /**
    * {@inheritdoc}
@@ -37,7 +37,7 @@ class EntityOperationsTest extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installSchema('node', 'node_access');
     $this->installEntitySchema('user');
-    $this->installConfig('moderation_state');
+    $this->installConfig('workbench_moderation');
 
     $this->createNodeType();
   }
@@ -50,7 +50,7 @@ class EntityOperationsTest extends KernelTestBase {
       'type' => 'page',
       'label' => 'Page',
     ]);
-    $node_type->setThirdPartySetting('moderation_state', 'enabled', TRUE);
+    $node_type->setThirdPartySetting('workbench_moderation', 'enabled', TRUE);
     $node_type->save();
   }
 

@@ -56,7 +56,7 @@ class EntityModerationForm extends EntityForm {
       '#type' => 'checkbox',
       '#title' => t('Enable moderation states.'),
       '#description' => t('Content of this type must transition through moderation states in order to be published.'),
-      '#default_value' => $bundle->getThirdPartySetting('moderation_state', 'enabled', FALSE),
+      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'enabled', FALSE),
     ];
     $states = \Drupal::entityTypeManager()->getStorage('moderation_state')->loadMultiple();
     $options = [];
@@ -68,7 +68,7 @@ class EntityModerationForm extends EntityForm {
       '#type' => 'checkboxes',
       '#title' => t('Allowed moderation states.'),
       '#description' => t('The allowed moderation states this content-type can be assigned. You must select at least one published and one non-published state.'),
-      '#default_value' => $bundle->getThirdPartySetting('moderation_state', 'allowed_moderation_states', []),
+      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', []),
       '#options' => $options,
       '#states' => [
         'visible' => [
@@ -82,7 +82,7 @@ class EntityModerationForm extends EntityForm {
       '#empty_option' => t('-- Select --'),
       '#options' => $options,
       '#description' => t('Select the moderation state for new content'),
-      '#default_value' => $bundle->getThirdPartySetting('moderation_state', 'default_moderation_state', ''),
+      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'default_moderation_state', ''),
       '#states' => [
         'visible' => [
           ':input[name=enable_moderation_state]' => ['checked' => TRUE],
@@ -108,9 +108,9 @@ class EntityModerationForm extends EntityForm {
    */
   public function formBuilderCallback($entity_type, ConfigEntityInterface $bundle, &$form, FormStateInterface $form_state) {
     // @todo write a test for this.
-    $bundle->setThirdPartySetting('moderation_state', 'enabled', $form_state->getValue('enable_moderation_state'));
-    $bundle->setThirdPartySetting('moderation_state', 'allowed_moderation_states', array_keys(array_filter($form_state->getValue('allowed_moderation_states'))));
-    $bundle->setThirdPartySetting('moderation_state', 'default_moderation_state', $form_state->getValue('default_moderation_state'));
+    $bundle->setThirdPartySetting('workbench_moderation', 'enabled', $form_state->getValue('enable_moderation_state'));
+    $bundle->setThirdPartySetting('workbench_moderation', 'allowed_moderation_states', array_keys(array_filter($form_state->getValue('allowed_moderation_states'))));
+    $bundle->setThirdPartySetting('workbench_moderation', 'default_moderation_state', $form_state->getValue('default_moderation_state'));
   }
 
   /**

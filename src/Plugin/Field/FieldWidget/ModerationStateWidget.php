@@ -141,7 +141,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       ->getOptionsProvider($this->column, $entity)
       ->getSettableOptions($this->currentUser);
 
-    $default = $items->get($delta)->target_id ?: $bundle_entity->getThirdPartySetting('moderation_state', 'default_moderation_state', FALSE);
+    $default = $items->get($delta)->target_id ?: $bundle_entity->getThirdPartySetting('workbench_moderation', 'default_moderation_state', FALSE);
     /** @var \Drupal\workbench_moderation\ModerationStateInterface $default_state */
     $default_state = ModerationState::load($default);
     if (!$default || !$default_state) {
@@ -154,7 +154,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
     // Can always keep this one as is.
     $to[$default] = $default;
     // @todo write a test for this.
-    $allowed = $bundle_entity->getThirdPartySetting('moderation_state', 'allowed_moderation_states', []);
+    $allowed = $bundle_entity->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', []);
     if ($from) {
       /* @var \Drupal\workbench_moderation\ModerationStateTransitionInterface $transition */
       foreach ($this->moderationStateTransitionStorage->loadMultiple($from) as $id => $transition) {
