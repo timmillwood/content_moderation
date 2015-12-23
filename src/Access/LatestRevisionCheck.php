@@ -1,6 +1,12 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\workbench_moderation\Access\LatestRevisionCheck
+ */
+
 namespace Drupal\workbench_moderation\Access;
+
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -9,10 +15,6 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\workbench_moderation\ModerationInformationInterface;
 use Symfony\Component\Routing\Route;
 
-/**
- * @file
- * Contains LatestRevisionCheck.php
- */
 class LatestRevisionCheck implements AccessInterface {
 
   /**
@@ -50,9 +52,10 @@ class LatestRevisionCheck implements AccessInterface {
 
     // This tab should not show up period unless there's a reason to show it.
     // @todo Do we need any extra cache tags here?
-    return $this->moderationInfo->hasForwardRevision($this->loadEntity($route, $route_match))
-      ? AccessResult::allowed()
-      : AccessResult::forbidden();
+    $entity = $this->loadEntity($route, $route_match);
+    return $this->moderationInfo->hasForwardRevision($entity)
+      ? AccessResult::allowed()->addCacheableDependency($entity)
+      : AccessResult::forbidden()->addCacheableDependency($entity);
   }
 
   /**

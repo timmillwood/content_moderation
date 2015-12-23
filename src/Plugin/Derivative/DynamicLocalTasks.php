@@ -94,9 +94,9 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   }
 
   /**
-   * Returns an array of content entities that are potentially moderatable.
+   * Returns an array of content entities that are potentially moderateable.
    *
-   * @return array
+   * @return EntityTypeInterface[]
    *   An array of just those entities we care about.
    */
   protected function moderatableEntityDefinitions() {
@@ -109,7 +109,7 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   /**
    * Returns an iterable of the config entities representing moderatable content.
    *
-   * @return array
+   * @return EntityTypeInterface[]
    *   An array of just those entity types we care about.
    */
   protected function moderatableEntityTypeDefinitions() {

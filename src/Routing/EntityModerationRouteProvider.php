@@ -5,9 +5,7 @@
  * Contains Drupal\workbench_moderation\Routing\EntityModerationRouteProvider.
  */
 
-
 namespace Drupal\workbench_moderation\Routing;
-
 
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityHandlerInterface;
@@ -18,6 +16,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
+/**
+ * Provides the following routes:
+ *
+ * - The latest version tab, showing the latest revision of an entity, not the
+ *   default one.
+ */
 class EntityModerationRouteProvider implements EntityRouteProviderInterface, EntityHandlerInterface  {
 
   /**
