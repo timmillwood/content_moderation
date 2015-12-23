@@ -25,7 +25,7 @@ use Drupal\workbench_moderation\ModerationStateInterface;
  *     },
  *   },
  *   config_prefix = "moderation_state",
- *   admin_permission = "administer moderation state",
+ *   admin_permission = "administer moderation states",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",
