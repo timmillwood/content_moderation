@@ -49,8 +49,9 @@ class EntityOperations {
     if ($entity instanceof ContentEntityInterface && $this->moderationInfo->isModeratableEntity($entity)) {
       // @todo write a test for this.
       if ($entity->moderation_state->entity) {
+        $update_live_revision = $entity->moderation_state->entity->isLiveRevisionState();
         $published_state = $entity->moderation_state->entity->isPublishedState();
-        $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->onPresave($entity, $published_state);
+        $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->onPresave($entity, $update_live_revision, $published_state);
       }
     }
   }
