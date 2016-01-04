@@ -22,4 +22,12 @@ interface ModerationStateInterface extends ConfigEntityInterface {
    */
   public function isPublishedState();
 
+  /**
+   * Determines if a revision should be made the live revision upon transition to this state.
+   *
+   * @return bool
+   *   TRUE if content in this state should be the live revision.
+   */
+  public function isLiveRevisionState();
+
 }

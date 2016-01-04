@@ -62,10 +62,24 @@ class ModerationState extends ConfigEntityBase implements ModerationStateInterfa
   protected $published;
 
   /**
+   * Whether this state represents a default revision of the node.
+   *
+   * @var bool
+   */
+  protected $live_revision;
+
+  /**
    * {@inheritdoc}
    */
   public function isPublishedState() {
     return $this->published;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isLiveRevisionState() {
+    return $this->live_revision;
   }
 
 }
