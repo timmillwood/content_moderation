@@ -14,6 +14,7 @@ use Drupal\workbench_moderation\Entity\ModerationState;
  * Class ModerationStateEntityTest
  *
  * @coversDefaultClass \Drupal\workbench_moderation\Entity\ModerationState
+ *
  * @group workbench_moderation
  */
 class ModerationStateEntityTest extends KernelTestBase {
@@ -33,12 +34,10 @@ class ModerationStateEntityTest extends KernelTestBase {
   }
 
   /**
-   * @covers ::isPublishedState
-   * @covers ::isDefaultRevisionState
-   *
-   * @todo these might not quite be crud tests, since they're looking at the method logic
+   * Verify ModerationState config entity CRUD.
    */
   public function testModerationStateCrud() {
+    // Create/read.
     $moderation_state_id = $this->randomMachineName();
     $moderation_state = ModerationState::create([
       'id' => $moderation_state_id,
@@ -46,45 +45,60 @@ class ModerationStateEntityTest extends KernelTestBase {
       'published' => FALSE,
       'default_revision' => FALSE,
     ]);
-    // @todo is it necessary to do ModerationState::load() every time? if this test is focused on the methods, rather than the properties themselves, maybe ::save and ::load are unnecessary?
     $moderation_state->save();
+
     $moderation_state = ModerationState::load($moderation_state_id);
+    $this->assertFalse($moderation_state->get('published'));
+    $this->assertFalse($moderation_state->get('default_revision'));
 
-    $this->assertFalse($moderation_state->isPublishedState());
-    $this->assertFalse($moderation_state->isDefaultRevisionState());
-
-    // For archived states, a moderation state may prompt the revision to
-    // become the default default revision, but not be published.
-    $moderation_state->set('published', FALSE);
-    $moderation_state->set('default_revision', TRUE);
-    $moderation_state->save();
-    $moderation_state = ModerationState::load($moderation_state_id);
-
-    $this->assertFalse($moderation_state->isPublishedState());
-    $this->assertTrue($moderation_state->isDefaultRevisionState());
-
-    // When a moderation state is a published state, it should also become the
-    // default revision.
+    // Update.
     $moderation_state->set('published', TRUE);
     $moderation_state->set('default_revision', TRUE);
     $moderation_state->save();
-    $moderation_state = ModerationState::load($moderation_state_id);
-    $this->assertTrue($moderation_state->isPublishedState());
-    $this->assertTrue($moderation_state->isDefaultRevisionState());
 
-    $moderation_state->set('published', TRUE);
-    $moderation_state->set('default_revision', FALSE);
-    $moderation_state->save();
     $moderation_state = ModerationState::load($moderation_state_id);
-    $this->assertTrue($moderation_state->isPublishedState());
-    $this->assertTrue($moderation_state->isDefaultRevisionState());
+    $this->assertTrue($moderation_state->get('published'));
+    $this->assertTrue($moderation_state->get('default_revision'));
 
-    // When we delete a moderation state, it should go away.
-    // @todo this probably isn't necessary -- this case should be covered by
-    //       regular entity tests, right? however, this test class name does
-    //       say "crud"...
+    // Delete.
     $moderation_state->delete();
     $this->assertNull(ModerationState::load($moderation_state_id));
+  }
+
+  /**
+   * @covers ::isPublishedState
+   * @covers ::isDefaultRevisionState
+   *
+   * @dataProvider moderationStateProvider
+   */
+  public function testModerationStateProperties($published, $default_revision, $is_published, $is_default) {
+    $moderation_state_id = $this->randomMachineName();
+    $moderation_state = ModerationState::create([
+      'id' => $moderation_state_id,
+      'label' => $this->randomString(),
+      'published' => $published,
+      'default_revision' => $default_revision,
+    ]);
+
+    $this->assertEquals($is_published, $moderation_state->isPublishedState());
+    $this->assertEquals($is_default, $moderation_state->isDefaultRevisionState());
+  }
+
+  /**
+   * Data provider for ::testModerationStateProperties.
+   */
+  public function moderationStateProvider() {
+    return [
+      // Draft, Needs review; should not touch the default revision.
+      [FALSE, FALSE, FALSE, FALSE],
+      // Published; this state should update and publish the default revision.
+      [TRUE, TRUE, TRUE, TRUE],
+      // Archive; this state should update but not publish the default revision.
+      [FALSE, TRUE, FALSE, TRUE],
+      // We try to prevent creating this state via the UI, but when a moderation
+      // state is a published state, it should also become the default revision.
+      [TRUE, FALSE, TRUE, TRUE],
+    ];
   }
 
 }
