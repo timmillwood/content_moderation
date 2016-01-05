@@ -68,7 +68,7 @@ class ModerationState extends ConfigEntityBase implements ModerationStateInterfa
    *
    * @var bool
    */
-  protected $live_revision;
+  protected $default_revision;
 
   /**
    * {@inheritdoc}
@@ -80,8 +80,8 @@ class ModerationState extends ConfigEntityBase implements ModerationStateInterfa
   /**
    * {@inheritdoc}
    */
-  public function isLiveRevisionState() {
-    return $this->published || $this->live_revision;
+  public function isDefaultRevisionState() {
+    return $this->published || $this->default_revision;
   }
 
 }

@@ -172,7 +172,7 @@ class EntityOperationsTest extends KernelTestBase {
       'id' => $published_id,
       'label' => $this->randomString(),
       'published' => true,
-      'live_revision' => true,
+      'default_revision' => true,
     ]);
     $published_state->save();
 
@@ -181,7 +181,7 @@ class EntityOperationsTest extends KernelTestBase {
       'id' => $archived_id,
       'label' => $this->randomString(),
       'published' => false,
-      'live_revision' => true,
+      'default_revision' => true,
     ]);
     $archived_state->save();
 

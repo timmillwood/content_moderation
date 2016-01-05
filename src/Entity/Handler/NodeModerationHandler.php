@@ -21,8 +21,8 @@ class NodeModerationHandler extends ModerationHandler {
   /**
    * {@inheritdoc}
    */
-  public function onPresave(ContentEntityInterface $entity, $live_revision, $published_state) {
-    parent::onPresave($entity, $live_revision, $published_state);
+  public function onPresave(ContentEntityInterface $entity, $default_revision, $published_state) {
+    parent::onPresave($entity, $default_revision, $published_state);
 
     // Only nodes have a concept of published.
     /** @var $entity Node */

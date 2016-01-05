@@ -34,7 +34,7 @@ class ModerationStateEntityTest extends KernelTestBase {
 
   /**
    * @covers ::isPublishedState
-   * @covers ::isLiveRevisionState
+   * @covers ::isDefaultRevisionState
    *
    * @todo these might not quite be crud tests, since they're looking at the method logic
    */
@@ -44,40 +44,40 @@ class ModerationStateEntityTest extends KernelTestBase {
       'id' => $moderation_state_id,
       'label' => $this->randomString(),
       'published' => false,
-      'live_revision' => false,
+      'default_revision' => false,
     ]);
     // @todo is it necessary to do ModerationState::load() every time? if this test is focused on the methods, rather than the properties themselves, maybe ::save and ::load are unnecessary?
     $moderation_state->save();
     $moderation_state = ModerationState::load($moderation_state_id);
 
     $this->assertFalse($moderation_state->isPublishedState());
-    $this->assertFalse($moderation_state->isLiveRevisionState());
+    $this->assertFalse($moderation_state->isDefaultRevisionState());
 
     // For archived states, a moderation state may prompt the revision to
-    // become the default live revision, but not be published.
+    // become the default default revision, but not be published.
     $moderation_state->set('published', false);
-    $moderation_state->set('live_revision', true);
+    $moderation_state->set('default_revision', true);
     $moderation_state->save();
     $moderation_state = ModerationState::load($moderation_state_id);
 
     $this->assertFalse($moderation_state->isPublishedState());
-    $this->assertTrue($moderation_state->isLiveRevisionState());
+    $this->assertTrue($moderation_state->isDefaultRevisionState());
 
     // When a moderation state is a published state, it should also become the
-    // live revision.
+    // default revision.
     $moderation_state->set('published', true);
-    $moderation_state->set('live_revision', true);
+    $moderation_state->set('default_revision', true);
     $moderation_state->save();
     $moderation_state = ModerationState::load($moderation_state_id);
     $this->assertTrue($moderation_state->isPublishedState());
-    $this->assertTrue($moderation_state->isLiveRevisionState());
+    $this->assertTrue($moderation_state->isDefaultRevisionState());
 
     $moderation_state->set('published', true);
-    $moderation_state->set('live_revision', false);
+    $moderation_state->set('default_revision', false);
     $moderation_state->save();
     $moderation_state = ModerationState::load($moderation_state_id);
     $this->assertTrue($moderation_state->isPublishedState());
-    $this->assertTrue($moderation_state->isLiveRevisionState());
+    $this->assertTrue($moderation_state->isDefaultRevisionState());
 
     // When we delete a moderation state, it should go away.
     // @todo this probably isn't necessary -- this case should be covered by

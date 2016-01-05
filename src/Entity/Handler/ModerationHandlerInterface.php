@@ -23,12 +23,12 @@ interface ModerationHandlerInterface {
   /**
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The entity to modify.
-   * @param bool $live_revision
+   * @param bool $default_revision
    *   Whether the new revision should be made the default revision.
    * @param bool $published_state
    *   Whether the state being transitioned to is a published state or not.
    */
-  public function onPresave(ContentEntityInterface $entity, $live_revision, $published_state);
+  public function onPresave(ContentEntityInterface $entity, $default_revision, $published_state);
 
   /**
    * Operates on the bundle definition that has been marked as moderatable.

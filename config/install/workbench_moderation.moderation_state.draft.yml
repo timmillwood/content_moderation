@@ -4,4 +4,4 @@ dependencies: {  }
 id: draft
 label: Draft
 published: false
-live_revision: false
+default_revision: false

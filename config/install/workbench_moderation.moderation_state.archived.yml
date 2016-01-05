@@ -4,4 +4,4 @@ dependencies: {  }
 id: archived
 label: Archived
 published: false
-live_revision: true
+default_revision: true
