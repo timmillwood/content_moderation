@@ -33,8 +33,8 @@ class ModerationStateEntityTest extends KernelTestBase {
   }
 
   /**
-   * @covers ::isPublishedState()
-   * @covers ::isLiveRevisionState()
+   * @covers ::isPublishedState
+   * @covers ::isLiveRevisionState
    *
    * @todo these might not quite be crud tests, since they're looking at the method logic
    */
