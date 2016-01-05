@@ -72,15 +72,11 @@ class EntityOperationsTest extends KernelTestBase {
 
     $id = $page->id();
 
-    // Verify the entity saved correctly.
+    // Verify the entity saved correctly, and that the presence of forward
+    // revisions doesn't affect the default node load.
     /** @var Node $page */
     $page = Node::load($id);
     $this->assertEquals('A', $page->getTitle());
-    // @todo Isn't the point of Node::load() that it loads the default
-    // revision? If we're going to use Node::isDefaultRevision() in these
-    // tests, shouldn't we specifically load our new revisions and verify that
-    // they are not the default revision (if not the first draft) or are the
-    // default revision (first draft, any published revision)?
     $this->assertTrue($page->isDefaultRevision());
     $this->assertFalse($page->isPublished());
 
@@ -160,13 +156,8 @@ class EntityOperationsTest extends KernelTestBase {
 
   /**
    * Verifies that an unpublished state may be made the default revision.
-   *
-   * @todo This method is creating ModerationState entities that are specific to
-   * the test. It is NOT creating transitions, which don't actually seem to be
-   * validated when changing the moderation state internally (that might be ok,
-   * is probably as designed, but I just wanted to check).
    */
-  public function testLiveRevision() {
+  public function testArchive() {
     $published_id = $this->randomMachineName();
     $published_state = ModerationState::create([
       'id' => $published_id,
