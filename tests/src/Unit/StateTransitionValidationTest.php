@@ -52,7 +52,7 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
     $state_transition6->getToState()->willReturn('published');
 
     $entity_storage->loadMultiple()->willReturn([
-      'draf__needs_review' => $state_transition0->reveal(),
+      'draft__needs_review' => $state_transition0->reveal(),
       'needs_review__staging' => $state_transition1->reveal(),
       'staging__published' => $state_transition2->reveal(),
       'needs_review__draft' => $state_transition3->reveal(),
