@@ -46,6 +46,9 @@ class ModerationStateEntityTest extends KernelTestBase {
       'published' => false,
       'live_revision' => false,
     ]);
+    // @todo is it necessary to do ModerationState::load() every time? if this test is focused on the methods, rather than the properties themselves, maybe ::save and ::load are unnecessary?
+    $moderation_state->save();
+    $moderation_state = ModerationState::load($moderation_state_id);
 
     $this->assertFalse($moderation_state->isPublishedState());
     $this->assertFalse($moderation_state->isLiveRevisionState());
@@ -55,6 +58,7 @@ class ModerationStateEntityTest extends KernelTestBase {
     $moderation_state->set('published', false);
     $moderation_state->set('live_revision', true);
     $moderation_state->save();
+    $moderation_state = ModerationState::load($moderation_state_id);
 
     $this->assertFalse($moderation_state->isPublishedState());
     $this->assertTrue($moderation_state->isLiveRevisionState());
@@ -64,12 +68,14 @@ class ModerationStateEntityTest extends KernelTestBase {
     $moderation_state->set('published', true);
     $moderation_state->set('live_revision', true);
     $moderation_state->save();
+    $moderation_state = ModerationState::load($moderation_state_id);
     $this->assertTrue($moderation_state->isPublishedState());
     $this->assertTrue($moderation_state->isLiveRevisionState());
 
     $moderation_state->set('published', true);
     $moderation_state->set('live_revision', false);
     $moderation_state->save();
+    $moderation_state = ModerationState::load($moderation_state_id);
     $this->assertTrue($moderation_state->isPublishedState());
     $this->assertTrue($moderation_state->isLiveRevisionState());
 
