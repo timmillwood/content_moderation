@@ -43,8 +43,8 @@ class ModerationStateEntityTest extends KernelTestBase {
     $moderation_state = ModerationState::create([
       'id' => $moderation_state_id,
       'label' => $this->randomString(),
-      'published' => false,
-      'default_revision' => false,
+      'published' => FALSE,
+      'default_revision' => FALSE,
     ]);
     // @todo is it necessary to do ModerationState::load() every time? if this test is focused on the methods, rather than the properties themselves, maybe ::save and ::load are unnecessary?
     $moderation_state->save();
@@ -55,8 +55,8 @@ class ModerationStateEntityTest extends KernelTestBase {
 
     // For archived states, a moderation state may prompt the revision to
     // become the default default revision, but not be published.
-    $moderation_state->set('published', false);
-    $moderation_state->set('default_revision', true);
+    $moderation_state->set('published', FALSE);
+    $moderation_state->set('default_revision', TRUE);
     $moderation_state->save();
     $moderation_state = ModerationState::load($moderation_state_id);
 
@@ -65,15 +65,15 @@ class ModerationStateEntityTest extends KernelTestBase {
 
     // When a moderation state is a published state, it should also become the
     // default revision.
-    $moderation_state->set('published', true);
-    $moderation_state->set('default_revision', true);
+    $moderation_state->set('published', TRUE);
+    $moderation_state->set('default_revision', TRUE);
     $moderation_state->save();
     $moderation_state = ModerationState::load($moderation_state_id);
     $this->assertTrue($moderation_state->isPublishedState());
     $this->assertTrue($moderation_state->isDefaultRevisionState());
 
-    $moderation_state->set('published', true);
-    $moderation_state->set('default_revision', false);
+    $moderation_state->set('published', TRUE);
+    $moderation_state->set('default_revision', FALSE);
     $moderation_state->save();
     $moderation_state = ModerationState::load($moderation_state_id);
     $this->assertTrue($moderation_state->isPublishedState());

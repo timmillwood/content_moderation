@@ -171,8 +171,8 @@ class EntityOperationsTest extends KernelTestBase {
     $published_state = ModerationState::create([
       'id' => $published_id,
       'label' => $this->randomString(),
-      'published' => true,
-      'default_revision' => true,
+      'published' => TRUE,
+      'default_revision' => TRUE,
     ]);
     $published_state->save();
 
@@ -180,8 +180,8 @@ class EntityOperationsTest extends KernelTestBase {
     $archived_state = ModerationState::create([
       'id' => $archived_id,
       'label' => $this->randomString(),
-      'published' => false,
-      'default_revision' => true,
+      'published' => FALSE,
+      'default_revision' => TRUE,
     ]);
     $archived_state->save();
 

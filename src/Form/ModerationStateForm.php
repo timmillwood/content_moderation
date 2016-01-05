@@ -55,10 +55,10 @@ class ModerationStateForm extends EntityForm {
       '#description' => $this->t('When content reaches this state it should be made the default revision'),
       '#default_value' => $moderation_state->isDefaultRevisionState(),
       // @todo When these are added, the checkbox default value does not apply properly.
-      // '#states' => array(
-      //   'checked' => array(':input[name="published"]' => array('checked' => TRUE)),
-      //   'disabled' => array(':input[name="published"]' => array('checked' => TRUE)),
-      // ),
+      // '#states' => [
+      //   'checked' => [':input[name="published"]' => ['checked' => TRUE]],
+      //   'disabled' => [':input[name="published"]' => ['checked' => TRUE]],
+      // ],
     ];
 
     return $form;
