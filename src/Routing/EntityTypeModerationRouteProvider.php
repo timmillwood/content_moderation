@@ -52,7 +52,7 @@ class EntityTypeModerationRouteProvider implements EntityRouteProviderInterface 
           '_title' => 'Moderation',
           //'_title_callback' => '\Drupal\Core\Entity\Controller\EntityController::editTitle'
         ])
-        ->setRequirement('_permission', 'administer moderation state') // @todo Come up with a new permission.
+        ->setRequirement('_permission', 'administer moderation states') // @todo Come up with a new permission.
         ->setOption('parameters', [
           $entity_type_id => ['type' => 'entity:' . $entity_type_id],
         ]);

@@ -4,9 +4,9 @@
   'restrict access': TRUE
 
 'administer moderation state transitions':
-  title: Administer moderation state transitions
-  description: Create and edit moderation state transitions
+  title: Administer  workbench moderation state transitions
+  description: Create and edit  workbench moderation state transitions
   'restrict access': TRUE
 
 permission_callbacks:
-  - \Drupal\workbench_moderation\ModerationStatePermissions::transitionPermissions
+  - \Drupal\workbench_moderation\Permissions::transitionPermissions

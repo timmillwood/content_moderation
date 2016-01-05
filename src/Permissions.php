@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Contains \Drupal\workbench_moderation\ModerationStatePermissions.
+ * Contains \Drupal\workbench_moderation\Permissions.
  */
 
 namespace Drupal\workbench_moderation;
@@ -12,9 +12,9 @@ use Drupal\workbench_moderation\Entity\ModerationState;
 use Drupal\workbench_moderation\Entity\ModerationStateTransition;
 
 /**
- * Defines a class for dynamic permisisons based on transitions.
+ * Defines a class for dynamic permissions based on transitions.
  */
-class ModerationStatePermissions {
+class Permissions {
 
   use StringTranslationTrait;
   use UrlGeneratorTrait;
@@ -28,6 +28,7 @@ class ModerationStatePermissions {
   public function transitionPermissions() {
     // @todo write a test for this.
     $perms = [];
+    /* @var \Drupal\workbench_moderation\ModerationStateInterface[] $states */
     $states = ModerationState::loadMultiple();
     /* @var \Drupal\workbench_moderation\ModerationStateTransitionInterface $transition */
     foreach (ModerationStateTransition::loadMultiple() as $id => $transition) {

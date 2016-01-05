@@ -110,7 +110,7 @@ class ModerationInformation implements ModerationInformationInterface {
       $type instanceof ConfigEntityTypeInterface
       && ($bundle_of = $type->get('bundle_of'))
       && $this->entityTypeManager->getDefinition($bundle_of)->isRevisionable()
-      && $this->currentUser->hasPermission('administer moderation state');
+      && $this->currentUser->hasPermission('administer moderation states');
   }
 
   /**

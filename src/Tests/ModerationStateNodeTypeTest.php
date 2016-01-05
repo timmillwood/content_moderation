@@ -5,12 +5,14 @@
  */
 
 namespace Drupal\workbench_moderation\Tests;
+
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\Entity\Role;
 
 /**
  * Tests moderation state node type integration.
- * @group moderation_state
+ *
+ * @group workbench_moderation
  */
 class ModerationStateNodeTypeTest extends ModerationStateTestBase {
 

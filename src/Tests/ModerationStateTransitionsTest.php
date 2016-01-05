@@ -8,7 +8,8 @@ namespace Drupal\workbench_moderation\Tests;
 
 /**
  * Tests moderation state transition config entity.
- * @group moderation_state
+ *
+ * @group workbench_moderation
  */
 class ModerationStateTransitionsTest extends ModerationStateTestBase {
 
@@ -17,10 +18,10 @@ class ModerationStateTransitionsTest extends ModerationStateTestBase {
    */
   public function testAccess() {
     $paths = [
-      'admin/structure/moderation-state/transitions',
-      'admin/structure/moderation-state/transitions/add',
-      'admin/structure/moderation-state/transitions/draft_needs_review',
-      'admin/structure/moderation-state/transitions/draft_needs_review/delete',
+      'admin/structure/workbench-moderation/transitions',
+      'admin/structure/workbench-moderation/transitions/add',
+      'admin/structure/workbench-moderation/transitions/draft_needs_review',
+      'admin/structure/workbench-moderation/transitions/draft_needs_review/delete',
     ];
 
     foreach ($paths as $path) {
@@ -41,12 +42,12 @@ class ModerationStateTransitionsTest extends ModerationStateTestBase {
    */
   public function testTransitionAdministration() {
     $this->drupalLogin($this->adminUser);
-    $this->drupalGet('admin/structure/moderation-state');
+    $this->drupalGet('admin/structure/workbench-moderation');
     $this->clickLink('Moderation state transitions');
     $this->assertLink('Add Moderation state transition');
     $this->assertText('Draft » Needs review');
     // Edit the Draft » Needs review.
-    $this->clickLink('Edit');
+    $this->drupalGet('admin/structure/workbench-moderation/transitions/draft_needs_review');
     $this->assertFieldByName('label', 'Draft » Needs review');
     $this->assertFieldByName('stateFrom', 'draft');
     $this->assertFieldByName('stateTo', 'needs_review');
@@ -54,20 +55,20 @@ class ModerationStateTransitionsTest extends ModerationStateTestBase {
       'label' => 'Draft to Needs review',
     ], t('Save'));
     $this->assertText('Saved the Draft to Needs review Moderation state transition.');
-    $this->drupalGet('admin/structure/moderation-state/transitions/draft_needs_review');
+    $this->drupalGet('admin/structure/workbench-moderation/transitions/draft_needs_review');
     $this->assertFieldByName('label', 'Draft to Needs review');
     $this->drupalPostForm(NULL, [
       'label' => 'Draft » Needs review',
     ], t('Save'));
     $this->assertText('Saved the Draft » Needs review Moderation state transition.');
     // Add a new state.
-    $this->drupalGet('admin/structure/moderation-state/states/add');
+    $this->drupalGet('admin/structure/workbench-moderation/states/add');
     $this->drupalPostForm(NULL, [
       'label' => 'Expired',
       'id' => 'expired',
     ], t('Save'));
     $this->assertText('Created the Expired Moderation state.');
-    $this->drupalGet('admin/structure/moderation-state/transitions');
+    $this->drupalGet('admin/structure/workbench-moderation/transitions');
     $this->clickLink(t('Add Moderation state transition'));
     $this->drupalPostForm(NULL, [
       'label' => 'Published » Expired',
@@ -83,7 +84,7 @@ class ModerationStateTransitionsTest extends ModerationStateTestBase {
       'stateTo' => 'expired',
     ], t('Save'));
     $this->assertText('Created the Published » Expired Moderation state transition.');
-    $this->drupalGet('admin/structure/moderation-state/transitions/published_expired');
+    $this->drupalGet('admin/structure/workbench-moderation/transitions/published_expired');
     $this->clickLink('Delete');
     $this->assertText('Are you sure you want to delete Published » Expired?');
     $this->drupalPostForm(NULL, [], t('Delete'));

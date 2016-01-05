@@ -10,7 +10,7 @@ namespace Drupal\workbench_moderation\Tests;
 /**
  * Tests general content moderation workflow for nodes..
  *
- * @group moderation_state
+ * @group workbench_moderation
  */
 class ModerationStateNodeTest extends ModerationStateTestBase {
 

@@ -8,7 +8,8 @@ namespace Drupal\workbench_moderation\Tests;
 
 /**
  * Tests moderation state config entity.
- * @group moderation_state
+ *
+ * @group workbench_moderation
  */
 class ModerationStateStatesTest extends ModerationStateTestBase {
 
