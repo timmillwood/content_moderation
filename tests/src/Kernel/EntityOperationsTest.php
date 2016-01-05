@@ -10,6 +10,7 @@ namespace Drupal\Tests\workbench_moderation\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\workbench_moderation\EntityOperations;
+use Drupal\workbench_moderation\Entity\ModerationState;
 use Drupal\workbench_moderation\ModerationInformation;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
@@ -37,6 +38,9 @@ class EntityOperationsTest extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installSchema('node', 'node_access');
     $this->installEntitySchema('user');
+    // @todo is this conflating testing the default config with testing the
+    // state behaviors? Should we be creating states that are specific to the
+    // test?
     $this->installConfig('workbench_moderation');
 
     $this->createNodeType();
@@ -72,6 +76,11 @@ class EntityOperationsTest extends KernelTestBase {
     /** @var Node $page */
     $page = Node::load($id);
     $this->assertEquals('A', $page->getTitle());
+    // @todo Isn't the point of Node::load() that it loads the default
+    // revision? If we're going to use Node::isDefaultRevision() in these
+    // tests, shouldn't we specifically load our new revisions and verify that
+    // they are not the default revision (if not the first draft) or are the
+    // default revision (first draft, any published revision)?
     $this->assertTrue($page->isDefaultRevision());
     $this->assertFalse($page->isPublished());
 
@@ -147,7 +156,58 @@ class EntityOperationsTest extends KernelTestBase {
     $this->assertEquals('A', $page->getTitle());
     $this->assertTrue($page->isDefaultRevision());
     $this->assertTrue($page->isPublished());
+  }
 
+  /**
+   * Verifies that an unpublished state may be made the default revision.
+   *
+   * @todo This method is creating ModerationState entities that are specific to
+   * the test. It is NOT creating transitions, which don't actually seem to be
+   * validated when changing the moderation state internally (that might be ok,
+   * is probably as designed, but I just wanted to check).
+   */
+  public function testLiveRevision() {
+    $published_id = $this->randomMachineName();
+    $published_state = ModerationState::create([
+      'id' => $published_id,
+      'label' => $this->randomString(),
+      'published' => true,
+      'live_revision' => true,
+    ]);
+    $published_state->save();
+
+    $archived_id = $this->randomMachineName();
+    $archived_state = ModerationState::create([
+      'id' => $archived_id,
+      'label' => $this->randomString(),
+      'published' => false,
+      'live_revision' => true,
+    ]);
+    $archived_state->save();
+
+    $page = Node::create([
+      'type' => 'page',
+      'title' => $this->randomString(),
+    ]);
+    $page->moderation_state->target_id = $published_id;
+    $page->save();
+
+    $id = $page->id();
+
+    // The newly-created page should already be published.
+    $page = Node::load($id);
+    $this->assertTrue($page->isPublished());
+
+    // When the page is moderated to the archived state, then the latest
+    // revision should be the default revision, and it should be unpublished.
+    $page->moderation_state->target_id = $archived_id;
+    $page->save();
+    $new_revision_id = $page->getRevisionId();
+
+    $storage = \Drupal::entityTypeManager()->getStorage('node');
+    $new_revision = $storage->loadRevision($new_revision_id);
+    $this->assertFalse($new_revision->isPublished());
+    $this->assertTrue($new_revision->isDefaultRevision());
   }
 
 }
