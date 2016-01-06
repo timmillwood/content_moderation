@@ -72,6 +72,8 @@ class EntityRevisionConverter extends EntityConverter {
    */
   protected function isEditFormPage(Route $route) {
     if ($default = $route->getDefault('_entity_form') ) {
+      // If no operation is provided, use 'default'.
+      $default .= '.default';
       list($entity_type_id, $operation) = explode('.', $default);
       if (!$this->entityManager->hasDefinition($entity_type_id)) {
         return FALSE;
