@@ -10,6 +10,7 @@ namespace Drupal\Tests\workbench_moderation\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\workbench_moderation\EntityOperations;
+use Drupal\workbench_moderation\Entity\ModerationState;
 use Drupal\workbench_moderation\ModerationInformation;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
@@ -68,7 +69,8 @@ class EntityOperationsTest extends KernelTestBase {
 
     $id = $page->id();
 
-    // Verify the entity saved correctly.
+    // Verify the entity saved correctly, and that the presence of forward
+    // revisions doesn't affect the default node load.
     /** @var Node $page */
     $page = Node::load($id);
     $this->assertEquals('A', $page->getTitle());
@@ -147,7 +149,53 @@ class EntityOperationsTest extends KernelTestBase {
     $this->assertEquals('A', $page->getTitle());
     $this->assertTrue($page->isDefaultRevision());
     $this->assertTrue($page->isPublished());
+  }
 
+  /**
+   * Verifies that an unpublished state may be made the default revision.
+   */
+  public function testArchive() {
+    $published_id = $this->randomMachineName();
+    $published_state = ModerationState::create([
+      'id' => $published_id,
+      'label' => $this->randomString(),
+      'published' => TRUE,
+      'default_revision' => TRUE,
+    ]);
+    $published_state->save();
+
+    $archived_id = $this->randomMachineName();
+    $archived_state = ModerationState::create([
+      'id' => $archived_id,
+      'label' => $this->randomString(),
+      'published' => FALSE,
+      'default_revision' => TRUE,
+    ]);
+    $archived_state->save();
+
+    $page = Node::create([
+      'type' => 'page',
+      'title' => $this->randomString(),
+    ]);
+    $page->moderation_state->target_id = $published_id;
+    $page->save();
+
+    $id = $page->id();
+
+    // The newly-created page should already be published.
+    $page = Node::load($id);
+    $this->assertTrue($page->isPublished());
+
+    // When the page is moderated to the archived state, then the latest
+    // revision should be the default revision, and it should be unpublished.
+    $page->moderation_state->target_id = $archived_id;
+    $page->save();
+    $new_revision_id = $page->getRevisionId();
+
+    $storage = \Drupal::entityTypeManager()->getStorage('node');
+    $new_revision = $storage->loadRevision($new_revision_id);
+    $this->assertFalse($new_revision->isPublished());
+    $this->assertTrue($new_revision->isDefaultRevision());
   }
 
 }

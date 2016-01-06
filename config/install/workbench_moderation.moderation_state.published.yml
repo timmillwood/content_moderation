@@ -4,3 +4,4 @@ dependencies: {  }
 id: published
 label: Published
 published: true
+default_revision: true

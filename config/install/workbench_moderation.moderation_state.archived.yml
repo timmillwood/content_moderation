@@ -1,7 +1,7 @@
 langcode: en
 status: true
 dependencies: {  }
-id: draft
-label: Draft
+id: archived
+label: Archived
 published: false
-default_revision: false
+default_revision: true

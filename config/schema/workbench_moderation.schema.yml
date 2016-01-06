@@ -11,6 +11,9 @@ workbench_moderation.moderation_state.*:
     published:
       type: boolean
       label: 'Is published'
+    default_revision:
+      type: boolean
+      label: 'Is default revision'
     uuid:
       type: string
 

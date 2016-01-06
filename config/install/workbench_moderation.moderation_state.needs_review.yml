@@ -4,3 +4,4 @@ dependencies: {  }
 id: needs_review
 label: Needs Review
 published: false
+default_revision: false

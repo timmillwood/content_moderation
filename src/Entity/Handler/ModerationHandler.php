@@ -35,14 +35,14 @@ class ModerationHandler implements ModerationHandlerInterface, EntityHandlerInte
   /**
    * {@inheritdoc}
    */
-  public function onPresave(ContentEntityInterface $entity, $published_state) {
+  public function onPresave(ContentEntityInterface $entity, $default_revision, $published_state) {
     // This is *probably* not necessary if configuration is setup correctly,
     // but it can't hurt.
     $entity->setNewRevision(TRUE);
 
     // A newly-created revision is always the default revision, or else
     // it gets lost.
-    $entity->isDefaultRevision($entity->isNew() || $published_state);
+    $entity->isDefaultRevision($entity->isNew() || $default_revision);
   }
 
   /**

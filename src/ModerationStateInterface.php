@@ -22,4 +22,13 @@ interface ModerationStateInterface extends ConfigEntityInterface {
    */
   public function isPublishedState();
 
+  /**
+   * Determines if a revision should be made the default revision upon transition to
+   * this state.
+   *
+   * @return bool
+   *   TRUE if content in this state should be the default revision.
+   */
+  public function isDefaultRevisionState();
+
 }
