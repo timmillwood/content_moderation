@@ -34,38 +34,8 @@ class ModerationStateEntityTest extends KernelTestBase {
   }
 
   /**
-   * Verify ModerationState config entity CRUD.
-   */
-  public function testModerationStateCrud() {
-    // Create/read.
-    $moderation_state_id = $this->randomMachineName();
-    $moderation_state = ModerationState::create([
-      'id' => $moderation_state_id,
-      'label' => $this->randomString(),
-      'published' => FALSE,
-      'default_revision' => FALSE,
-    ]);
-    $moderation_state->save();
-
-    $moderation_state = ModerationState::load($moderation_state_id);
-    $this->assertFalse($moderation_state->get('published'));
-    $this->assertFalse($moderation_state->get('default_revision'));
-
-    // Update.
-    $moderation_state->set('published', TRUE);
-    $moderation_state->set('default_revision', TRUE);
-    $moderation_state->save();
-
-    $moderation_state = ModerationState::load($moderation_state_id);
-    $this->assertTrue($moderation_state->get('published'));
-    $this->assertTrue($moderation_state->get('default_revision'));
-
-    // Delete.
-    $moderation_state->delete();
-    $this->assertNull(ModerationState::load($moderation_state_id));
-  }
-
-  /**
+   * Verify moderation state methods based on entity properties.
+   *
    * @covers ::isPublishedState
    * @covers ::isDefaultRevisionState
    *
@@ -79,7 +49,9 @@ class ModerationStateEntityTest extends KernelTestBase {
       'published' => $published,
       'default_revision' => $default_revision,
     ]);
+    $moderation_state->save();
 
+    $moderation_state = ModerationState::load($moderation_state_id);
     $this->assertEquals($is_published, $moderation_state->isPublishedState());
     $this->assertEquals($is_default, $moderation_state->isDefaultRevisionState());
   }
