@@ -38,9 +38,6 @@ class EntityOperationsTest extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installSchema('node', 'node_access');
     $this->installEntitySchema('user');
-    // @todo is this conflating testing the default config with testing the
-    // state behaviors? Should we be creating states that are specific to the
-    // test?
     $this->installConfig('workbench_moderation');
 
     $this->createNodeType();
