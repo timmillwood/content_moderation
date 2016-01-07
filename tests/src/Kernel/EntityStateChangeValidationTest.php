@@ -79,4 +79,32 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     $this->assertEquals('Invalid state transition from <em class="placeholder">Draft</em> to <em class="placeholder">Published</em>', $violations->get(0)->getMessage());
   }
 
+  /**
+   * Verifies that content without prior moderation information can be moderated.
+   */
+  public function testLegacyContent() {
+    $node_type = NodeType::create([
+      'type' => 'example',
+    ]);
+    $node_type->save();
+    $node = Node::create([
+      'type' => 'example',
+      'title' => 'Test title',
+    ]);
+    $node->save();
+
+    // Enable moderation for Articles.
+    /** @var NodeType $node_type */
+    $node_type = NodeType::load('example');
+    $node_type->setThirdPartySetting('workbench_moderation', 'enabled', TRUE);
+    $node_type->setThirdPartySetting('workbench_moderation', 'allowed_moderation_states', ['draft', 'needs_review', 'published']);
+    $node_type->setThirdPartySetting('workbench_moderation', 'default_moderation_state', 'draft');
+    $node_type->save();
+
+    // Having no previous state should not break validation.
+    $violations = $node->validate();
+
+    $this->assertCount(0, $violations);
+  }
+
 }
