@@ -90,3 +90,29 @@ function workbench_moderation_local_tasks_alter(&$local_tasks) {
 function workbench_moderation_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   return \Drupal::service('workbench_moderation.entity_type')->bundleFormAlter($form, $form_state, $form_id);
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ *
+ * Many default node templates rely on $page to determine whether to output the
+ * node title as part of the node content.
+ */
+function workbench_moderation_preprocess_node(&$variables) {
+  $variables['page'] = $variables['page'] || workbench_moderation_is_latest_page($variables['node']);
+}
+
+/**
+ * Checks whether the current page is the latest revision page of the node.
+ *
+ * Analagous to node_is_page().
+ *
+ * @param \NodeInterface $node
+ * @return bool
+ */
+function workbench_moderation_is_latest_page(NodeInterface $node) {
+  $route_match = \Drupal::routeMatch();
+  if ($route_match->getRouteName() == 'entity.node.latest_version') {
+    $page_node = $route_match->getParameter('node');
+  }
+  return (!empty($page_node) ? $page_node->id() == $node->id() : FALSE);
+}
