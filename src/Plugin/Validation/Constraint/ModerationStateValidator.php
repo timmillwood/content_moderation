@@ -8,6 +8,7 @@
 namespace Drupal\workbench_moderation\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\workbench_moderation\ModerationInformationInterface;
 use Drupal\workbench_moderation\StateTransitionValidation;
@@ -66,18 +67,49 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
   public function validate($value, Constraint $constraint) {
     /** @var \Drupal\Core\Entity\EntityInterface $entity */
     $entity = $value->getEntity();
+
+    // Ignore entities that are not subject to moderation anyway.
     if (!$this->moderationInformation->isModeratableEntity($entity)) {
       return;
     }
-    if (!$entity->isNew()) {
-      $original_entity = $this->moderationInformation->getLatestRevision($entity->getEntityTypeId(), $entity->id());
-      $next_moderation_state_id = $entity->moderation_state->target_id;
-      $original_moderation_state_id = $original_entity->moderation_state->target_id;
 
-      if (!$this->validation->isTransitionAllowed($original_moderation_state_id, $next_moderation_state_id)) {
-        $this->context->addViolation($constraint->message, ['%from' => $original_entity->moderation_state->entity->label(), '%to' => $entity->moderation_state->entity->label()]);
-      }
+    // Ignore entities that are being created for the first time.
+    if ($entity->isNew()) {
+      return;
     }
+
+    // Ignore entities that are being moderated for the first time, such as
+    // when they existed before moderation was enabled for this entity type.
+    if ($this->isFirstTimeModeration($entity)) {
+      return;
+    }
+
+    $original_entity = $this->moderationInformation->getLatestRevision($entity->getEntityTypeId(), $entity->id());
+    $next_moderation_state_id = $entity->moderation_state->target_id;
+    $original_moderation_state_id = $original_entity->moderation_state->target_id;
+
+    if (!$this->validation->isTransitionAllowed($original_moderation_state_id, $next_moderation_state_id)) {
+      $this->context->addViolation($constraint->message, ['%from' => $original_entity->moderation_state->entity->label(), '%to' => $entity->moderation_state->entity->label()]);
+    }
+  }
+
+  /**
+   * Determines if this entity is being moderated for the first time.
+   *
+   * If the previous version of the entity has no moderation state, we assume
+   * that means it predates the presence of moderation states.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *
+   * @return bool
+   *   TRUE if this is the entity's first time being moderated, FALSE otherwise.
+   */
+  protected function isFirstTimeModeration(EntityInterface $entity) {
+    $original_entity = $this->moderationInformation->getLatestRevision($entity->getEntityTypeId(), $entity->id());
+
+    $original_id = $original_entity->moderation_state->target_id;
+
+    return !($original_entity && $original_id);
   }
 
 }
