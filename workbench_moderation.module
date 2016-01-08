@@ -98,21 +98,5 @@ function workbench_moderation_form_alter(&$form, FormStateInterface $form_state,
  * node title as part of the node content.
  */
 function workbench_moderation_preprocess_node(&$variables) {
-  $variables['page'] = $variables['page'] || workbench_moderation_is_latest_page($variables['node']);
-}
-
-/**
- * Checks whether the current page is the latest revision page of the node.
- *
- * Analagous to node_is_page().
- *
- * @param \NodeInterface $node
- * @return bool
- */
-function workbench_moderation_is_latest_page(NodeInterface $node) {
-  $route_match = \Drupal::routeMatch();
-  if ($route_match->getRouteName() == 'entity.node.latest_version') {
-    $page_node = $route_match->getParameter('node');
-  }
-  return (!empty($page_node) ? $page_node->id() == $node->id() : FALSE);
+  $variables['page'] = $variables['page'] || \Drupal::service('workbench_moderation.is_latest_page')->isLatestPage($variables['node']);
 }
