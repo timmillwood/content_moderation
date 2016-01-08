@@ -7,6 +7,7 @@
 namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\node\Entity\Node;
 
 /**
  * Service to determine whether a route is the "Latest version" tab of a node.
@@ -33,11 +34,10 @@ class WorkbenchPreprocess {
    *
    * @param array $variables
    *   Theme variables to preprocess.
-   *
-   * @todo I don't like passing $variables by reference here, but I did it
-   *       because it matches the way hook_preprocess_HOOK() works. Is this OK?
    */
   public function preprocessNode(array &$variables) {
+    // Set the 'page' template variable when the node is being displayed on the
+    // "Latest version" tab provided by workbench_moderation.
     $variables['page'] = $variables['page'] || $this->isLatestPage($variables['node']);
   }
 
@@ -50,7 +50,7 @@ class WorkbenchPreprocess {
    * @return bool
    *  True if the current route is the latest version tab of the given node.
    */
-  public function isLatestPage(\Drupal\node\Entity\Node $node) {
+  public function isLatestPage(Node $node) {
     return $this->routeMatch->getRouteName() == 'entity.node.latest_version'
            && $pageNode = $this->routeMatch->getParameter('node')
            && $pageNode->id == $node->id;
