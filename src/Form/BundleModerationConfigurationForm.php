@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Form for configuring moderation usage on a given entity bundle.
  */
-class EntityModerationForm extends EntityForm {
+class BundleModerationConfigurationForm extends EntityForm {
 
   /**
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface

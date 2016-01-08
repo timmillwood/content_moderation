@@ -15,7 +15,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\workbench_moderation\Form\EntityModerationForm;
+use Drupal\workbench_moderation\Form\BundleModerationConfigurationForm;
 use Drupal\workbench_moderation\Routing\EntityModerationRouteProvider;
 use Drupal\workbench_moderation\Routing\EntityTypeModerationRouteProvider;
 use Drupal\workbench_moderation\Entity\Handler\NodeModerationHandler;
@@ -137,7 +137,7 @@ class EntityTypeInfo {
     }
 
     if (!$type->getFormClass('moderation')) {
-      $type->setFormClass('moderation', EntityModerationForm::class);
+      $type->setFormClass('moderation', BundleModerationConfigurationForm::class);
     }
 
     // @todo Core forgot to add a direct way to manipulate route_provider, so
