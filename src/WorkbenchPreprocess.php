@@ -38,7 +38,7 @@ class WorkbenchPreprocess {
   public function preprocessNode(array &$variables) {
     // Set the 'page' template variable when the node is being displayed on the
     // "Latest version" tab provided by workbench_moderation.
-    $variables['page'] = $variables['page'] || $this->isLatestPage($variables['node']);
+    $variables['page'] = $variables['page'] || $this->isLatestVersionPage($variables['node']);
   }
 
   /**
@@ -50,7 +50,7 @@ class WorkbenchPreprocess {
    * @return bool
    *  True if the current route is the latest version tab of the given node.
    */
-  public function isLatestPage(Node $node) {
+  public function isLatestVersionPage(Node $node) {
     return $this->routeMatch->getRouteName() == 'entity.node.latest_version'
            && $pageNode = $this->routeMatch->getParameter('node')
            && $pageNode->id == $node->id;
