@@ -87,15 +87,20 @@ class EntityRevisionConverter extends EntityConverter {
    * {@inheritdoc}
    */
   public function convert($value, $definition, $name, array $defaults) {
-    $entity_type_id = $this->getEntityTypeFromDefaults($definition, $name, $defaults);
-    if ($entity = $this->moderationInformation->getLatestRevision($entity_type_id, $value)) {
+    $entity = parent::convert($value, $definition, $name, $defaults);
+
+    if ($entity && $this->moderationInformation->isModeratableEntity($entity) && !$this->moderationInformation->isLatestRevision($entity)) {
+      $entity_type_id = $this->getEntityTypeFromDefaults($definition, $name, $defaults);
+      $entity = $this->moderationInformation->getLatestRevision($entity_type_id, $value);
+
       // If the entity type is translatable, ensure we return the proper
       // translation object for the current context.
       if ($entity instanceof EntityInterface && $entity instanceof TranslatableInterface) {
         $entity = $this->entityManager->getTranslationFromContext($entity, NULL, array('operation' => 'entity_upcast'));
       }
-      return $entity;
     }
+
+    return $entity;
   }
 
 }
