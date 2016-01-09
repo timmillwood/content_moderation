@@ -32,8 +32,8 @@ class WorkbenchPreprocessTest extends \PHPUnit_Framework_TestCase {
   public function routeNodeProvider() {
     return [
       ['entity.node.cannonical', 1, 1, FALSE, 'Not on the latest version tab route.'],
-      ['entity.node.latest_revision', 1, 1, TRUE, 'On the latest version tab route, with the route node.'],
-      ['entity.node.latest_revision', 1, 2, FALSE, 'On the latest version tab route, with a different node.'],
+      ['entity.node.latest_version', 1, 1, TRUE, 'On the latest version tab route, with the route node.'],
+      ['entity.node.latest_version', 1, 2, FALSE, 'On the latest version tab route, with a different node.'],
     ];
   }
 
@@ -48,7 +48,6 @@ class WorkbenchPreprocessTest extends \PHPUnit_Framework_TestCase {
   protected function setupCurrentRouteMatch($routeName, $nid) {
     $route_match = $this->prophesize(CurrentRouteMatch::class);
     $route_match->getRouteName()->willReturn($routeName);
-    // @todo this is not working, why not?
     $route_match->getParameter('node')->willReturn($this->setupNode($nid));
 
     return $route_match->reveal();
@@ -62,7 +61,7 @@ class WorkbenchPreprocessTest extends \PHPUnit_Framework_TestCase {
    */
   protected function setupNode($nid) {
     $node = $this->prophesize(Node::class);
-    $node->id = $nid;
+    $node->id()->willReturn($nid);
 
     return $node->reveal();
   }
