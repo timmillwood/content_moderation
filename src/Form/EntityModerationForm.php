@@ -58,6 +58,20 @@ class EntityModerationForm extends EntityForm {
       '#description' => t('Content of this type must transition through moderation states in order to be published.'),
       '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'enabled', FALSE),
     ];
+
+    // Add a special message when moderation is being disabled.
+    if ($bundle->getThirdPartySetting('workbench_moderation', 'enabled', FALSE)) {
+      $form['enable_moderation_state_note'] = [
+        '#type' => 'item',
+        '#description' => t('After disabling moderation, any existing forward drafts will be accessible via the "Revisions" tab.'),
+        '#states' => [
+          'visible' => [
+            ':input[name=enable_moderation_state]' => ['checked' => FALSE],
+          ],
+        ],
+      ];
+    }
+
     $states = \Drupal::entityTypeManager()->getStorage('moderation_state')->loadMultiple();
     $options = [];
     /** @var ModerationState $state */
