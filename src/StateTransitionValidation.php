@@ -21,11 +21,6 @@ use Drupal\workbench_moderation\Entity\ModerationStateTransition;
 class StateTransitionValidation {
 
   /**
-   * @var \Drupal\Core\Entity\EntityStorageInterface
-   */
-  protected $transitionStorage;
-
-  /**
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
@@ -43,19 +38,16 @@ class StateTransitionValidation {
   protected $possibleTransitions = [];
 
   /**
-   * Creates a new StateTransitionValidation instance.
+   * Constructs a new StateTransitionValidation.
    *
-   * @param \Drupal\Core\Entity\EntityStorageInterface $transitionStorage
-   *   The transition storage.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager service.
+   * @param \Drupal\Core\Entity\Query\QueryFactory $query_factory
+   *   The entity query factory.
    */
-  public function __construct(EntityStorageInterface $transitionStorage, EntityTypeManagerInterface $entity_type_manager, QueryFactory $query_factory) {
-    $this->transitionStorage = $transitionStorage;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, QueryFactory $query_factory) {
     $this->entityTypeManager = $entity_type_manager;
     $this->queryFactory = $query_factory;
-  }
-
-  public static function create(EntityTypeManagerInterface $entity_type_manager) {
-    return new static($entity_type_manager->getStorage('moderation_state_transition'));
   }
 
   /**
@@ -72,7 +64,7 @@ class StateTransitionValidation {
    *   on the currently defined transition objects.
    */
   protected function calculatePossibleTransitions() {
-    $transitions = $this->transitionStorage->loadMultiple();
+    $transitions = $this->transitionStorage()->loadMultiple();
 
     $possible_transitions = [];
     /** @var \Drupal\workbench_moderation\ModerationStateTransitionInterface $transition */
