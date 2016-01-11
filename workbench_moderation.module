@@ -90,3 +90,13 @@ function workbench_moderation_local_tasks_alter(&$local_tasks) {
 function workbench_moderation_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   return \Drupal::service('workbench_moderation.entity_type')->bundleFormAlter($form, $form_state, $form_id);
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ *
+ * Many default node templates rely on $page to determine whether to output the
+ * node title as part of the node content.
+ */
+function workbench_moderation_preprocess_node(&$variables) {
+  \Drupal::service('workbench_moderation.workbench_preprocess')->preprocessNode($variables);
+}
