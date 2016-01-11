@@ -58,6 +58,19 @@ class StateTransitionValidation {
     return new static($entity_type_manager->getStorage('moderation_state_transition'));
   }
 
+  /**
+   * Computes a mapping of possible transitions.
+   *
+   * This method is uncached and will recalculate the list on every request.
+   * In most cases you want to use getPossibleTransitions() instead.
+   *
+   * @see static::getPossibleTransitions()
+   *
+   * @return array[]
+   *   An array containing all possible transitions. Each entry is keyed by the
+   *   "from" state, and the value is an array of all legal "to" states based
+   *   on the currently defined transition objects.
+   */
   protected function calculatePossibleTransitions() {
     $transitions = $this->transitionStorage->loadMultiple();
 
@@ -69,6 +82,14 @@ class StateTransitionValidation {
     return $possible_transitions;
   }
 
+  /**
+   * Returns a mapping of possible transitions.
+   *
+   * @return array[]
+   *   An array containing all possible transitions. Each entry is keyed by the
+   *   "from" state, and the value is an array of all legal "to" states based
+   *   on the currently defined transition objects.
+   */
   protected function getPossibleTransitions() {
     if (empty($this->possibleTransitions)) {
       $this->possibleTransitions = $this->calculatePossibleTransitions();
@@ -102,43 +123,30 @@ class StateTransitionValidation {
 
     $destinations = array_intersect($states_for_bundle, $destinations);
 
-    array_filter($destinations, function($state_name) use ($user) {
-
+    $permitted_destinations = array_filter($destinations, function($state_name) use ($current_state_id, $user) {
+      return $this->userMayTransition($current_state_id, $state_name, $user);
     });
 
+    return $this->entityTypeManager->getStorage('moderation_state')->loadMultiple($permitted_destinations);
   }
 
   /**
-   * Loads a specific bundle entity.
+   * Determines if a user is allowed to transition from one state to another.
    *
-   * @param string $bundle_entity_type_id
-   *   The bundle entity type ID.
-   * @param string $bundle_id
-   *   The bundle ID.
+   * This method will also return FALSE if there is no transition between the
+   * specified states at all.
    *
-   * @return \Drupal\Core\Config\Entity\ConfigEntityInterface|null
-   */
-  protected function loadBundleEntity($bundle_entity_type_id, $bundle_id) {
-    if ($bundle_entity_type_id) {
-      return $this->entityTypeManager->getStorage($bundle_entity_type_id)->load($bundle_id);
-    }
-  }
-
-  public function isTransitionAllowedForUser($from, $to, AccountInterface $user) {
-    return $this->isTransitionAllowed($from, $to) && $this->userMayTransition($from, $to, $user);
-  }
-
-  /**
-   *
-   *
-   * @param $from
-   * @param $to
+   * @param string $from
+   *   The origin state machine name.
+   * @param string $to
+   *   The desetination state machine name.
    * @param \Drupal\Core\Session\AccountInterface $user
+   *   The user to validate.
    *
    * @return bool
    *   TRUE if the given user may transition between those two states.
    */
-  protected function userMayTransition($from, $to, AccountInterface $user) {
+  public function userMayTransition($from, $to, AccountInterface $user) {
     if ($transition = $this->getTransitionFromStates($from, $to)) {
       return $user->hasPermission('use ' . $transition->id() . ' transition');
     }
@@ -172,19 +180,6 @@ class StateTransitionValidation {
   }
 
   /**
-   *
-   * @return \Drupal\Core\Entity\Query\QueryInterface
-   *   A transition state query.
-   */
-  protected function transitionStateQuery() {
-    return $this->queryFactory->get('moderation_state_transition', 'AND');
-  }
-
-  protected function transitionStorage() {
-    return $this->entityTypeManager->getStorage('moderation_state_transition');
-  }
-
-  /**
    * Determines a transition allowed.
    *
    * @param string $from
@@ -203,4 +198,46 @@ class StateTransitionValidation {
     return FALSE;
   }
 
+  /**
+   *
+   * @return \Drupal\Core\Entity\Query\QueryInterface
+   *   A transition state query.
+   */
+  protected function transitionStateQuery() {
+    return $this->queryFactory->get('moderation_state_transition', 'AND');
+  }
+
+  /**
+   * Returns the transition entity storage service.
+   *
+   * @return \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected function transitionStorage() {
+    return $this->entityTypeManager->getStorage('moderation_state_transition');
+  }
+
+  /**
+   * Returns the state entity storage service.
+   *
+   * @return \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected function stateStorage() {
+    return $this->entityTypeManager->getStorage('moderation_state');
+  }
+
+  /**
+   * Loads a specific bundle entity.
+   *
+   * @param string $bundle_entity_type_id
+   *   The bundle entity type ID.
+   * @param string $bundle_id
+   *   The bundle ID.
+   *
+   * @return \Drupal\Core\Config\Entity\ConfigEntityInterface|null
+   */
+  protected function loadBundleEntity($bundle_entity_type_id, $bundle_id) {
+    if ($bundle_entity_type_id) {
+      return $this->entityTypeManager->getStorage($bundle_entity_type_id)->load($bundle_id);
+    }
+  }
 }
