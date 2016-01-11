@@ -9,6 +9,7 @@
  *   revision) - i.e. unpublish
  */
 
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -38,6 +39,24 @@ function workbench_moderation_help($route_name, RouteMatchInterface $route_match
 function workbench_moderation_entity_base_field_info(EntityTypeInterface $entity_type) {
   $base_field_info = new BaseFieldInfo();
   return $base_field_info->entityBaseFieldInfo($entity_type);
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function workbench_moderation_module_implements_alter(&$implementations, $hook) {
+  /** @var \Drupal\workbench_moderation\InlineEditingDisabler $inline_editing_disabler */
+  $inline_editing_disabler = \Drupal::service('workbench_moderation.inline_editing_disabler');
+  $inline_editing_disabler->moduleImplementsAlter($implementations, $hook);
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function workbench_moderation_entity_view_alter(&$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
+  /** @var \Drupal\workbench_moderation\InlineEditingDisabler $inline_editing_disabler */
+  $inline_editing_disabler = \Drupal::service('workbench_moderation.inline_editing_disabler');
+  $inline_editing_disabler->entityViewAlter($build, $entity, $display);
 }
 
 /**
