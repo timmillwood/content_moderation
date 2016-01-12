@@ -219,6 +219,28 @@ class EntityTypeInfo {
       $entity = $form_state->getFormObject()->getEntity();
 
       $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->enforceRevisionsEntityFormAlter($form, $form_state, $form_id);
+
+      // Submit handler to redirect to the
+      $form['actions']['submit']['#submit'][] = [$this, 'bundleFormRedirect'];
+    }
+  }
+
+  /**
+   * Redirect content entity edit forms on save, if there is a forward revision.
+   *
+   * When saving their changes, editors should see those changes displayed on
+   * the next page.
+   *
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   */
+  public function bundleFormRedirect(array &$form, FormStateInterface $form_state) {
+    /* @var ContentEntityInterface $entity */
+    $entity = $form_state->getFormObject()->getEntity();
+
+    if ($this->moderationInfo->hasForwardRevision($entity)) {
+      $entity_type_id = $entity->getEntityTypeId();
+      $form_state->setRedirect("entity.$entity_type_id.latest_version", [$entity_type_id => $entity->id()]);
     }
   }
 }
