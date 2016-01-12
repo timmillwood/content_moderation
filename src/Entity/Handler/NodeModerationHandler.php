@@ -42,9 +42,14 @@ class NodeModerationHandler extends ModerationHandler {
    * {@inheritdoc}
    */
   public function enforceRevisionsBundleFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
-    // Force the revision checkbox on.
-    $form['workflow']['options']['#default_value']['revision'] = 'revision';
-    $form['workflow']['options']['revision']['#disabled'] = TRUE;
+    /* @var \Drupal\node\Entity\NodeType $entity */
+    $entity = $form_state->getFormObject()->getEntity();
+
+    if ($entity->getThirdPartySetting('workbench_moderation', 'enabled', FALSE)) {
+      // Force the revision checkbox on.
+      $form['workflow']['options']['#default_value']['revision'] = 'revision';
+      $form['workflow']['options']['revision']['#disabled'] = TRUE;
+    }
   }
 
 }
