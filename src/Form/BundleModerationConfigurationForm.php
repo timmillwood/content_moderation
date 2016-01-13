@@ -172,7 +172,7 @@ class BundleModerationConfigurationForm extends EntityForm {
       /* @var ConfigEntityTypeInterface $bundle */
       $bundle = $form_state->getFormObject()->getEntity();
 
-      $this->entityTypeManager->getHandler($bundle->getEntityType()->getBundleOf(), 'moderation')->onEntityModerationFormSubmit($bundle);
+      $this->entityTypeManager->getHandler($bundle->getEntityType()->getBundleOf(), 'moderation')->onBundleModerationConfigurationFormSubmit($bundle);
     }
 
     parent::submitForm( $form, $form_state);
