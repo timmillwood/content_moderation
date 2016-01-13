@@ -111,21 +111,21 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
     $state->label()->willReturn('Draft');
     $state->isPublishedState()->willReturn(FALSE);
     $state->isDefaultRevisionState()->willReturn(FALSE);
-    $states['draft'] = $state;
+    $states['draft'] = $state->reveal();
 
     $state = $this->prophesize(ModerationStateInterface::class);
     $state->id()->willReturn('needs_review');
     $state->label()->willReturn('Needs Review');
     $state->isPublishedState()->willReturn(FALSE);
     $state->isDefaultRevisionState()->willReturn(FALSE);
-    $states['needs_review'] = $state;
+    $states['needs_review'] = $state->reveal();
 
     $state = $this->prophesize(ModerationStateInterface::class);
     $state->id()->willReturn('published');
     $state->label()->willReturn('Published');
     $state->isPublishedState()->willReturn(TRUE);
     $state->isDefaultRevisionState()->willReturn(TRUE);
-    $states['published'] = $state;
+    $states['published'] = $state->reveal();
 
     $entity_storage->loadMultiple()->willReturn($states);
 
