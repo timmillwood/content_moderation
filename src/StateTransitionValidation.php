@@ -102,7 +102,7 @@ class StateTransitionValidation {
    *   entity.
    */
   public function getValidTransitionTargets(ContentEntityInterface $entity, AccountInterface $user) {
-    $bundle = $this->loadBundleEntity($entity->getEntityTypeId(), $entity->bundle());
+    $bundle = $this->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle());
 
     $states_for_bundle = $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', []);
 
