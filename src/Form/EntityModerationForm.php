@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Contains EntityModerationForm.php
+ * Contains \Drupal\workbench_moderation\Form\EntityModerationForm.
  */
 
 
@@ -89,7 +89,7 @@ class EntityModerationForm extends FormBase {
 
     $form['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Set'),
+      '#value' => $this->t('Update'),
     ];
 
     return $form;

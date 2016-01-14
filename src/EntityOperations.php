@@ -70,19 +70,8 @@ class EntityOperations {
    *
    * This is a hook bridge.
    *
-   * @param &$build
-   *   A renderable array representing the entity content.
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity object.
-   * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
-   *   The entity view display holding the display options configured for the
-   *   entity components.
-   * @param $view_mode
-   *   The view mode the entity is rendered in.
-   *
-   * The module may add elements to $build prior to rendering. The
-   * structure of $build is a renderable array as expected by
-   * drupal_render().
+   * @see hook_entity_view()
+   * @see EntityFieldManagerInterface::getExtraFields()
    */
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
 
@@ -101,7 +90,6 @@ class EntityOperations {
     if ($component) {
       $build['workbench_moderation_control'] = $this->formBuilder->getForm(EntityModerationForm::class, $entity);
       $build['workbench_moderation_control']['#weight'] = $component['weight'];
-      unset($build['moderation_state']);
     }
   }
 }
