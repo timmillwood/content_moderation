@@ -62,14 +62,15 @@ class EntityModerationForm extends FormBase {
    * @inheritDoc
    */
   public function buildForm(array $form, FormStateInterface $form_state, ContentEntityInterface $entity = NULL) {
+    /** @var ModerationState $current_state */
+    $current_state = $entity->moderation_state->entity;
+
     $target_states = $this->validation->getValidTransitionTargets($entity, $this->currentUser());
+    $target_states = array_diff_key($target_states, [$current_state->id() => $current_state]);
 
     $target_states = array_map(function(ModerationState $state) {
       return $state->label();
     }, $target_states);
-
-    /** @var ModerationState $current_state */
-    $current_state = $entity->moderation_state->entity;
 
     if ($current_state) {
       $form['current'] = [
