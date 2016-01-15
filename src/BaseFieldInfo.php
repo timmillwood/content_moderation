@@ -37,7 +37,7 @@ class BaseFieldInfo {
         // @todo write a test for this.
         ->setDisplayOptions('view', [
           'label' => 'hidden',
-          'type' => 'string',
+          'type' => 'hidden',
           'weight' => -5,
         ])
         // @todo write a custom widget/selection handler plugin instead of
@@ -49,7 +49,7 @@ class BaseFieldInfo {
         ])
         ->addConstraint('ModerationState', [])
         ->setDisplayConfigurable('form', FALSE)
-        ->setDisplayConfigurable('view', TRUE);
+        ->setDisplayConfigurable('view', FALSE);
       return $fields;
     }
     return [];

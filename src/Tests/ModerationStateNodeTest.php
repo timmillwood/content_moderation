@@ -59,6 +59,9 @@ class ModerationStateNodeTest extends ModerationStateTestBase {
     /* @var \Drupal\node\NodeInterface $node */
     $node = \Drupal::entityTypeManager()->getStorage('node')->load($node->id());
     $this->assertTrue($node->isPublished());
+
+    // Verify that the state field is not shown.
+    $this->assertNoText('Published');
   }
 
   /**
