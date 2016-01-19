@@ -9,13 +9,16 @@
  *   revision) - i.e. unpublish
  */
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\node\NodeInterface;
 use Drupal\workbench_moderation\BaseFieldInfo;
 use Drupal\workbench_moderation\Plugin\Menu\EditTab;
-use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_help().
@@ -132,4 +135,17 @@ function workbench_moderation_entity_extra_field_info() {
  */
 function workbench_moderation_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
   \Drupal::service('workbench_moderation.entity_operations')->entityView($build, $entity, $display, $view_mode);
+}
+
+/**
+ * Implements hook_entity_access().
+ *
+ * Nodes in particular should be viewable if unpublished and the user has
+ * the appropriate permission. This permission is therefore effectively
+ * mandatory for any user that wants to moderate things.
+ */
+function workbench_moderation_node_access(NodeInterface $entity, $operation, AccountInterface $account) {
+  return (!$entity->isPublished() && $operation == 'view')
+    ? AccessResult::allowedIfHasPermission($account, 'view any unpublished content')
+    : AccessResult::neutral();
 }
