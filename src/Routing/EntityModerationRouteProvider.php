@@ -82,7 +82,9 @@ class EntityModerationRouteProvider implements EntityRouteProviderInterface, Ent
           '_entity_view' => "{$entity_type_id}.full",
           '_title_callback' => '\Drupal\Core\Entity\Controller\EntityController::title',
         ])
-        ->setRequirement('_entity_access', "{$entity_type_id}.update")
+        // If the entity type is a node, unpublished content will be visible
+        // if the user has the "view all unpublished content" permission.
+        ->setRequirement('_entity_access', "{$entity_type_id}.view")
         ->setRequirement('_workbench_moderation_latest_version', 'TRUE')
         ->setOption('parameters', [
           $entity_type_id => ['type' => 'entity:' . $entity_type_id, 'load_forward_revision' => 1],
