@@ -289,7 +289,7 @@ class EntityTypeInfo {
       $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->enforceRevisionsEntityFormAlter($form, $form_state, $form_id);
 
       // Submit handler to redirect to the
-      $form['actions']['submit']['#submit'][] = [$this, 'bundleFormRedirect'];
+      $form['actions']['submit']['#submit'][] = '\Drupal\workbench_moderation\EntityTypeInfo::bundleFormRedirect';
     }
   }
 
@@ -302,11 +302,12 @@ class EntityTypeInfo {
    * @param array $form
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
-  public function bundleFormRedirect(array &$form, FormStateInterface $form_state) {
+  public static function bundleFormRedirect(array &$form, FormStateInterface $form_state) {
     /* @var ContentEntityInterface $entity */
     $entity = $form_state->getFormObject()->getEntity();
 
-    if ($this->moderationInfo->hasForwardRevision($entity)) {
+    $moderation_info = \Drupal::getContainer()->get('workbench_moderation.moderation_information');
+    if ($moderation_info->hasForwardRevision($entity)) {
       $entity_type_id = $entity->getEntityTypeId();
       $form_state->setRedirect("entity.$entity_type_id.latest_version", [$entity_type_id => $entity->id()]);
     }
