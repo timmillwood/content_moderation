@@ -79,17 +79,6 @@ class ModerationStateTransitionForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    if ($form_state->getValue('stateFrom') === $form_state->getValue('stateTo')) {
-      $form_state->setErrorByName('stateTo', $this->t('You cannot use the same state for both from and to.'));
-    }
-    parent::validateForm($form, $form_state);
-  }
-
-
-  /**
-   * {@inheritdoc}
-   */
   public function save(array $form, FormStateInterface $form_state) {
     $moderation_state_transition = $this->entity;
     $status = $moderation_state_transition->save();
