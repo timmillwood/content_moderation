@@ -5,6 +5,6 @@ dependencies:
     - workbench_moderation.moderation_state.draft
     - workbench_moderation.moderation_state.published
 id: published_draft
-label: 'Published » Draft'
+label: 'Create New Draft'
 stateFrom: published
 stateTo: draft
