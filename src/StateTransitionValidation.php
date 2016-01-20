@@ -123,6 +123,57 @@ class StateTransitionValidation {
   }
 
   /**
+   * Gets a list of transitions that are legal for this user on this entity.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The entity to be transitioned.
+   * @param \Drupal\Core\Session\AccountInterface $user
+   *   The account that wants to perform a transition.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   * @param \Drupal\Core\Session\AccountInterface $user
+   *
+   * @return ModerationStateTransition[]
+   */
+  public function getValidTransitions(ContentEntityInterface $entity, AccountInterface $user) {
+    $current_state_id = $entity->moderation_state->entity->id();
+
+    // Determine the states that are legal on this bundle.
+    $legal_bundle_states = $this
+      ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle())
+      ->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', []);
+
+    // Legal transitions include those that are possible from the current state,
+    // filtered by those whose target is legal on this bundle and that the
+    // user has access to execute.
+    $transitions = array_filter($this->getTransitionsFrom($current_state_id), function(ModerationStateTransition $transition) use ($legal_bundle_states, $user) {
+      return in_array($transition->getToState(), $legal_bundle_states)
+        && $user->hasPermission('use ' . $transition->id() . ' transition');
+    });
+
+    return $transitions;
+  }
+
+  /**
+   * Returns a list of transitions from a given state.
+   *
+   * This list is based only on those transitions that exist, not what
+   * transitions are legal in a given context.
+   *
+   * @param string $state_name
+   *   The machine name of the state from which we are transitioning.
+   *
+   * @return ModerationStateTransition[]
+   */
+  protected function getTransitionsFrom($state_name) {
+    $result = $this->transitionStateQuery()
+      ->condition('stateFrom', $state_name)
+      ->execute();
+
+    return $this->transitionStorage()->loadMultiple($result);
+  }
+
+  /**
    * Determines if a user is allowed to transition from one state to another.
    *
    * This method will also return FALSE if there is no transition between the
@@ -168,7 +219,6 @@ class StateTransitionValidation {
       return current($transitions);
     }
     return NULL;
-
   }
 
   /**
