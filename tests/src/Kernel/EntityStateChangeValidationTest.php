@@ -72,11 +72,11 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     ]);
     $node->save();
 
-    $node->moderation_state->target_id = 'published';
+    $node->moderation_state->target_id = 'archived';
     $violations = $node->validate();
     $this->assertCount(1, $violations);
 
-    $this->assertEquals('Invalid state transition from <em class="placeholder">Draft</em> to <em class="placeholder">Published</em>', $violations->get(0)->getMessage());
+    $this->assertEquals('Invalid state transition from <em class="placeholder">Draft</em> to <em class="placeholder">Archived</em>', $violations->get(0)->getMessage());
   }
 
   /**
