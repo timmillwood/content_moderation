@@ -136,12 +136,14 @@ class StateTransitionValidation {
    * @return ModerationStateTransition[]
    */
   public function getValidTransitions(ContentEntityInterface $entity, AccountInterface $user) {
-    $current_state_id = $entity->moderation_state->entity->id();
+    $bundle = $this->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle());
+
+    /** @var ModerationState $current_state */
+    $current_state = $entity->moderation_state->entity;
+    $current_state_id = $current_state ? $current_state->id(): $bundle->getThirdPartySetting('workbench_moderation', 'default_moderation_state');
 
     // Determine the states that are legal on this bundle.
-    $legal_bundle_states = $this
-      ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle())
-      ->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', []);
+    $legal_bundle_states = $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', []);
 
     // Legal transitions include those that are possible from the current state,
     // filtered by those whose target is legal on this bundle and that the
