@@ -7,3 +7,4 @@ id: draft_draft
 label: 'Create New Draft'
 stateFrom: draft
 stateTo: draft
+weight: -10

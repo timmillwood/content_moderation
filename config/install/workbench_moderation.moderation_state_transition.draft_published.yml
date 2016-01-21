@@ -8,3 +8,4 @@ id: draft_published
 label: 'Publish'
 stateFrom: draft
 stateTo: published
+weight: -8

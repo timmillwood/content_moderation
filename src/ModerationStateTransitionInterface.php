@@ -31,6 +31,14 @@ interface ModerationStateTransitionInterface extends ConfigEntityInterface {
   public function getToState();
 
   /**
+   * Gets the weight for the given transition.
+   *
+   * @return int
+   *   The weight of this transition.
+   */
+  public function getWeight();
+
+  /**
    * Sets the moderation state config prefix.
    *
    * @param string $moderation_state_config_prefix

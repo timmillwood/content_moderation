@@ -14,5 +14,8 @@ workbench_moderation.moderation_state_transition.*:
     stateTo:
       type: string
       label: 'To state'
+    weight:
+      type: integer
+      label: 'Weight'
     uuid:
       type: string
