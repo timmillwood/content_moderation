@@ -150,7 +150,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
 
     $default = $items->get($delta)->target_id ?: $bundle_entity->getThirdPartySetting('workbench_moderation', 'default_moderation_state', FALSE);
     /** @var \Drupal\workbench_moderation\ModerationStateInterface $default_state */
-    $default_state = ModerationState::load($default);
+    $default_state = $this->entityTypeManager->getStorage('moderation_state')->load($default);
     if (!$default || !$default_state) {
       throw new \UnexpectedValueException(sprintf('The %s bundle has an invalid moderation state configuration, moderation states are enabled but no default is set.', $bundle_entity->label()));
     }
@@ -177,15 +177,6 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
     return $element;
   }
 
-  protected function getAdminPermission(EntityTypeInterface $entity_type) {
-    switch ($entity_type->id()) {
-      case 'node':
-        return 'administer nodes';
-      default:
-        return $entity_type->getAdminPermission();
-    }
-  }
-
   /**
    * Entity builder updating the node moderation state with the submitted value.
    *
@@ -209,7 +200,15 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
    * Process callback to alter action buttons.
    */
   public static function processActions($element, FormStateInterface $form_state, array &$form) {
+
+    // We'll steal most of the button configuration from the default submit button.
+    // However, NodeForm also hides that button for admins (as it adds its own,
+    // too), so we have to restore it.
     $default_button = $form['actions']['submit'];
+    $default_button['#access'] = TRUE;
+
+    // Add a custom button for each transition we're allowing. The #dropbutton
+    // property tells FAPI to cluster them all together into a single widget.
     $options = $element['#options'];
     foreach ($options as $id => $label) {
       $button = [
@@ -221,14 +220,19 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
 
       $form['actions']['moderation_state_' . $id] = $button + $default_button;
     }
+
+    // Hide the default buttons, including the specialty ones added by
+    // NodeForm.
     foreach (['publish', 'unpublish', 'submit'] as $key) {
       $form['actions'][$key]['#access'] = FALSE;
       unset($form['actions'][$key]['#dropbutton']);
     }
+
+    // Setup a callback to translate the button selection back into field
+    // widget, so that it will get saved properly.
     $form['#entity_builders']['update_moderation_state'] = [get_called_class(), 'updateStatus'];
     return $element;
   }
-
 
   /**
    * {@inheritdoc}
