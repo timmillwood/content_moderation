@@ -81,7 +81,7 @@ class EntityModerationForm extends FormBase {
 
     if ($current_state) {
       $form['current'] = [
-        '#type' => 'markup',
+        '#type' => 'item',
         '#title' => $this->t('Status'),
         '#markup' => $current_state->label(),
       ];
@@ -99,12 +99,15 @@ class EntityModerationForm extends FormBase {
     $form['revision_log'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Log message'),
+      '#size' => 30,
     ];
 
     $form['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Update'),
+      '#value' => $this->t('Apply'),
     ];
+
+    $form['#theme'] = ['entity_moderation_form'];
 
     return $form;
   }
