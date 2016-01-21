@@ -96,6 +96,11 @@ class EntityModerationForm extends FormBase {
       '#options' => $target_states,
     ];
 
+    $form['revision_log'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Log message'),
+    ];
+
     $form['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Update'),
@@ -112,8 +117,10 @@ class EntityModerationForm extends FormBase {
     $entity = $form_state->get('entity');
 
     $new_state = $form_state->getValue('new_state');
-
     $entity->moderation_state->target_id = $new_state;
+
+    $entity->revision_log = $form_state->getValue('revision_log');
+
     $entity->save();
 
     drupal_set_message($this->t('The moderation state has been updated.'));
