@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - workbench_moderation.moderation_state.draft
+    - workbench_moderation.moderation_state.published
+id: draft_published
+label: 'Draft » Published'
+stateFrom: draft
+stateTo: published
