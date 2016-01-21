@@ -20,7 +20,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\workbench_moderation\Entity\ModerationState;
+use Drupal\workbench_moderation\Entity\ModerationStateTransition;
 use Drupal\workbench_moderation\ModerationInformation;
+use Drupal\workbench_moderation\StateTransitionValidation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -75,6 +77,11 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
   protected $moderationStateTransitionStorage;
 
   /**
+   * @var \Drupal\workbench_moderation\StateTransitionValidation
+   */
+  protected $validator;
+
+  /**
    * Constructs a new ModerationStateWidget object.
    *
    * @param string $plugin_id
@@ -96,7 +103,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
    * @param \Drupal\Core\Entity\Query\QueryInterface $entity_query
    *   Moderation transation entity query service.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, EntityStorageInterface $moderation_state_storage, EntityStorageInterface $moderation_state_transition_storage, QueryInterface $entity_query, ModerationInformation $moderation_information) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, EntityStorageInterface $moderation_state_storage, EntityStorageInterface $moderation_state_transition_storage, QueryInterface $entity_query, ModerationInformation $moderation_information, StateTransitionValidation $validator) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->moderationStateTransitionEntityQuery = $entity_query;
     $this->moderationStateTransitionStorage = $moderation_state_transition_storage;
@@ -104,6 +111,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
     $this->entityTypeManager = $entity_type_manager;
     $this->currentUser = $current_user;
     $this->moderationInformation = $moderation_information;
+    $this->validator = $validator;
   }
 
   /**
@@ -121,7 +129,8 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       $container->get('entity_type.manager')->getStorage('moderation_state'),
       $container->get('entity_type.manager')->getStorage('moderation_state_transition'),
       $container->get('entity.query')->get('moderation_state_transition', 'AND'),
-      $container->get('workbench_moderation.moderation_information')
+      $container->get('workbench_moderation.moderation_information'),
+      $container->get('workbench_moderation.state_transition_validation')
     );
   }
 
@@ -129,17 +138,15 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+    /** @var ContentEntityInterface $entity */
     $entity = $items->getEntity();
+
     /* @var \Drupal\Core\Config\Entity\ConfigEntityInterface $bundle_entity */
     $bundle_entity = $this->entityTypeManager->getStorage($entity->getEntityType()->getBundleEntityType())->load($entity->bundle());
     if (!$this->moderationInformation->isModeratableEntity($entity)) {
       // @todo write a test for this.
       return $element + ['#access' => FALSE];
     }
-    $options = $this->fieldDefinition
-      ->getFieldStorageDefinition()
-      ->getOptionsProvider($this->column, $entity)
-      ->getSettableOptions($this->currentUser);
 
     $default = $items->get($delta)->target_id ?: $bundle_entity->getThirdPartySetting('workbench_moderation', 'default_moderation_state', FALSE);
     /** @var \Drupal\workbench_moderation\ModerationStateInterface $default_state */
@@ -147,52 +154,26 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
     if (!$default || !$default_state) {
       throw new \UnexpectedValueException(sprintf('The %s bundle has an invalid moderation state configuration, moderation states are enabled but no default is set.', $bundle_entity->label()));
     }
-    // @todo write a test for this.
-    $from = $this->moderationStateTransitionEntityQuery
-      ->condition('stateFrom', $default)
-      ->execute();
-    // Can always keep this one as is.
-    $to[$default] = $default;
-    // @todo write a test for this.
-    $allowed = $bundle_entity->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', []);
-    if ($from) {
-      /* @var \Drupal\workbench_moderation\ModerationStateTransitionInterface $transition */
-      foreach ($this->moderationStateTransitionStorage->loadMultiple($from) as $id => $transition) {
-        $to_state = $transition->getToState();
-        if ($this->currentUser->hasPermission('use ' . $id . ' transition') && in_array($to_state, $allowed, TRUE)) {
-          $to[$to_state] = $to_state;
-        }
-      }
+
+    $transitions = $this->validator->getValidTransitions($entity, $this->currentUser);
+
+    $target_states = [];
+    /** @var ModerationStateTransition $transition */
+    foreach ($transitions as $transition) {
+      $target_states[$transition->getToState()] = $transition->label();
     }
-    $options = array_intersect_key($options, $to);
 
     // @todo write a test for this.
     $element += [
-      '#access' => count($options),
+      '#access' => FALSE,
       '#type' => 'select',
-      '#options' => $options,
+      '#options' => $target_states,
       '#default_value' => $default,
       '#published' => $default ? $default_state->isPublishedState() : FALSE,
     ];
-    if ($this->currentUser->hasPermission($this->getAdminPermission($entity->getEntityType())) && count($options)) {
-      // Use the dropbutton.
-      $element['#process'][] = [get_called_class(), 'processActions'];
-      // Don't show in sidebar/body.
-      $element['#access'] = FALSE;
-    }
-    else {
-      // Place the field as a details element in the advanced tab-set in e.g.
-      // the sidebar.
-      $element = [
-        '#type' => 'details',
-        '#group' => 'advanced',
-        '#open' => TRUE,
-        '#weight' => -10,
-        '#title' => t('Moderation state'),
-        'target_id' => $element,
-      ];
-    }
 
+    // Use the dropbutton.
+    $element['#process'][] = [get_called_class(), 'processActions'];
     return $element;
   }
 
@@ -223,46 +204,24 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       $entity->moderation_state->target_id = $element['#moderation_state'];
     }
   }
+
   /**
    * Process callback to alter action buttons.
    */
   public static function processActions($element, FormStateInterface $form_state, array &$form) {
     $default_button = $form['actions']['submit'];
-    $default_button['#access'] = TRUE;
     $options = $element['#options'];
     foreach ($options as $id => $label) {
-      if ($id === $element['#default_value']) {
-        if ($element['#published']) {
-          $button = [
-            '#value' => t('Save and keep @state', ['@state' => $label]),
-            '#dropbutton' => 'save',
-            '#moderation_state' => $id,
-            '#weight' => -10,
-          ];
-        }
-        else {
-          $button = [
-            '#value' => t('Save as @state', ['@state' => $label]),
-            '#dropbutton' => 'save',
-            '#moderation_state' => $id,
-            '#weight' => -10,
-          ];
-        }
-      }
-      else {
-        // @todo write a test for this.
-        $button = [
-          '#value' => t('Save and @type @state', [
-            '@state' => $label,
-            '@type' => $element['#published'] ? t('create new revision in') : t('transition to'),
-          ]),
-          '#dropbutton' => 'save',
-          '#moderation_state' => $id,
-        ];
-      }
+      $button = [
+        '#value' => t('Save and @transition', ['@transition' => $label]),
+        '#dropbutton' => 'save',
+        '#moderation_state' => $id,
+        '#weight' => -10,
+      ];
+
       $form['actions']['moderation_state_' . $id] = $button + $default_button;
     }
-    foreach (['publish', 'unpublish'] as $key) {
+    foreach (['publish', 'unpublish', 'submit'] as $key) {
       $form['actions'][$key]['#access'] = FALSE;
       unset($form['actions'][$key]['#dropbutton']);
     }
