@@ -50,7 +50,7 @@ class ModerationStateTransitionsTest extends ModerationStateTestBase {
 
     // Edit the Draft » Needs review.
     $this->drupalGet('admin/structure/workbench-moderation/transitions/draft_needs_review');
-    $this->assertFieldByName('label', 'Draft » Needs review');
+    $this->assertFieldByName('label', 'Request Review');
     $this->assertFieldByName('stateFrom', 'draft');
     $this->assertFieldByName('stateTo', 'needs_review');
     $this->drupalPostForm(NULL, [
@@ -62,7 +62,7 @@ class ModerationStateTransitionsTest extends ModerationStateTestBase {
     $this->drupalPostForm(NULL, [
       'label' => 'Draft » Needs review',
     ], t('Save'));
-    $this->assertText('Saved the Draft » Needs review Moderation state transition.');
+    $this->assertText('Saved the Request Review Moderation state transition.');
 
     // Add a new state.
     $this->drupalGet('admin/structure/workbench-moderation/states/add');
