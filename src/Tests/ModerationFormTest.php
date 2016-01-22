@@ -53,7 +53,7 @@ class ModerationFormTest extends ModerationStateTestBase {
     // Make a new forward revision; after saving, the tab and form should show.
     $this->drupalPostForm($edit_path, [
       'body[0][value]' => 'Second version of the content.',
-    ], t('Save and transition to Needs Review'));
+    ], t('Save and Request Review'));
     $this->drupalGet($latest_version_path);
     $this->assertResponse(200);
     $this->assertText('Second version of the content.');
@@ -64,7 +64,7 @@ class ModerationFormTest extends ModerationStateTestBase {
     // be unavailable and the public node page should have no form on it.
     $this->drupalPostForm($edit_path, [
       'body[0][value]' => 'Third version of the content.',
-    ], t('Save and transition to Published'));
+    ], t('Save and Publish'));
     $this->drupalGet($canonical_path);
     $this->assertResponse(200);
     $this->assertNoText('Current status', 'The node view page has no moderation form.');
@@ -75,7 +75,7 @@ class ModerationFormTest extends ModerationStateTestBase {
     // be back, and have a form, while the node view page still has no form.
     $this->drupalPostForm($edit_path, [
       'body[0][value]' => 'Fourth version of the content.',
-    ], t('Save and create new revision in Draft'));
+    ], t('Save and Create New Draft'));
     $this->drupalGet($latest_version_path);
     $this->assertResponse(200);
     $this->assertText('Current status', 'Form text found on the latest-version page.');

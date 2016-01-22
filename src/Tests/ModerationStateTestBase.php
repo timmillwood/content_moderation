@@ -35,6 +35,7 @@ abstract class ModerationStateTestBase extends WebTestBase {
   protected $permissions = [
     'administer moderation states',
     'administer moderation state transitions',
+    'use draft_draft transition',
     'use draft_needs_review transition',
     'use published_draft transition',
     'use needs_review_published transition',

@@ -69,7 +69,7 @@ class ModerationStateNodeTypeTest extends ModerationStateTestBase {
     $this->assertLinkByHref('node/' . $node->id() . '/edit');
     $this->drupalGet('node/' . $node->id() . '/edit');
     $this->assertResponse(200);
-    $this->assertRaw('Save as Draft');
+    $this->assertRaw('Save and Create New Draft');
     $this->assertNoRaw('Save and publish');
   }
 
