@@ -38,7 +38,7 @@ class ModerationFormTest extends ModerationStateTestBase {
     $this->drupalPostForm('node/add/moderated_content', [
       'title[0][value]' => 'Some moderated content',
       'body[0][value]' => 'First version of the content.',
-    ], t('Save as Draft'));
+    ], t('Save and Create New Draft'));
 
     $node = $this->drupalGetNodeByTitle('Some moderated content');
     $canonical_path = sprintf('node/%d', $node->id());
@@ -57,7 +57,7 @@ class ModerationFormTest extends ModerationStateTestBase {
     $this->drupalGet($latest_version_path);
     $this->assertResponse(200);
     $this->assertText('Second version of the content.');
-    $this->assertText('Current status', 'Form text found on the latest-version page.');
+    $this->assertText('Status', 'Form text found on the latest-version page.');
     $this->assertText('Needs Review', 'Correct status found on the latest-version page.');
 
     // Make a new published revision; after saving, the latest-version tab should
@@ -78,7 +78,7 @@ class ModerationFormTest extends ModerationStateTestBase {
     ], t('Save and Create New Draft'));
     $this->drupalGet($latest_version_path);
     $this->assertResponse(200);
-    $this->assertText('Current status', 'Form text found on the latest-version page.');
+    $this->assertText('Status', 'Form text found on the latest-version page.');
     $this->assertText('Draft', 'Correct status found on the latest-version page.');
     $this->drupalGet($canonical_path);
     $this->assertResponse(200);
@@ -87,10 +87,10 @@ class ModerationFormTest extends ModerationStateTestBase {
     // Submit the moderation form to change status.
     $this->drupalPostForm($latest_version_path, [
       'new_state' => 'needs_review',
-    ], t('Update'));
+    ], t('Apply'));
     $this->drupalGet($latest_version_path);
     $this->assertResponse(200);
-    $this->assertText('Current status', 'Form text found on the latest-version page.');
+    $this->assertText('Status', 'Form text found on the latest-version page.');
     $this->assertText('Needs Review', 'Correct status found on the latest-version page.');
   }
 
