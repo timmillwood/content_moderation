@@ -32,3 +32,19 @@ node.type.*.third_party.workbench_moderation:
     default_moderation_state:
       type: string
       label: 'Moderation state for new content'
+
+block_content.type.*.third_party.workbench_moderation:
+  type: mapping
+  label: 'Enable moderation states for this block content type'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Moderation states enabled'
+    allowed_moderation_states:
+      type: sequence
+      sequence:
+        type: string
+        label: 'Moderation state'
+    default_moderation_state:
+      type: string
+      label: 'Moderation state for new block content'
