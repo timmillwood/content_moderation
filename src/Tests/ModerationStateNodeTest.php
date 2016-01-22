@@ -36,7 +36,7 @@ class ModerationStateNodeTest extends ModerationStateTestBase {
   public function testCreatingContent() {
     $this->drupalPostForm('node/add/moderated_content', [
       'title[0][value]' => 'moderated content',
-    ], t('Save as Draft'));
+    ], t('Save and Create New Draft'));
     $nodes = \Drupal::entityTypeManager()
       ->getStorage('node')
       ->loadByProperties([
@@ -72,7 +72,7 @@ class ModerationStateNodeTest extends ModerationStateTestBase {
     $this->drupalPostForm('node/add/moderated_content', [
       'title[0][value]' => 'Some moderated content',
       'body[0][value]' => 'First version of the content.',
-    ], t('Save as Draft'));
+    ], t('Save and Create New Draft'));
 
     $node = $this->drupalGetNodeByTitle('Some moderated content');
     $edit_path = sprintf('node/%d/edit', $node->id());
