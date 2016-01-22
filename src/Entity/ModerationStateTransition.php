@@ -30,7 +30,8 @@ use Drupal\workbench_moderation\ModerationStateTransitionInterface;
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",
- *     "uuid" = "uuid"
+ *     "uuid" = "uuid",
+ *     "weight" = "weight"
  *   },
  *   links = {
  *     "canonical" = "/admin/structure/moderation-state/transitions/{moderation_state_transition}",
