@@ -7,8 +7,8 @@
 
 namespace Drupal\workbench_moderation;
 
-use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Config\Entity\DraggableListBuilder;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -67,7 +67,9 @@ class ModerationStateTransitionListBuilder extends DraggableListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function buildRow(ConfigEntityInterface $entity) {
+  public function buildRow(EntityInterface $entity) {
+    /** @var ModerationStateTransitionInterface $entity */
+
     $row['label'] = $entity->label();
     $row['id']['#markup'] = $entity->id();
     $row['from']['#markup'] = $this->stateStorage->load($entity->getFromState())->label();
