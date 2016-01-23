@@ -170,6 +170,7 @@ class StateTransitionValidation {
   protected function getTransitionsFrom($state_name) {
     $result = $this->transitionStateQuery()
       ->condition('stateFrom', $state_name)
+      ->sort('weight')
       ->execute();
 
     return $this->transitionStorage()->loadMultiple($result);

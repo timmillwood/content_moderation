@@ -73,6 +73,14 @@ class ModerationStateTransitionForm extends EntityForm {
       '#default_value' => $moderation_state_transition->getToState(),
     ];
 
+    $form['weight'] = [
+      '#type' => 'weight',
+      '#options' => $options,
+      '#title' => $this->t('Weight'),
+      '#default_value' => $moderation_state_transition->getWeight(),
+      '#description' => $this->t('Orders the transitions in moderation forms and the administrative listing. Heavier items will sink and the lighter items will be positioned nearer the top.'),
+    ];
+
     return $form;
   }
 

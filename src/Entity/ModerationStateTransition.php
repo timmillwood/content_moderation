@@ -30,7 +30,8 @@ use Drupal\workbench_moderation\ModerationStateTransitionInterface;
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",
- *     "uuid" = "uuid"
+ *     "uuid" = "uuid",
+ *     "weight" = "weight"
  *   },
  *   links = {
  *     "canonical" = "/admin/structure/moderation-state/transitions/{moderation_state_transition}",
@@ -65,9 +66,16 @@ class ModerationStateTransition extends ConfigEntityBase implements ModerationSt
   /**
    * ID of to state.
    *
-   * @var
+   * @var string
    */
   protected $stateTo;
+
+  /**
+   * Relative weight of this transition.
+   *
+   * @var int
+   */
+  protected $weight;
 
   /**
    * Moderation state config prefix
@@ -103,6 +111,13 @@ class ModerationStateTransition extends ConfigEntityBase implements ModerationSt
    */
   public function getToState() {
     return $this->stateTo;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getWeight() {
+    return $this->weight;
   }
 
   /**
