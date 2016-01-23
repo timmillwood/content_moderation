@@ -149,3 +149,14 @@ function workbench_moderation_node_access(NodeInterface $entity, $operation, Acc
     ? AccessResult::allowedIfHasPermission($account, 'view any unpublished content')
     : AccessResult::neutral();
 }
+
+/**
+ * Implements hook_theme().
+ */
+function workbench_moderation_theme($existing, $type, $theme, $path) {
+  $themes['entity_moderation_form'] = [
+    'render element' => 'form',
+  ];
+
+  return $themes;
+}

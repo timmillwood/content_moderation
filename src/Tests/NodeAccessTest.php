@@ -35,10 +35,12 @@ class NodeAccessTest extends ModerationStateTestBase {
    * Verifies that a non-admin user can still access the appropriate pages.
    */
   public function testPageAccess() {
+    $this->drupalLogin($this->adminUser);
+
     // Create a node to test with.
     $this->drupalPostForm('node/add/moderated_content', [
       'title[0][value]' => 'moderated content',
-    ], t('Save as Draft'));
+    ], t('Save and Create New Draft'));
     $nodes = \Drupal::entityTypeManager()
       ->getStorage('node')
       ->loadByProperties([
@@ -58,10 +60,11 @@ class NodeAccessTest extends ModerationStateTestBase {
     $latest_path = 'node/' . $node->id() . '/latest';
 
     // Set up needs review revision.
-    $this->drupalPostForm($edit_path, [], t('Save and transition to Needs Review'));
+    $this->drupalPostForm($edit_path, [], t('Save and Request Review'));
 
     // Now make a new user and verify that the new user's access is correct.
     $user = $this->createUser([
+      'use draft_draft transition',
       'use draft_needs_review transition',
       'use published_draft transition',
       'use needs_review_published transition',

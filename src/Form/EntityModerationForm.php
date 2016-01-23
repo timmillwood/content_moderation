@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\workbench_moderation\Entity\ModerationState;
+use Drupal\workbench_moderation\Entity\ModerationStateTransition;
 use Drupal\workbench_moderation\ModerationInformationInterface;
 use Drupal\workbench_moderation\StateTransitionValidation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -65,17 +66,24 @@ class EntityModerationForm extends FormBase {
     /** @var ModerationState $current_state */
     $current_state = $entity->moderation_state->entity;
 
-    $target_states = $this->validation->getValidTransitionTargets($entity, $this->currentUser());
-    $target_states = array_diff_key($target_states, [$current_state->id() => $current_state]);
+    $transitions = $this->validation->getValidTransitions($entity, $this->currentUser());
 
-    $target_states = array_map(function(ModerationState $state) {
-      return $state->label();
-    }, $target_states);
+    // Exclude self-transitions.
+    $transitions = array_filter($transitions, function(ModerationStateTransition $transition) use ($current_state) {
+      return $transition->getToState() != $current_state->id();
+    });
+
+    $target_states = [];
+    /** @var ModerationStateTransition $transition */
+    foreach ($transitions as $transition) {
+      $target_states[$transition->getToState()] = $transition->label();
+    }
 
     if ($current_state) {
       $form['current'] = [
-        '#type' => 'markup',
-        '#markup' => $this->t('Current status: %state', ['%state' => $current_state->label()]),
+        '#type' => 'item',
+        '#title' => $this->t('Status'),
+        '#markup' => $current_state->label(),
       ];
     }
 
@@ -84,14 +92,22 @@ class EntityModerationForm extends FormBase {
 
     $form['new_state'] = [
       '#type' => 'select',
-      '#title' => $this->t('New state'),
+      '#title' => $this->t('Moderate'),
       '#options' => $target_states,
+    ];
+
+    $form['revision_log'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Log message'),
+      '#size' => 30,
     ];
 
     $form['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Update'),
+      '#value' => $this->t('Apply'),
     ];
+
+    $form['#theme'] = ['entity_moderation_form'];
 
     return $form;
   }
@@ -104,8 +120,10 @@ class EntityModerationForm extends FormBase {
     $entity = $form_state->get('entity');
 
     $new_state = $form_state->getValue('new_state');
-
     $entity->moderation_state->target_id = $new_state;
+
+    $entity->revision_log = $form_state->getValue('revision_log');
+
     $entity->save();
 
     drupal_set_message($this->t('The moderation state has been updated.'));

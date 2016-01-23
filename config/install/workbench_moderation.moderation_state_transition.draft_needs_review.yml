@@ -5,6 +5,6 @@ dependencies:
     - workbench_moderation.moderation_state.draft
     - workbench_moderation.moderation_state.needs_review
 id: draft_needs_review
-label: 'Draft » Needs review'
+label: 'Request Review'
 stateFrom: draft
 stateTo: needs_review
