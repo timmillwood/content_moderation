@@ -249,7 +249,6 @@ class EntityTypeInfo {
     }
   }
 
-
   /**
    * Adds base field info to an entity type.
    *
@@ -260,34 +259,36 @@ class EntityTypeInfo {
    *   New fields added by moderation state.
    */
   public function entityBaseFieldInfo(EntityTypeInterface $entity_type) {
-    if ($this->moderationInfo->isModeratableEntityType($entity_type)) {
-      $fields = [];
-      // @todo write a test for this.
-      $fields['moderation_state'] = BaseFieldDefinition::create('entity_reference')
-        ->setLabel(t('Moderation state'))
-        ->setDescription(t('The moderation state of this piece of content.'))
-        ->setSetting('target_type', 'moderation_state')
-        ->setTargetEntityTypeId($entity_type->id())
-        ->setRevisionable(TRUE)
-        // @todo write a test for this.
-        ->setDisplayOptions('view', [
-          'label' => 'hidden',
-          'type' => 'hidden',
-          'weight' => -5,
-        ])
-        // @todo write a custom widget/selection handler plugin instead of
-        // manual filtering?
-        ->setDisplayOptions('form', [
-          'type' => 'moderation_state_default',
-          'weight' => 5,
-          'settings' => [],
-        ])
-        ->addConstraint('ModerationState', [])
-        ->setDisplayConfigurable('form', FALSE)
-        ->setDisplayConfigurable('view', FALSE);
-      return $fields;
+
+    if (!$this->moderationInfo->isModeratableEntityType($entity_type)) {
+      return [];
     }
-    return [];
+
+    $fields = [];
+    // @todo write a test for this.
+    $fields['moderation_state'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Moderation state'))
+      ->setDescription(t('The moderation state of this piece of content.'))
+      ->setSetting('target_type', 'moderation_state')
+      ->setTargetEntityTypeId($entity_type->id())
+      ->setRevisionable(TRUE)
+      // @todo write a test for this.
+      ->setDisplayOptions('view', [
+        'label' => 'hidden',
+        'type' => 'hidden',
+        'weight' => -5,
+      ])
+      // @todo write a custom widget/selection handler plugin instead of
+      // manual filtering?
+      ->setDisplayOptions('form', [
+        'type' => 'moderation_state_default',
+        'weight' => 5,
+        'settings' => [],
+      ])
+      ->addConstraint('ModerationState', [])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE);
+    return $fields;
   }
 
   /**
