@@ -11,6 +11,7 @@ use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\BundleEntityFormBase;
 use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -97,6 +98,17 @@ class ModerationInformation implements ModerationInformationInterface {
       return ($type instanceof ConfigEntityTypeInterface)
       && ($bundle_of = $type->get('bundle_of'))
       && $entity_types[$bundle_of]->isRevisionable();
+    });
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function selectRevisionableEntities(array $entity_types) {
+    return array_filter($entity_types, function (EntityTypeInterface $type) use ($entity_types) {
+      return ($type instanceof ContentEntityTypeInterface)
+      && $type->isRevisionable()
+      && $type->getBundleEntityType();
     });
   }
 
