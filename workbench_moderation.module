@@ -40,8 +40,7 @@ function workbench_moderation_help($route_name, RouteMatchInterface $route_match
  * Implements hook_entity_base_field_info().
  */
 function workbench_moderation_entity_base_field_info(EntityTypeInterface $entity_type) {
-  $base_field_info = new BaseFieldInfo();
-  return $base_field_info->entityBaseFieldInfo($entity_type);
+  return \Drupal::service('workbench_moderation.entity_type')->entityBaseFieldInfo($entity_type);
 }
 
 /**

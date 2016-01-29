@@ -11,6 +11,9 @@ services:
   workbench_moderation.moderation_information:
     class: Drupal\workbench_moderation\ModerationInformation
     arguments: ['@entity_type.manager', '@current_user']
+  workbench_moderation.base_field:
+    class: Drupal\workbench_moderation\BaseFieldInfo
+    arguments: ['@workbench_moderation.moderation_information']
   workbench_moderation.entity_type:
     class: Drupal\workbench_moderation\EntityTypeInfo
     arguments: ['@string_translation', '@workbench_moderation.moderation_information', '@entity_type.manager']

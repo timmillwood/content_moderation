@@ -66,6 +66,13 @@ class ModerationInformation implements ModerationInformationInterface {
   /**
    * {@inheritdoc}
    */
+  public function isModeratableEntityType(EntityTypeInterface $entity_type) {
+    return $entity_type->hasHandlerClass('moderation');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function loadBundleEntity($bundle_entity_type_id, $bundle_id) {
     if ($bundle_entity_type_id) {
       return $this->entityTypeManager->getStorage($bundle_entity_type_id)->load($bundle_id);

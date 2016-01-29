@@ -41,6 +41,17 @@ interface ModerationInformationInterface {
   public function isModeratableEntity(EntityInterface $entity);
 
   /**
+   * Determines if an entity type has been marked as moderatable.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   An entity type object.
+   *
+   * @return bool
+   *   TRUE if this entity type has been marked as moderatable, FALSE otherwise.
+   */
+  public function isModeratableEntityType(EntityTypeInterface $entity_type);
+
+  /**
    * Determines if an entity type/bundle is one that will be moderated.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
