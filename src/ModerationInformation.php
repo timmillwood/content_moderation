@@ -64,13 +64,7 @@ class ModerationInformation implements ModerationInformationInterface {
   }
 
   /**
-   * Determines if an entity type has been marked as moderatable.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
-   *   An entity type object.
-   *
-   * @return bool
-   *   TRUE if this entity type has been marked as moderatable, FALSE otherwise.
+   * {@inheritdoc}
    */
   public function isModeratableEntityType(EntityTypeInterface $entity_type) {
     return $entity_type->hasHandlerClass('moderation');
