@@ -123,6 +123,7 @@ abstract class ModerationStateTestBase extends WebTestBase {
     $role = Role::load($role_id);
     $role->grantPermission(sprintf('create %s content', $content_type_id));
     $role->grantPermission(sprintf('edit any %s content', $content_type_id));
+    $role->grantPermission(sprintf('delete any %s content', $content_type_id));
     $role->save();
   }
 

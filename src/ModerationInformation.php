@@ -171,7 +171,10 @@ class ModerationInformation implements ModerationInformationInterface {
    */
   public function getDefaultRevisionId($entity_type_id, $entity_id) {
     $storage = $this->entityTypeManager->getStorage($entity_type_id);
-    return $storage->load($entity_id)->getRevisionId();
+    $entity = $storage->load($entity_id);
+    if ($entity) {
+      return $entity->getRevisionId();
+    }
   }
 
   /**

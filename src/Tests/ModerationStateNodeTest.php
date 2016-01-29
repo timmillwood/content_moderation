@@ -10,7 +10,7 @@ namespace Drupal\workbench_moderation\Tests;
 use Drupal\Core\Url;
 
 /**
- * Tests general content moderation workflow for nodes..
+ * Tests general content moderation workflow for nodes.
  *
  * @group workbench_moderation
  */
@@ -31,7 +31,7 @@ class ModerationStateNodeTest extends ModerationStateTestBase {
   }
 
   /**
-   * Tests creating content.
+   * Tests creating and deleting content.
    */
   public function testCreatingContent() {
     $this->drupalPostForm('node/add/moderated_content', [
@@ -62,6 +62,10 @@ class ModerationStateNodeTest extends ModerationStateTestBase {
 
     // Verify that the state field is not shown.
     $this->assertNoText('Published');
+
+    // Delete the node.
+    $this->drupalPostForm('node/' . $node->id() . '/delete', array(), t('Delete'));
+    $this->assertText(t('The Moderated content moderated content has been deleted.'));
   }
 
   /**
