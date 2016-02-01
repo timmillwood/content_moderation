@@ -7,7 +7,9 @@
 
 namespace Drupal\workbench_moderation;
 
+use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormInterface;
@@ -70,10 +72,23 @@ interface ModerationInformationInterface {
    * @param EntityTypeInterface[] $entity_types
    *   The master entity type list filter.
    *
-   * @return array
+   * @return ConfigEntityTypeInterface[]
    *   An array of only the config entities we want to modify.
    */
   public function selectRevisionableEntityTypes(array $entity_types);
+
+  /**
+   * Filters an entity list to just the definitions for moderatable entities.
+   *
+   * An entity type is moderatable only if it is both revisionable and bundable.
+   *
+   * @param EntityTypeInterface[] $entity_types
+   *   The master entity type list filter.
+   *
+   * @return ContentEntityTypeInterface[]
+   *   An array of only the content entity definitions we want to modify.
+   */
+  public function selectRevisionableEntities(array $entity_types);
 
   /**
    * Determines if config entity is a bundle for entities that may be moderated.
