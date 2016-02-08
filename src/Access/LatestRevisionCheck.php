@@ -59,12 +59,7 @@ class LatestRevisionCheck implements AccessInterface {
   }
 
   /**
-   * Loads the default revision of the entity this route is for.
-   *
-   * Drupal doesn't offer an entity-generic way to access the entity this
-   * route is for, so we need to make a reasonable guess of the entity type
-   * from the other information in the route. If that information doesn't lead
-   * us to an entity, we cannot continue.
+   * Returns the default revision of the entity this route is for.
    *
    * @param \Symfony\Component\Routing\Route $route
    *   The route to check against.
@@ -72,27 +67,24 @@ class LatestRevisionCheck implements AccessInterface {
    *   The parametrized route
    *
    * @return ContentEntityInterface
-   *   returns the Entity in question, or NULL if for some reason no entity
-   *   is available.
+   *   returns the Entity in question.
    *
    * @throws \Exception
+   *   A generic exception is thrown if the entity couldn't be loaded. This
+   *   almost always implies a developer error, so it should get turned into
+   *   an HTTP 500.
    */
   protected function loadEntity(Route $route, RouteMatchInterface $route_match) {
-    // Split the entity type and the operation. There are several possible
-    // properties we could check for this information.
-    $requirement = $route->getRequirement('_entity_access')
-      ?: $route_match->getParameter('_entity_view')
-      ?: $route_match->getParameter('_entity_form');
-    list($entity_type, $operation) = explode('.', $requirement);
-    // If there is valid entity of the given entity type, check its access.
-    $parameters = $route_match->getParameters();
-    if ($parameters->has($entity_type)) {
-      $entity = $parameters->get($entity_type);
+    $options = $route->getOptions();
+
+    $entity_type = key($options['parameters']);
+    $info = current($options['parameters']);
+
+    if ($info['type'] == 'entity:' . $entity_type && $entity = $route_match->getParameter($entity_type)) {
       if ($entity instanceof EntityInterface) {
         return $entity;
       }
     }
-
-    throw new \Exception('Fail');
+    throw new \Exception(sprintf('%s is not a valid entity route. The LatestRevisionCheck access checker may only be used with a route that has a single entity parameter.', $route_match->getRouteName()));
   }
 }
