@@ -59,29 +59,29 @@ class LatestRevisionCheck implements AccessInterface {
   }
 
   /**
-   * Loads the default revision of the entity this route is for.
+   * Returns the default revision of the entity this route is for.
    *
    * @param \Symfony\Component\Routing\Route $route
    *   The route to check against.
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The parametrized route
    *
-   * @return ContentEntityInterface|null
-   *   returns the Entity in question, or NULL if for some reason no entity
-   *   is available.
+   * @return ContentEntityInterface
+   *   returns the Entity in question.
+   *
+   * @throws \Exception
+   *   A generic exception is thrown if the entity couldn't be loaded. This
+   *   almost always implies a developer error, so it should get turned into
+   *   an HTTP 500.
    */
   protected function loadEntity(Route $route, RouteMatchInterface $route_match) {
-    // Split the entity type and the operation.
-    $requirement = $route->getRequirement('_entity_access');
-    list($entity_type, $operation) = explode('.', $requirement);
-    // If there is valid entity of the given entity type, check its access.
-    $parameters = $route_match->getParameters();
-    if ($parameters->has($entity_type)) {
-      $entity = $parameters->get($entity_type);
+    $entity_type = $route->getOption('_workbench_moderation_entity_type');
+
+    if ($entity = $route_match->getParameter($entity_type)) {
       if ($entity instanceof EntityInterface) {
         return $entity;
       }
     }
-    return NULL;
+    throw new \Exception(sprintf('%s is not a valid entity route. The LatestRevisionCheck access checker may only be used with a route that has a single entity parameter.', $route_match->getRouteName()));
   }
 }
