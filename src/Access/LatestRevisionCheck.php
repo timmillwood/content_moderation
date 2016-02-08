@@ -75,12 +75,9 @@ class LatestRevisionCheck implements AccessInterface {
    *   an HTTP 500.
    */
   protected function loadEntity(Route $route, RouteMatchInterface $route_match) {
-    $options = $route->getOptions();
+    $entity_type = $route->getOption('_workbench_moderation_entity_type');
 
-    $entity_type = key($options['parameters']);
-    $info = current($options['parameters']);
-
-    if ($info['type'] == 'entity:' . $entity_type && $entity = $route_match->getParameter($entity_type)) {
+    if ($entity = $route_match->getParameter($entity_type)) {
       if ($entity instanceof EntityInterface) {
         return $entity;
       }
