@@ -183,6 +183,8 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
     $this->assertFalse($state_transition_validation->isTransitionAllowed('staging', 'needs_review'));
     $this->assertFalse($state_transition_validation->isTransitionAllowed('staging', 'staging'));
     $this->assertFalse($state_transition_validation->isTransitionAllowed('needs_review', 'published'));
+    $this->assertFalse($state_transition_validation->isTransitionAllowed('published', 'archived'));
+    $this->assertFalse($state_transition_validation->isTransitionAllowed('archived', 'published'));
   }
 
   /**
