@@ -210,13 +210,20 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
     // Add a custom button for each transition we're allowing. The #dropbutton
     // property tells FAPI to cluster them all together into a single widget.
     $options = $element['#options'];
+
+    $entity = $form_state->getFormObject()->getEntity();
+    $translatable = !$entity->isNew() && $entity->isTranslatable();
     foreach ($options as $id => $label) {
       $button = [
-        '#value' => t('Save and @transition', ['@transition' => $label]),
         '#dropbutton' => 'save',
         '#moderation_state' => $id,
         '#weight' => -10,
       ];
+
+      $button['#value'] = $translatable
+        ? t('Save and @transition (this translation)', ['@transition' => $label])
+        : t('Save and @transition', ['@transition' => $label]);
+
 
       $form['actions']['moderation_state_' . $id] = $button + $default_button;
     }

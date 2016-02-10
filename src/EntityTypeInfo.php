@@ -272,6 +272,7 @@ class EntityTypeInfo {
       ->setSetting('target_type', 'moderation_state')
       ->setTargetEntityTypeId($entity_type->id())
       ->setRevisionable(TRUE)
+      ->setTranslatable(TRUE)
       // @todo write a test for this.
       ->setDisplayOptions('view', [
         'label' => 'hidden',

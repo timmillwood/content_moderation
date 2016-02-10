@@ -85,6 +85,9 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
     }
 
     $original_entity = $this->moderationInformation->getLatestRevision($entity->getEntityTypeId(), $entity->id());
+    if (!$entity->isDefaultTranslation() && $original_entity->hasTranslation($entity->language()->getId())) {
+      $original_entity = $original_entity->getTranslation($entity->language()->getId());
+    }
     $next_moderation_state_id = $entity->moderation_state->target_id;
     $original_moderation_state_id = $original_entity->moderation_state->target_id;
 
