@@ -102,6 +102,7 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   protected function moderatableEntityDefinitions() {
     return array_filter($this->entityTypeManager->getDefinitions(), function (EntityTypeInterface $type) {
       return ($type instanceof ContentEntityTypeInterface)
+        && $type->getBundleEntityType()
         && $type->isRevisionable();
     });
   }
