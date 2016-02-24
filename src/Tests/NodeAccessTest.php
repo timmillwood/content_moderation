@@ -68,6 +68,7 @@ class NodeAccessTest extends ModerationStateTestBase {
       'use draft_needs_review transition',
       'use published_draft transition',
       'use needs_review_published transition',
+      'view latest version',
       'view any unpublished content',
     ]);
     $this->drupalLogin($user);

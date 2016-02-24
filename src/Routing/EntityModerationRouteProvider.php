@@ -85,6 +85,7 @@ class EntityModerationRouteProvider implements EntityRouteProviderInterface, Ent
         // If the entity type is a node, unpublished content will be visible
         // if the user has the "view all unpublished content" permission.
         ->setRequirement('_entity_access', "{$entity_type_id}.view")
+        ->setRequirement('_permission', 'view latest version')
         ->setRequirement('_workbench_moderation_latest_version', 'TRUE')
         ->setOption('_workbench_moderation_entity_type', $entity_type_id)
         ->setOption('parameters', [

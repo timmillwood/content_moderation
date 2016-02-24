@@ -42,6 +42,7 @@ abstract class ModerationStateTestBase extends WebTestBase {
     'access administration pages',
     'administer content types',
     'administer nodes',
+    'view latest version',
     'view own unpublished content',
   ];
 
