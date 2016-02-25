@@ -79,6 +79,10 @@ class EntityModerationForm extends FormBase {
       $target_states[$transition->getToState()] = $transition->label();
     }
 
+    if (!count($target_states)) {
+      return $form;
+    }
+
     if ($current_state) {
       $form['current'] = [
         '#type' => 'item',
