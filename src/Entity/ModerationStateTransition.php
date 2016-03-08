@@ -34,7 +34,6 @@ use Drupal\workbench_moderation\ModerationStateTransitionInterface;
  *     "weight" = "weight"
  *   },
  *   links = {
- *     "canonical" = "/admin/structure/moderation-state/transitions/{moderation_state_transition}",
  *     "edit-form" = "/admin/structure/moderation-state/transitions/{moderation_state_transition}/edit",
  *     "delete-form" = "/admin/structure/moderation-state/transitions/{moderation_state_transition}/delete",
  *     "collection" = "/admin/structure/moderation-state/transitions"
