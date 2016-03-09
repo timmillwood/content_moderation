@@ -150,12 +150,15 @@ function workbench_moderation_entity_view(array &$build, EntityInterface $entity
  * mandatory for any user that wants to moderate things.
  */
 function workbench_moderation_node_access(NodeInterface $entity, $operation, AccountInterface $account) {
+  /** @var \Drupal\workbench_moderation\ModerationInformationInterface $modinfo */
+  $moderation_info = Drupal::service('workbench_moderation.moderation_information');
+
   if ($operation == 'view') {
     return (!$entity->isPublished())
       ? AccessResult::allowedIfHasPermission($account, 'view any unpublished content')
       : AccessResult::neutral();
   }
-  elseif ($operation == 'update') {
+  elseif ($operation == 'update' && $moderation_info->isModeratableEntity($entity) && $entity->moderation_information && $entity->moderation_information->target_id) {
     /** @var \Drupal\workbench_moderation\StateTransitionValidation $transition_validation */
     $transition_validation = \Drupal::service('workbench_moderation.state_transition_validation');
 
