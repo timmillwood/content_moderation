@@ -103,7 +103,7 @@ class ModerationStateTransitionForm extends EntityForm {
           '%label' => $moderation_state_transition->label(),
         ]));
     }
-    $form_state->setRedirectUrl($moderation_state_transition->urlInfo('collection'));
+    $form_state->setRedirectUrl($moderation_state_transition->toUrl('collection'));
   }
 
 }

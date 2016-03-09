@@ -7,7 +7,6 @@
 
 namespace Drupal\workbench_moderation\Tests;
 
-use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
 /**

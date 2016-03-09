@@ -7,8 +7,6 @@
 
 namespace Drupal\workbench_moderation\Tests;
 
-use Drupal\Core\Url;
-
 /**
  * Tests the moderation form, specifically on nodes.
  *

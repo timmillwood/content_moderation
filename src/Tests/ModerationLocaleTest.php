@@ -7,10 +7,6 @@
 
 namespace Drupal\workbench_moderation\Tests;
 
-use Drupal\Core\Language\Language;
-use Drupal\Core\Language\LanguageInterface;
-use Drupal\language\Entity\ConfigurableLanguage;
-
 /**
  * Test workbench_moderation functionality with localization and translation.
  *

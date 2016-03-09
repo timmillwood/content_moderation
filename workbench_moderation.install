@@ -5,8 +5,6 @@
  * Contains install/update hooks for moderation_state.
  */
 
-use Drupal\Core\Entity\EntityTypeInterface;
-
 /**
  * Implements hook_install().
  */

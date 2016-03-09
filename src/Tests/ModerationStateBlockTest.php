@@ -9,7 +9,6 @@ namespace Drupal\workbench_moderation\Tests;
 
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\block_content\Entity\BlockContentType;
-use Drupal\Component\Utility\Unicode;
 
 /**
  * Tests general content moderation workflow for blocks.

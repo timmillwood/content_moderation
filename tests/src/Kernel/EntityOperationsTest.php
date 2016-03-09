@@ -9,13 +9,9 @@ namespace Drupal\Tests\workbench_moderation\Kernel;
 
 
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\workbench_moderation\EntityOperations;
 use Drupal\workbench_moderation\Entity\ModerationState;
-use Drupal\workbench_moderation\ModerationInformation;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
-use Drupal\Tests\UnitTestCase;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Class EntityOperationsTest

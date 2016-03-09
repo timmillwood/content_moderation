@@ -8,8 +8,6 @@
 namespace Drupal\Tests\workbench_moderation\Kernel;
 
 use Drupal\entity_test\Entity\EntityTest;
-use Drupal\entity_test\Entity\EntityTestMulRev;
-use Drupal\entity_test\Entity\EntityTestRev;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
