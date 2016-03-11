@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\Tests\workbench_moderation\Kernel;
+
 use Drupal\KernelTests\KernelTestBase;
 
 
