@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\workbench_moderation\Routing\EntityModerationRouteProvider.
- */
-
 namespace Drupal\workbench_moderation\Routing;
 
 use Drupal\Core\Entity\EntityFieldManagerInterface;

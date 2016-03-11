@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\workbench_moderation\Kernel\EntityRevisionConverterTest.
- */
-
 namespace Drupal\Tests\workbench_moderation\Kernel;
 
 use Drupal\entity_test\Entity\EntityTest;

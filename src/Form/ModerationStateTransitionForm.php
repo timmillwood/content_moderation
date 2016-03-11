@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Form\ModerationStateTransitionForm.
- */
-
 namespace Drupal\workbench_moderation\Form;
 
 use Drupal\Core\Entity\EntityForm;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\EntityOperations.
- */
-
 namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Entity\ContentEntityInterface;

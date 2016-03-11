@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Tests\ModerationStateNodeTest.
- */
-
 namespace Drupal\workbench_moderation\Tests;
 
 use Drupal\Core\Url;

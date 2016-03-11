@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\InlineEditingDisabler.
- */
-
 namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;

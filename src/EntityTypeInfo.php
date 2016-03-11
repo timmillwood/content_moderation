@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Contains Drupal\workbench_moderation\EntityTypeInfo.
- */
-
 namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;

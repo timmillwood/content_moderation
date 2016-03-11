@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\Tests\workbench_moderation\Kernel\EntityOperationsTest.
- */
-
 namespace Drupal\Tests\workbench_moderation\Kernel;
 
 

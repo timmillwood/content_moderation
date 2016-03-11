@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Tests\ModerationFormTest.
- */
-
 namespace Drupal\workbench_moderation\Tests;
 
 /**

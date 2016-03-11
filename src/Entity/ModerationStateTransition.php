@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Entity\ModerationStateTransition.
- */
-
 namespace Drupal\workbench_moderation\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;

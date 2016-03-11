@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Plugin\Validation\Constraint\ModerationStateValidator.
- */
-
 namespace Drupal\workbench_moderation\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;

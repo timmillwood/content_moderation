@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\workbench_moderation\Plugin\Derivative\DynamicLocalTasks.
- */
-
 namespace Drupal\workbench_moderation\Plugin\Derivative;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;

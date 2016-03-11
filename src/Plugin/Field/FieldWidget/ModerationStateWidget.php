@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Plugin\Field\FieldWidget\ModerationStateWidget.
- */
-
 namespace Drupal\workbench_moderation\Plugin\Field\FieldWidget;
 
 use Drupal\Component\Utility\NestedArray;

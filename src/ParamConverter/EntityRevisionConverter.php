@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\workbench_moderation\ParamConverter\EntityRevisionConverter.
- */
 
 namespace Drupal\workbench_moderation\ParamConverter;
 

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\workbench_moderation\Unit\ModerationInformationTest.
- */
-
 namespace Drupal\Tests\workbench_moderation\Unit;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;

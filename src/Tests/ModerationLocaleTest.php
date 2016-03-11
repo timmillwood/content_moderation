@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Tests\ModerationLocaleTest.
- */
-
 namespace Drupal\workbench_moderation\Tests;
 
 /**

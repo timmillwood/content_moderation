@@ -1,9 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\workbench_moderation\Form\EntityModerationForm.
- */
-
 
 namespace Drupal\workbench_moderation\Form;
 

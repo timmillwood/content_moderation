@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workbench_moderation\ModerationStateTransitionListBuilder.
- */
-
 namespace Drupal\workbench_moderation;
 
 use Drupal\Core\Config\Entity\DraggableListBuilder;

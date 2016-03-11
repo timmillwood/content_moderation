@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\workbench_moderation\Kernel\EntityStateChangeValidationTest.
- */
-
 namespace Drupal\Tests\workbench_moderation\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
