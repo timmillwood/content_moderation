@@ -68,8 +68,14 @@ class EntityOperations {
     if ($entity instanceof ContentEntityInterface && $this->moderationInfo->isModeratableEntity($entity)) {
       // @todo write a test for this.
       if ($entity->moderation_state->entity) {
-        $update_default_revision = $entity->moderation_state->entity->isDefaultRevisionState();
         $published_state = $entity->moderation_state->entity->isPublishedState();
+
+        // A newly-created and newly-translated entity are always the default revision, or else
+        // it gets lost.
+        $update_default_revision = $entity->isNew()
+          || $entity->moderation_state->entity->isDefaultRevisionState()
+          || $this->isNewTranslation($entity);
+
         $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->onPresave($entity, $update_default_revision, $published_state);
         $event = new WorkbenchModerationTransitionEvent($entity, isset($entity->original) ? $entity->original->moderation_state->target_id : NULL, $entity->moderation_state->target_id);
         $this->eventDispatcher->dispatch(WorkbenchModerationEvents::STATE_TRANSITION, $event);
@@ -104,5 +110,20 @@ class EntityOperations {
       $build['workbench_moderation_control'] = $this->formBuilder->getForm(EntityModerationForm::class, $entity);
       $build['workbench_moderation_control']['#weight'] = $component['weight'];
     }
+  }
+
+  /**
+   * Checks if the Entity doesn't have a translation yet.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity being saved.
+   *
+   * @return bool
+   *   TRUE if it's a new translation being saved. FALSE otherwise.
+   */
+  protected function isNewTranslation(EntityInterface $entity) {
+    $original_entity = $this->moderationInfo->getLatestRevision($entity->getEntityTypeId(), $entity->id());
+    return !$original_entity->hasTranslation($entity->language()
+      ->getId());
   }
 }
