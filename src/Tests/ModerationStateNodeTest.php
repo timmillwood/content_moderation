@@ -81,12 +81,12 @@ class ModerationStateNodeTest extends ModerationStateTestBase {
     $this->assertUrl(Url::fromRoute('entity.node.canonical', ['node' => $node->id()]));
     $this->assertText('First version of the content.');
 
-    // Make a new forward revision; after saving, we should be on the "Latest
-    // version" tab.
+    // Update the draft to review; after saving, we should still be on the
+    // canonical URL, but viewing the second revision.
     $this->drupalPostForm($edit_path, [
       'body[0][value]' => 'Second version of the content.',
     ], t('Save and Request Review'));
-    $this->assertUrl(Url::fromRoute('entity.node.latest_version', ['node' => $node->id()]));
+    $this->assertUrl(Url::fromRoute('entity.node.canonical', ['node' => $node->id()]));
     $this->assertText('Second version of the content.');
 
     // Make a new published revision; after saving, we should be at the
@@ -97,8 +97,8 @@ class ModerationStateNodeTest extends ModerationStateTestBase {
     $this->assertUrl(Url::fromRoute('entity.node.canonical', ['node' => $node->id()]));
     $this->assertText('Third version of the content.');
 
-    // Make a new forward revision; after saving, we should once again be on the
-    // "Latest version" tab.
+    // Make a new forward revision; after saving, we should be on the "Latest
+    // version" tab.
     $this->drupalPostForm($edit_path, [
       'body[0][value]' => 'Fourth version of the content.',
     ], t('Save and Create New Draft'));

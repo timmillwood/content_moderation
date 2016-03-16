@@ -7,9 +7,10 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
-use Drupal\workbench_moderation\Form\EntityModerationForm;
+use Drupal\Core\TypedData\TranslatableInterface;
 use Drupal\workbench_moderation\Event\WorkbenchModerationEvents;
 use Drupal\workbench_moderation\Event\WorkbenchModerationTransitionEvent;
+use Drupal\workbench_moderation\Form\EntityModerationForm;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -70,11 +71,11 @@ class EntityOperations {
       if ($entity->moderation_state->entity) {
         $published_state = $entity->moderation_state->entity->isPublishedState();
 
-        // A newly-created and newly-translated entity are always the default revision, or else
-        // it gets lost.
+        // This entity is default if it is new, the default revision, or the
+        // default revision is not published.
         $update_default_revision = $entity->isNew()
           || $entity->moderation_state->entity->isDefaultRevisionState()
-          || $this->isNewTranslation($entity);
+          || !$this->isDefaultRevisionPublished($entity);
 
         $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->onPresave($entity, $update_default_revision, $published_state);
         $event = new WorkbenchModerationTransitionEvent($entity, isset($entity->original) ? $entity->original->moderation_state->target_id : NULL, $entity->moderation_state->target_id);
@@ -113,17 +114,34 @@ class EntityOperations {
   }
 
   /**
-   * Checks if the Entity doesn't have a translation yet.
+   * Check if the default revision for the given entity is published.
+   *
+   * The default revision is the same as the entity retrieved by "default" from
+   * the storage handler. If the entity is translated, use the default revision
+   * of the same language as the given entity.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity being saved.
    *
    * @return bool
-   *   TRUE if it's a new translation being saved. FALSE otherwise.
+   *   TRUE if the default revision is published. FALSE otherwise.
    */
-  protected function isNewTranslation(EntityInterface $entity) {
-    $original_entity = $this->moderationInfo->getLatestRevision($entity->getEntityTypeId(), $entity->id());
-    return !$original_entity->hasTranslation($entity->language()
-      ->getId());
+  protected function isDefaultRevisionPublished(EntityInterface $entity) {
+    $storage = $this->entityTypeManager->getStorage($entity->getEntityTypeId());
+    $default_revision = $storage->load($entity->id());
+
+    // Ensure we are comparing the same translation as the current entity.
+    if ($default_revision instanceof TranslatableInterface && $default_revision->isTranslatable()) {
+      // If there is no translation, then there is no default revision and is
+      // therefore not published.
+      if (!$default_revision->hasTranslation($entity->language()->getId())) {
+        return FALSE;
+      }
+
+      $default_revision = $default_revision->getTranslation($entity->language()->getId());
+    }
+
+    return $default_revision && $default_revision->moderation_state->entity->isPublishedState();
   }
+
 }
