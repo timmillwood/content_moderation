@@ -133,36 +133,37 @@ class EntityOperations {
    *   The entity being saved.
    */
   public function entityPresave(EntityInterface $entity) {
-    if ($entity instanceof ContentEntityInterface && $this->moderationInfo->isModeratableEntity($entity)) {
-      if ($entity->moderation_state->entity) {
-        $published_state = $entity->moderation_state->entity->isPublishedState();
+    if (!$this->moderationInfo->isModeratableEntity($entity)) {
+      return;
+    }
+    if ($entity->moderation_state->entity) {
+      $published_state = $entity->moderation_state->entity->isPublishedState();
 
-        // This entity is default if it is new, the default revision, or the
-        // default revision is not published.
-        $update_default_revision = $entity->isNew()
-          || $entity->moderation_state->entity->isDefaultRevisionState()
-          || !$this->isDefaultRevisionPublished($entity);
+      // This entity is default if it is new, the default revision, or the
+      // default revision is not published.
+      $update_default_revision = $entity->isNew()
+        || $entity->moderation_state->entity->isDefaultRevisionState()
+        || !$this->isDefaultRevisionPublished($entity);
 
-        // Fire per-entity-type logic for handling the save process.
-        $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->onPresave($entity, $update_default_revision, $published_state);
+      // Fire per-entity-type logic for handling the save process.
+      $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->onPresave($entity, $update_default_revision, $published_state);
 
-        // There's currently a bug in core where $entity->original always points
-        // to the default revision, for now work around this by loading the latest
-        // revision.
-        $latest_revision = $this->moderationInfo->getLatestRevision($entity->getEntityTypeId(), $entity->id());
-        $state_before = !empty($latest_revision) ? $latest_revision->moderation_state->target_id : NULL;
-        // @todo: Revert to this simpler version when https://www.drupal.org/node/2700747 is fixed.
-        // $state_before = isset($entity->original) ? $entity->original->moderation_state->target_id : NULL;
+      // There's currently a bug in core where $entity->original always points
+      // to the default revision, for now work around this by loading the latest
+      // revision.
+      $latest_revision = $this->moderationInfo->getLatestRevision($entity->getEntityTypeId(), $entity->id());
+      $state_before = !empty($latest_revision) ? $latest_revision->moderation_state->target_id : NULL;
+      // @todo: Revert to this simpler version when https://www.drupal.org/node/2700747 is fixed.
+      // $state_before = isset($entity->original) ? $entity->original->moderation_state->target_id : NULL;
 
-        $state_after = $entity->moderation_state->target_id;
+      $state_after = $entity->moderation_state->target_id;
 
-        // Allow other modules to respond to the transition. Note that this
-        // does not provide any mechanism to cancel the transition, since
-        // Entity API doesn't allow hook_entity_presave to short-circuit a save.
-        $event = new WorkbenchModerationTransitionEvent($entity, $state_before, $state_after);
+      // Allow other modules to respond to the transition. Note that this
+      // does not provide any mechanism to cancel the transition, since
+      // Entity API doesn't allow hook_entity_presave to short-circuit a save.
+      $event = new WorkbenchModerationTransitionEvent($entity, $state_before, $state_after);
 
-        $this->eventDispatcher->dispatch(WorkbenchModerationEvents::STATE_TRANSITION, $event);
-      }
+      $this->eventDispatcher->dispatch(WorkbenchModerationEvents::STATE_TRANSITION, $event);
     }
   }
 
@@ -175,7 +176,7 @@ class EntityOperations {
    *   The entity that was just saved.
    */
   public function entityInsert(EntityInterface $entity) {
-    if (!($entity instanceof ContentEntityInterface && $this->moderationInfo->isModeratableEntity($entity))) {
+    if (!$this->moderationInfo->isModeratableEntity($entity)) {
       return;
     }
 
@@ -194,7 +195,7 @@ class EntityOperations {
    *   The entity that was just saved.
    */
   public function entityUpdate(EntityInterface $entity) {
-    if (!($entity instanceof ContentEntityInterface && $this->moderationInfo->isModeratableEntity($entity))) {
+    if (!$this->moderationInfo->isModeratableEntity($entity)) {
       return;
     }
 
