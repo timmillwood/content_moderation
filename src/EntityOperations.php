@@ -41,6 +41,11 @@ class EntityOperations {
   protected $formBuilder;
 
   /**
+   * @var \Drupal\workbench_moderation\RevisionTrackerInterface
+   */
+  protected $tracker;
+
+  /**
    * Constructs a new EntityOperations object.
    *
    * @param \Drupal\workbench_moderation\ModerationInformationInterface $moderation_info
@@ -51,12 +56,15 @@ class EntityOperations {
    *   The form builder.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
+   * @param \Drupal\workbench_moderation\RevisionTrackerInterface $tracker
+   *   The revision tracker.
    */
-  public function __construct(ModerationInformationInterface $moderation_info, EntityTypeManagerInterface $entity_type_manager, FormBuilderInterface $form_builder, EventDispatcherInterface $event_dispatcher) {
+  public function __construct(ModerationInformationInterface $moderation_info, EntityTypeManagerInterface $entity_type_manager, FormBuilderInterface $form_builder, EventDispatcherInterface $event_dispatcher, RevisionTrackerInterface $tracker) {
     $this->moderationInfo = $moderation_info;
     $this->entityTypeManager = $entity_type_manager;
     $this->eventDispatcher = $event_dispatcher;
     $this->formBuilder = $form_builder;
+    $this->tracker = $tracker;
   }
 
   /**
@@ -126,7 +134,6 @@ class EntityOperations {
    */
   public function entityPresave(EntityInterface $entity) {
     if ($entity instanceof ContentEntityInterface && $this->moderationInfo->isModeratableEntity($entity)) {
-      // @todo write a test for this.
       if ($entity->moderation_state->entity) {
         $published_state = $entity->moderation_state->entity->isPublishedState();
 
@@ -136,6 +143,7 @@ class EntityOperations {
           || $entity->moderation_state->entity->isDefaultRevisionState()
           || !$this->isDefaultRevisionPublished($entity);
 
+        // Fire per-entity-type logic for handling the save process.
         $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->onPresave($entity, $update_default_revision, $published_state);
 
         // There's currently a bug in core where $entity->original always points
@@ -152,11 +160,49 @@ class EntityOperations {
         // does not provide any mechanism to cancel the transition, since
         // Entity API doesn't allow hook_entity_presave to short-circuit a save.
         $event = new WorkbenchModerationTransitionEvent($entity, $state_before, $state_after);
+
         $this->eventDispatcher->dispatch(WorkbenchModerationEvents::STATE_TRANSITION, $event);
       }
     }
   }
 
+  /**
+   * Hook bridge.
+   *
+   * @see hook_entity_insert().
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity that was just saved.
+   */
+  public function entityInsert(EntityInterface $entity) {
+    if (!($entity instanceof ContentEntityInterface && $this->moderationInfo->isModeratableEntity($entity))) {
+      return;
+    }
+
+    /** ContentEntityInterface $entity */
+
+    // Update our own record keeping.
+    $this->tracker->setLatestRevision($entity->getEntityTypeId(), $entity->id(), $entity->language()->getId(), $entity->getRevisionId());
+  }
+
+  /**
+   * Hook bridge.
+   *
+   * @see hook_entity_update().
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity that was just saved.
+   */
+  public function entityUpdate(EntityInterface $entity) {
+    if (!($entity instanceof ContentEntityInterface && $this->moderationInfo->isModeratableEntity($entity))) {
+      return;
+    }
+
+    /** ContentEntityInterface $entity */
+
+    // Update our own record keeping.
+    $this->tracker->setLatestRevision($entity->getEntityTypeId(), $entity->id(), $entity->language()->getId(), $entity->getRevisionId());
+  }
 
   /**
    * Act on entities being assembled before rendering.

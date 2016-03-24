@@ -96,6 +96,20 @@ function workbench_moderation_entity_presave(EntityInterface $entity) {
 }
 
 /**
+ * Implements hook_entity_insert().
+ */
+function workbench_moderation_entity_insert(EntityInterface $entity) {
+  return \Drupal::service('workbench_moderation.entity_operations')->entityInsert($entity);
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function workbench_moderation_entity_update(EntityInterface $entity) {
+  return \Drupal::service('workbench_moderation.entity_operations')->entityUpdate($entity);
+}
+
+/**
  * Implements hook_local_tasks_alter().
  */
 function workbench_moderation_local_tasks_alter(&$local_tasks) {
