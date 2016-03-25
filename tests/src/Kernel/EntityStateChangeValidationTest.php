@@ -24,6 +24,7 @@ class EntityStateChangeValidationTest extends KernelTestBase {
   protected function setUp() {
     parent::setUp();
 
+    $this->installSchema('node', 'node_access');
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
     $this->installConfig('workbench_moderation');
@@ -90,6 +91,8 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     ]);
     $node->save();
 
+    $nid = $node->id();
+
     // Enable moderation for Articles.
     /** @var NodeType $node_type */
     $node_type = NodeType::load('example');
@@ -98,14 +101,16 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     $node_type->setThirdPartySetting('workbench_moderation', 'default_moderation_state', 'draft');
     $node_type->save();
 
+    $node = Node::load($nid);
+
     // Having no previous state should not break validation.
     $violations = $node->validate();
+
+    $this->assertCount(0, $violations);
 
     // Having no previous state should not break saving the node.
     $node->setTitle('New');
     $node->save();
-
-    $this->assertCount(0, $violations);
   }
 
 }
