@@ -82,6 +82,13 @@ function workbench_moderation_entity_bundle_field_info_alter(&$fields, EntityTyp
 }
 
 /**
+ * Implements hook_entity_load().
+ */
+function workbench_moderation_entity_storage_load(array $entities, $entity_type_id) {
+  return \Drupal::service('workbench_moderation.entity_operations')->entityStorageLoad($entities, $entity_type_id);
+}
+
+/**
  * Implements hook_entity_presave().
  */
 function workbench_moderation_entity_presave(EntityInterface $entity) {
