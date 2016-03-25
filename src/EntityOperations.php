@@ -72,7 +72,7 @@ class EntityOperations {
   public function entityStorageLoad(array $entities, $entity_type_id) {
     $needs_default = array_filter($entities, function(EntityInterface $entity) {
       return $this->moderationInfo->isModeratableEntity($entity)
-        && $entity->moderation_state->entity == NULL;
+        && $entity->moderation_state->target_id == NULL;
     });
 
     // Because objects pass by handle, this will modify each in place
