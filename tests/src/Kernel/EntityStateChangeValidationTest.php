@@ -5,6 +5,7 @@ namespace Drupal\Tests\workbench_moderation\Kernel;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
+use Drupal\node\NodeInterface;
 
 /**
  * @coversDefaultClass \Drupal\workbench_moderation\Plugin\Validation\Constraint\ModerationStateValidator
@@ -82,6 +83,7 @@ class EntityStateChangeValidationTest extends KernelTestBase {
       'type' => 'example',
     ]);
     $node_type->save();
+    /** @var NodeInterface $node */
     $node = Node::create([
       'type' => 'example',
       'title' => 'Test title',
@@ -98,6 +100,10 @@ class EntityStateChangeValidationTest extends KernelTestBase {
 
     // Having no previous state should not break validation.
     $violations = $node->validate();
+
+    // Having no previous state should not break saving the node.
+    $node->setTitle('New');
+    $node->save();
 
     $this->assertCount(0, $violations);
   }

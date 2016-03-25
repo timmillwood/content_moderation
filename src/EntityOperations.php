@@ -70,7 +70,6 @@ class EntityOperations {
    *   The type of entity being loaded, such as "node" or "user".
    */
   public function entityStorageLoad(array $entities, $entity_type_id) {
-
     $needs_default = array_filter($entities, function(EntityInterface $entity) {
       return $this->moderationInfo->isModeratableEntity($entity)
         && $entity->moderation_state->entity == NULL;
