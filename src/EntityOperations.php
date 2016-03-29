@@ -70,16 +70,26 @@ class EntityOperations {
    *   The type of entity being loaded, such as "node" or "user".
    */
   public function entityStorageLoad(array $entities, $entity_type_id) {
-    $needs_default = array_filter($entities, function(EntityInterface $entity) {
-      return $this->moderationInfo->isModeratableEntity($entity)
-        && $entity->moderation_state->target_id == NULL;
-    });
 
-    // Because objects pass by handle, this will modify each in place
-    // appropriately.
-    array_map(function(ContentEntityInterface $entity) {
-      $entity->moderation_state->target_id = $this->getDefaultLoadStateId($entity);
-    }, $needs_default);
+    // Ensure that all moderatable entities always have a moderation_state field
+    // with data, in all translations. That avoids us needing to have a thousand
+    // NULL checks elsewhere in the code.
+
+    // Quickly exclude any non-moderatable entities.
+    $to_check = array_filter($entities, [$this->moderationInfo, 'isModeratableEntity']);
+    if (!$to_check) {
+      return;
+    }
+
+    // @todo make this more functional, less iterative.
+    foreach ($to_check as $entity) {
+      foreach ($entity->getTranslationLanguages() as $language) {
+        $translation = $entity->getTranslation($language->getId());
+        if ($translation->moderation_state->target_id == NULL) {
+          $translation->moderation_state->target_id = $this->getDefaultLoadStateId($translation);
+        }
+      }
+    }
   }
 
   /**
