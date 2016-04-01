@@ -107,7 +107,7 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
 
     $original_id = $original_entity->moderation_state->target_id;
 
-    return !($original_entity && $original_id);
+    return !($entity->moderation_state->target_id && $original_entity && $original_id);
   }
 
 }

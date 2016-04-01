@@ -60,6 +60,65 @@ class EntityOperations {
   }
 
   /**
+   * Hook bridge.
+   *
+   * @see hook_entity_storage_load().
+   *
+   * @param EntityInterface[] $entities
+   *   An array of entity objects that have just been loaded.
+   * @param string $entity_type_id
+   *   The type of entity being loaded, such as "node" or "user".
+   */
+  public function entityStorageLoad(array $entities, $entity_type_id) {
+
+    // Ensure that all moderatable entities always have a moderation_state field
+    // with data, in all translations. That avoids us needing to have a thousand
+    // NULL checks elsewhere in the code.
+
+    // Quickly exclude any non-moderatable entities.
+    $to_check = array_filter($entities, [$this->moderationInfo, 'isModeratableEntity']);
+    if (!$to_check) {
+      return;
+    }
+
+    // @todo make this more functional, less iterative.
+    foreach ($to_check as $entity) {
+      foreach ($entity->getTranslationLanguages() as $language) {
+        $translation = $entity->getTranslation($language->getId());
+        if ($translation->moderation_state->target_id == NULL) {
+          $translation->moderation_state->target_id = $this->getDefaultLoadStateId($translation);
+        }
+      }
+    }
+  }
+
+  /**
+   * Determines the default moderation state on load for an entity.
+   *
+   * This method is only applicable when an entity is loaded that has
+   * no moderation state on it, but should. In those cases, failing to set
+   * one may result in NULL references elsewhere when other code tries to check
+   * the moderation state of the entity.
+   *
+   * The amount of indirection here makes performance a concern, but
+   * given how Entity API works I don't know how else to do it.
+   * This reliably gets us *A* valid state. However, that state may be
+   * not the ideal one. Suggestions on how to better select the default
+   * state here are welcome.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The entity for which we want a default state.
+   *
+   * @return string
+   *   The default state for the given entity.
+   */
+  protected function getDefaultLoadStateId(ContentEntityInterface $entity) {
+    return $this->moderationInfo
+      ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle())
+      ->getThirdPartySetting('workbench_moderation', 'default_moderation_state');
+  }
+
+  /**
    * Acts on an entity and set published status based on the moderation state.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
