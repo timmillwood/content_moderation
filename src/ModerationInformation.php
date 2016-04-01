@@ -162,7 +162,7 @@ class ModerationInformation implements ModerationInformationInterface {
         ->allRevisions()
         ->condition($this->entityTypeManager->getDefinition($entity_type_id)->getKey('id'), $entity_id)
         ->sort($this->entityTypeManager->getDefinition($entity_type_id)->getKey('revision'), 'DESC')
-        ->pager(1)
+        ->range(0, 1)
         ->execute();
       if ($revision_ids) {
         $revision_id = array_keys($revision_ids)[0];

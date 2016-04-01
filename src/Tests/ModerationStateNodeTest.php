@@ -3,6 +3,7 @@
 namespace Drupal\workbench_moderation\Tests;
 
 use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
 
 /**
  * Tests general content moderation workflow for nodes.
@@ -104,6 +105,29 @@ class ModerationStateNodeTest extends ModerationStateTestBase {
     ], t('Save and Create New Draft'));
     $this->assertUrl(Url::fromRoute('entity.node.latest_version', ['node' => $node->id()]));
     $this->assertText('Fourth version of the content.');
+  }
+
+  /**
+   * Tests pagers aren't broken by workbench_moderation.
+   */
+  public function testPagers() {
+    // Create 51 nodes to force the pager.
+    foreach (range(1, 51) as $delta) {
+      Node::create([
+        'type' => 'moderated_content',
+        'uid' => $this->adminUser->id(),
+        'title' => 'Node ' . $delta,
+        'status' => 1,
+        'moderation_state' => 'published',
+      ])->save();
+    }
+    $this->drupalLogin($this->adminUser);
+    $this->drupalGet('admin/content');
+    $element = $this->cssSelect('nav.pager li.is-active a');
+    $url = (string) $element[0]['href'];
+    $query = [];
+    parse_str(parse_url($url, PHP_URL_QUERY), $query);
+    $this->assertEqual(0, $query['page']);
   }
 
 }
