@@ -193,6 +193,17 @@ function workbench_moderation_theme($existing, $type, $theme, $path) {
   return $themes;
 }
 
+/**
+ * Implements hook_views_data_alter().
+ */
+function workbench_moderation_views_data_alter(array &$data) {
+  $data['node_revision']['latest_revision'] = [
+    'title' => t('Is Latest Revision'),
+    'help' => t('Restrict the view to only revisions that are the latest revision of their entity.'),
+    'filter' => ['id' => 'latest_revision'],
+  ];
+}
+
 
 function hook_views_data() {
   // This example describes how to write hook_views_data() for a table defined

@@ -54,7 +54,8 @@ class LatestRevision extends FilterPluginBase implements ContainerFactoryPluginI
 
     $definition = [
       'table' => 'workbench_revision_tracker',
-      'field' => 'revision_id',
+      'type' => 'INNER',
+      'field' => 'entity_id',
       'left_table' => $table,
       'left_field' => $keys['id'],
       'extra' => [
@@ -66,24 +67,7 @@ class LatestRevision extends FilterPluginBase implements ContainerFactoryPluginI
 
     $join = \Drupal::service('plugin.manager.views.join')->createInstance('standard', $definition);
 
-    $table_alias = $query->ensureTable('workbench_revision_tracker', $this->relationship, $join);
-
-    // We need to join against workbench_revision_tracker, ON:
-    // - entity_type = The type of entity (get this from the view somewhere?)
-    // - entity_id = The ID in the base table.
-    // - langcode = The langcode in the base table.
-    // - revision_id = The revision ID in the base table.
-    // That means we need to, um, get the key IDs from the entity definition.
-
-    /*
-    $definition = $this->entityTypeManager->getDefinition($this->getEntityType());
-    $keys = $definition->getKeys();
-
-    $query->addWhere($query->options['group'], 'entity_type', $this->getEntityType());
-    $query->addWhereExpression($query->options['group'], "{$table}.{$keys['id']}={$tracker_table}.entity_id", []);
-    $query->addWhereExpression($query->options['group'], "{$table}.{$keys['langcode']}={$tracker_table}.langcode", []);
-    $query->addWhereExpression($query->options['group'], "{$table}.{$keys['revision']}={$tracker_table}.revision_id", []);
-    */
+    $query->ensureTable('workbench_revision_tracker', $this->relationship, $join);
   }
 
   /**
