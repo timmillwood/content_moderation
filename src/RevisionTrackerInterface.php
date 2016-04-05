@@ -1,6 +1,6 @@
 <?php
-namespace Drupal\workbench_moderation;
 
+namespace Drupal\workbench_moderation;
 
 /**
  * Tracks metadata about revisions across content entities.

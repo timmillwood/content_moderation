@@ -8,6 +8,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\views\Annotation\ViewsFilter;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Plugin\views\query\Sql;
+use Drupal\views\Plugin\ViewsHandlerManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -24,25 +25,54 @@ class LatestRevision extends FilterPluginBase implements ContainerFactoryPluginI
    */
   protected $entityTypeManager;
 
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
+  /**
+   * @var \Drupal\views\Plugin\ViewsHandlerManager
+   */
+  protected $joinHandler;
+
+  /**
+   * Constructs a new LatestRevision.
+   *
+   * @param array $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ViewsHandlerManager $join_handler) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_type_manager;
+    $this->joinHandler = $join_handler;
   }
 
-
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration, $plugin_id, $plugin_definition,
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('plugin.manager.views.join')
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function adminSummary() { }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function operatorForm(&$form, FormStateInterface $form_state) { }
 
+  /**
+   * {@inheritdoc}
+   */
   public function canExpose() { return FALSE; }
 
+  /**
+   * {@inheritdoc}
+   */
   public function query() {
     $table = $this->ensureMyTable();
 
@@ -65,18 +95,8 @@ class LatestRevision extends FilterPluginBase implements ContainerFactoryPluginI
       ],
     ];
 
-    $join = \Drupal::service('plugin.manager.views.join')->createInstance('standard', $definition);
+    $join = $this->joinHandler->createInstance('standard', $definition);
 
     $query->ensureTable('workbench_revision_tracker', $this->relationship, $join);
   }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheContexts() {
-    $contexts = parent::getCacheContexts();
-
-    return $contexts;
-  }
-
 }
