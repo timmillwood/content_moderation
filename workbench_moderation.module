@@ -197,9 +197,20 @@ function workbench_moderation_theme($existing, $type, $theme, $path) {
  * Implements hook_views_data_alter().
  */
 function workbench_moderation_views_data_alter(array &$data) {
-  $data['node_revision']['latest_revision'] = [
-    'title' => t('Is Latest Revision'),
-    'help' => t('Restrict the view to only revisions that are the latest revision of their entity.'),
-    'filter' => ['id' => 'latest_revision'],
-  ];
+
+  /** @var \Drupal\workbench_moderation\ModerationInformationInterface $mod_info */
+  $mod_info = \Drupal::service('workbench_moderation.moderation_information');
+
+  /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $etm */
+  $etm = \Drupal::service('entity_type.manager');
+
+  $revisionable_types = $mod_info->selectRevisionableEntities($etm->getDefinitions());
+
+  foreach ($revisionable_types as $type) {
+    $data[$type->getRevisionTable()]['latest_revision'] = [
+      'title' => t('Is Latest Revision'),
+      'help' => t('Restrict the view to only revisions that are the latest revision of their entity.'),
+      'filter' => ['id' => 'latest_revision'],
+    ];
+  }
 }
