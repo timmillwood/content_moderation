@@ -96,6 +96,20 @@ function workbench_moderation_entity_presave(EntityInterface $entity) {
 }
 
 /**
+ * Implements hook_entity_insert().
+ */
+function workbench_moderation_entity_insert(EntityInterface $entity) {
+  return \Drupal::service('workbench_moderation.entity_operations')->entityInsert($entity);
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function workbench_moderation_entity_update(EntityInterface $entity) {
+  return \Drupal::service('workbench_moderation.entity_operations')->entityUpdate($entity);
+}
+
+/**
  * Implements hook_local_tasks_alter().
  */
 function workbench_moderation_local_tasks_alter(&$local_tasks) {
@@ -177,4 +191,26 @@ function workbench_moderation_theme($existing, $type, $theme, $path) {
   ];
 
   return $themes;
+}
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function workbench_moderation_views_data_alter(array &$data) {
+
+  /** @var \Drupal\workbench_moderation\ModerationInformationInterface $mod_info */
+  $mod_info = \Drupal::service('workbench_moderation.moderation_information');
+
+  /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $etm */
+  $etm = \Drupal::service('entity_type.manager');
+
+  $revisionable_types = $mod_info->selectRevisionableEntities($etm->getDefinitions());
+
+  foreach ($revisionable_types as $type) {
+    $data[$type->getRevisionTable()]['latest_revision'] = [
+      'title' => t('Is Latest Revision'),
+      'help' => t('Restrict the view to only revisions that are the latest revision of their entity.'),
+      'filter' => ['id' => 'latest_revision'],
+    ];
+  }
 }
