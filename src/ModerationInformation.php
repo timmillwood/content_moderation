@@ -173,14 +173,18 @@ class ModerationInformation implements ModerationInformationInterface {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo Make this more performant.
    */
   public function getDefaultRevisionId($entity_type_id, $entity_id) {
-    $storage = $this->entityTypeManager->getStorage($entity_type_id);
-    $entity = $storage->load($entity_id);
-    if ($entity) {
-      return $entity->getRevisionId();
+    if ($storage = $this->entityTypeManager->getStorage($entity_type_id)) {
+      $revision_ids = $storage->getQuery()
+        ->condition($this->entityTypeManager->getDefinition($entity_type_id)->getKey('id'), $entity_id)
+        ->sort($this->entityTypeManager->getDefinition($entity_type_id)->getKey('revision'), 'DESC')
+        ->range(0, 1)
+        ->execute();
+      if ($revision_ids) {
+        $revision_id = array_keys($revision_ids)[0];
+        return $revision_id;
+      }
     }
   }
 
