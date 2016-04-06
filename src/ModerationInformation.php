@@ -186,16 +186,9 @@ class ModerationInformation implements ModerationInformationInterface {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo There may be a more perfomant way of doing this that doesn't
-   * require loading the full entity revision.
    */
   public function isLatestRevision(ContentEntityInterface $entity) {
-    $revision = $this->getLatestRevision($entity->getEntityTypeId(), $entity->id());
-    if (!$revision) {
-      return FALSE;
-    }
-    return $revision->getRevisionId() == $entity->getRevisionId();
+    return $entity->getRevisionId() == $this->getLatestRevisionId($entity->getEntityTypeId(), $entity->id());
   }
 
   /**
