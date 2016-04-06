@@ -137,7 +137,21 @@ class EntityOperations {
           || !$this->isDefaultRevisionPublished($entity);
 
         $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->onPresave($entity, $update_default_revision, $published_state);
-        $event = new WorkbenchModerationTransitionEvent($entity, isset($entity->original) ? $entity->original->moderation_state->target_id : NULL, $entity->moderation_state->target_id);
+
+        // There's currently a bug in core where $entity->original always points
+        // to the default revision, for now work around this by loading the latest
+        // revision.
+        $latest_revision = $this->moderationInfo->getLatestRevision($entity->getEntityTypeId(), $entity->id());
+        $state_before = !empty($latest_revision) ? $latest_revision->moderation_state->target_id : NULL;
+        // @todo: Revert to this simpler version when https://www.drupal.org/node/2700747 is fixed.
+        // $state_before = isset($entity->original) ? $entity->original->moderation_state->target_id : NULL;
+
+        $state_after = $entity->moderation_state->target_id;
+
+        // Allow other modules to respond to the transition. Note that this
+        // does not provide any mechanism to cancel the transition, since
+        // Entity API doesn't allow hook_entity_presave to short-circuit a save.
+        $event = new WorkbenchModerationTransitionEvent($entity, $state_before, $state_after);
         $this->eventDispatcher->dispatch(WorkbenchModerationEvents::STATE_TRANSITION, $event);
       }
     }
