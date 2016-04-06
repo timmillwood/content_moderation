@@ -25,7 +25,7 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
    *
    */
   public function testViewShowsCorrectNids() {
-    $this->createNodeType('Test', 'test');
+    $node_type = $this->createNodeType('Test', 'test');
 
     $permissions = [
       'access content',
@@ -34,6 +34,20 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
     $editor1 = $this->drupalCreateUser($permissions);
 
     $this->drupalLogin($editor1);
+
+    // Make a pre-moderation node.
+    /** @var Node $node_0 */
+    $node_0 = Node::create([
+      'type' => 'test',
+      'title' => 'Node 0 - Rev 1',
+      'uid' => $editor1->id(),
+    ]);
+    $node_0->save();
+
+    // Now enable moderation for subsequent nodes.
+
+    $node_type->setThirdPartySetting('workbench_moderation', 'enabled', TRUE);
+    $node_type->save();
 
     // Make a node that is only ever in Draft.
 
@@ -92,6 +106,7 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
     $this->assertFalse($page->hasContent('Node 2 - Rev 1'));
     $this->assertFalse($page->hasContent('Node 3 - Rev 1'));
     $this->assertFalse($page->hasContent('Node 3 - Rev 2'));
+    $this->assertFalse($page->hasContent('Node 0 - Rev 1'));
   }
 
   /**
@@ -101,6 +116,9 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
    *   The human-readable label of the type to create.
    * @param string $machine_name
    *   The machine name of the type to create.
+   *
+   * @return NodeType
+   *   The node type just created.
    */
   protected function createNodeType($label, $machine_name) {
     /** @var NodeType $node_type */
@@ -108,7 +126,9 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
       'type' => $machine_name,
       'label' => $label,
     ]);
-    $node_type->setThirdPartySetting('workbench_moderation', 'enabled', TRUE);
     $node_type->save();
+
+    return $node_type;
   }
+
 }

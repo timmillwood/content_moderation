@@ -2,6 +2,7 @@
 
 namespace Drupal\workbench_moderation\Plugin\views\filter;
 
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -31,17 +32,25 @@ class LatestRevision extends FilterPluginBase implements ContainerFactoryPluginI
   protected $joinHandler;
 
   /**
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $connection;
+
+  /**
    * Constructs a new LatestRevision.
    *
    * @param array $configuration
    * @param string $plugin_id
    * @param mixed $plugin_definition
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   * @param \Drupal\views\Plugin\ViewsHandlerManager $join_handler
+   * @param \Drupal\Core\Database\Connection $connection
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ViewsHandlerManager $join_handler) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ViewsHandlerManager $join_handler, Connection $connection) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_type_manager;
     $this->joinHandler = $join_handler;
+    $this->connection = $connection;
   }
 
   /**
@@ -51,7 +60,8 @@ class LatestRevision extends FilterPluginBase implements ContainerFactoryPluginI
     return new static(
       $configuration, $plugin_id, $plugin_definition,
       $container->get('entity_type.manager'),
-      $container->get('plugin.manager.views.join')
+      $container->get('plugin.manager.views.join'),
+      $container->get('database')
     );
   }
 
@@ -74,6 +84,10 @@ class LatestRevision extends FilterPluginBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function query() {
+    if (!$this->connection->schema()->tableExists('workbench_revision_tracker')) {
+      return;
+    }
+
     $table = $this->ensureMyTable();
 
     /** @var Sql $query */
