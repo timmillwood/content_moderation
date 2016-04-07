@@ -2,7 +2,9 @@
 
 namespace Drupal\workbench_moderation\Plugin\Action;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Plugin\Action\UnpublishNode;
 use Drupal\workbench_moderation\ModerationInformationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -44,5 +46,15 @@ class ModerationOptOutUnpublishNode extends UnpublishNode implements ContainerFa
     }
 
     parent::execute($entity);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+    $result = parent::access($object, $account, TRUE)
+      ->andif(AccessResult::forbiddenIf($this->moderationInfo->isModeratableEntity($object))->addCacheableDependency($object));
+
+    return $return_as_object ? $result : $result->isAllowed();
   }
 }
