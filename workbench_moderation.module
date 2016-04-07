@@ -17,6 +17,10 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
+use Drupal\node\Plugin\Action\PublishNode;
+use Drupal\node\Plugin\Action\UnpublishNode;
+use Drupal\workbench_moderation\Plugin\Action\ModerationOptOutPublishNode;
+use Drupal\workbench_moderation\Plugin\Action\ModerationOptOutUnpublishNode;
 use Drupal\workbench_moderation\Plugin\Menu\EditTab;
 
 /**
@@ -191,6 +195,23 @@ function workbench_moderation_theme($existing, $type, $theme, $path) {
   ];
 
   return $themes;
+}
+
+/**
+ * Implements hook_action_info_alter().
+ */
+function workbench_moderation_action_info_alter(&$definitions) {
+
+  // The publish/unpublish actions are not valid on moderated entities. So swap
+  // their implementations out for alternates that will become a no-op on a
+  // moderated node. If another module has already swapped out those classes,
+  // though, we'll be polite and do nothing.
+  if (isset($definitions['node_publish_action']['class']) && $definitions['node_publish_action']['class'] == PublishNode::class) {
+    $definitions['node_publish_action']['class'] = ModerationOptOutPublishNode::class;
+  }
+  if (isset($definitions['node_unpublish_action']['class']) && $definitions['node_unpublish_action']['class'] == UnpublishNode::class) {
+    $definitions['node_unpublish_action']['class'] = ModerationOptOutUnpublishNode::class;
+  }
 }
 
 /**
