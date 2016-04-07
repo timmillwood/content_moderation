@@ -84,6 +84,11 @@ class LatestRevision extends FilterPluginBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function query() {
+    // The table doesn't exist until a moderated node has been saved at least
+    // once. Just in case, disable this filter until then. Note that this means
+    // the view will still show all revisions, not just latest, but this is
+    // sufficiently edge-case-y that it's probably not worth the time to
+    // handle more robustly.
     if (!$this->connection->schema()->tableExists('workbench_revision_tracker')) {
       return;
     }
