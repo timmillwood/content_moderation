@@ -82,7 +82,7 @@ class BundleModerationConfigurationForm extends EntityForm {
       '#type' => 'checkboxes',
       '#title' => t('Allowed moderation states.'),
       '#description' => t('The allowed moderation states this content-type can be assigned. You must select at least one published and one non-published state.'),
-      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', []),
+      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', array_keys($options)),
       '#options' => $options,
       '#states' => [
         'visible' => [
