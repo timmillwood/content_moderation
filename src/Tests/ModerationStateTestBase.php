@@ -5,6 +5,7 @@ namespace Drupal\workbench_moderation\Tests;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\simpletest\WebTestBase;
 use Drupal\user\Entity\Role;
+use Drupal\workbench_moderation\Entity\ModerationState;
 
 /**
  * Defines a base class for moderation state tests.
@@ -98,9 +99,14 @@ abstract class ModerationStateTestBase extends WebTestBase {
     $edit = [];
     if ($moderated) {
       $edit['enable_moderation_state'] = 1;
-      foreach ($allowed_states as $state) {
-        $edit['allowed_moderation_states[' . $state . ']'] = 1;
+
+      /** @var ModerationState $state */
+      foreach (ModerationState::loadMultiple() as $id => $state) {
+        $value = (int)in_array($id, $allowed_states);
+        $key = $state->isPublishedState() ? 'allowed_moderation_states_published[' . $state->id() . ']' : 'allowed_moderation_states_unpublished[' . $state->id() . ']';
+        $edit[$key] = $value;
       }
+
       $edit['default_moderation_state'] = $default_state;
     }
     $this->drupalPostForm(NULL, $edit, t('Save'));
