@@ -72,7 +72,7 @@ class BundleModerationConfigurationForm extends EntityForm {
       ];
     }
 
-    $states = \Drupal::entityTypeManager()->getStorage('moderation_state')->loadMultiple();
+    $states = $this->entityTypeManager->getStorage('moderation_state')->loadMultiple();
     $options = [];
     /** @var ModerationState $state */
     foreach ($states as $key => $state) {
@@ -82,7 +82,7 @@ class BundleModerationConfigurationForm extends EntityForm {
       '#type' => 'checkboxes',
       '#title' => t('Allowed moderation states.'),
       '#description' => t('The allowed moderation states this content-type can be assigned. You must select at least one published and one non-published state.'),
-      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', []),
+      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', array_keys($options)),
       '#options' => $options,
       '#states' => [
         'visible' => [
@@ -96,7 +96,7 @@ class BundleModerationConfigurationForm extends EntityForm {
       '#empty_option' => t('-- Select --'),
       '#options' => $options,
       '#description' => t('Select the moderation state for new content'),
-      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'default_moderation_state', ''),
+      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'default_moderation_state', 'draft'),
       '#states' => [
         'visible' => [
           ':input[name=enable_moderation_state]' => ['checked' => TRUE],
