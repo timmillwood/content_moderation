@@ -54,8 +54,8 @@ class BundleModerationConfigurationForm extends EntityForm {
     $bundle = $form_state->getFormObject()->getEntity();
     $form['enable_moderation_state'] = [
       '#type' => 'checkbox',
-      '#title' => t('Enable moderation states.'),
-      '#description' => t('Content of this type must transition through moderation states in order to be published.'),
+      '#title' => $this->t('Enable moderation states.'),
+      '#description' => $this->t('Content of this type must transition through moderation states in order to be published.'),
       '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'enabled', FALSE),
     ];
 
@@ -63,7 +63,7 @@ class BundleModerationConfigurationForm extends EntityForm {
     if ($bundle->getThirdPartySetting('workbench_moderation', 'enabled', FALSE)) {
       $form['enable_moderation_state_note'] = [
         '#type' => 'item',
-        '#description' => t('After disabling moderation, any existing forward drafts will be accessible via the "Revisions" tab.'),
+        '#description' => $this->t('After disabling moderation, any existing forward drafts will be accessible via the "Revisions" tab.'),
         '#states' => [
           'visible' => [
             ':input[name=enable_moderation_state]' => ['checked' => FALSE],
@@ -87,8 +87,8 @@ class BundleModerationConfigurationForm extends EntityForm {
 
     $form['allowed_moderation_states_unpublished'] = [
       '#type' => 'checkboxes',
-      '#title' => t('Allowed moderation states (Unpublished)'),
-      '#description' => t('The allowed unpublisehd moderation states this content-type can be assigned.'),
+      '#title' => $this->t('Allowed moderation states (Unpublished)'),
+      '#description' => $this->t('The allowed unpublished moderation states this content-type can be assigned.'),
       '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', array_keys($options_unpublished)),
       '#options' => $options_unpublished,
       '#required' => TRUE,
@@ -101,8 +101,8 @@ class BundleModerationConfigurationForm extends EntityForm {
 
     $form['allowed_moderation_states_published'] = [
       '#type' => 'checkboxes',
-      '#title' => t('Allowed moderation states (Published)'),
-      '#description' => t('The allowed published moderation states this content-type can be assigned.'),
+      '#title' => $this->t('Allowed moderation states (Published)'),
+      '#description' => $this->t('The allowed published moderation states this content-type can be assigned.'),
       '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', array_keys($options_published)),
       '#options' => $options_published,
       '#required' => TRUE,
@@ -123,9 +123,9 @@ class BundleModerationConfigurationForm extends EntityForm {
 
     $form['default_moderation_state'] = [
       '#type' => 'select',
-      '#title' => t('Default moderation state'),
+      '#title' => $this->t('Default moderation state'),
       '#options' => $options,
-      '#description' => t('Select the moderation state for new content'),
+      '#description' => $this->t('Select the moderation state for new content'),
       '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'default_moderation_state', 'draft'),
       '#states' => [
         'visible' => [
@@ -165,7 +165,7 @@ class BundleModerationConfigurationForm extends EntityForm {
       $allowed = array_keys(array_filter($form_state->getValue('allowed_moderation_states_published') + $form_state->getValue('allowed_moderation_states_unpublished')));
 
       if (($default = $form_state->getValue('default_moderation_state')) && !in_array($default, $allowed, TRUE)) {
-        $form_state->setErrorByName('default_moderation_state', t('The default moderation state must be one of the allowed states.'));
+        $form_state->setErrorByName('default_moderation_state', $this->t('The default moderation state must be one of the allowed states.'));
       }
     }
   }
