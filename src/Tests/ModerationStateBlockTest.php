@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation\Tests;
+namespace Drupal\content_moderation\Tests;
 
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\block_content\Entity\BlockContentType;
@@ -8,7 +8,7 @@ use Drupal\block_content\Entity\BlockContentType;
 /**
  * Tests general content moderation workflow for blocks.
  *
- * @group workbench_moderation
+ * @group content_moderation
  */
 class ModerationStateBlockTest extends ModerationStateTestBase {
 
@@ -39,14 +39,14 @@ class ModerationStateBlockTest extends ModerationStateTestBase {
    *
    * The one exception is a block that has never been "published". When a block
    * is first created, it becomes the "default revision". For each edit of the
-   * block after that, Workbench Moderation checks the "default revision" to
+   * block after that, Content Moderation checks the "default revision" to
    * see if it is set to a published moderation state. If it is not, the entity
    * being saved will become the "default revision".
    *
    * The test below is intended, in part, to make this behavior clear.
    *
-   * @see \Drupal\workbench_moderation\EntityOperations::entityPresave
-   * @see \Drupal\workbench_moderation\Tests\ModerationFormTest::testModerationForm
+   * @see \Drupal\content_moderation\EntityOperations::entityPresave
+   * @see \Drupal\content_moderation\Tests\ModerationFormTest::testModerationForm
    */
   public function testCustomBlockModeration() {
     $this->drupalLogin($this->rootUser);

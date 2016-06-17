@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\workbench_moderation\ParamConverter;
+namespace Drupal\content_moderation\ParamConverter;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\ParamConverter\EntityConverter;
 use Drupal\Core\TypedData\TranslatableInterface;
-use Drupal\workbench_moderation\ModerationInformationInterface;
+use Drupal\content_moderation\ModerationInformationInterface;
 use Symfony\Component\Routing\Route;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -15,7 +15,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 class EntityRevisionConverter extends EntityConverter {
 
   /**
-   * @var \Drupal\workbench_moderation\ModerationInformationInterface
+   * @var \Drupal\content_moderation\ModerationInformationInterface
    */
   protected $moderationInformation;
 
@@ -27,7 +27,7 @@ class EntityRevisionConverter extends EntityConverter {
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_type_manager
    *   The entity manager, needed by the parent class.
-   * @param \Drupal\workbench_moderation\ModerationInformationInterface $moderation_info
+   * @param \Drupal\content_moderation\ModerationInformationInterface $moderation_info
    *   The moderation info utility service.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, ModerationInformationInterface $moderation_info) {

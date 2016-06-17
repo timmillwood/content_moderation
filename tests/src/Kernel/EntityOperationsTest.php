@@ -1,25 +1,25 @@
 <?php
 
-namespace Drupal\Tests\workbench_moderation\Kernel;
+namespace Drupal\Tests\content_moderation\Kernel;
 
 
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\workbench_moderation\Entity\ModerationState;
+use Drupal\content_moderation\Entity\ModerationState;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 
 /**
  * Class EntityOperationsTest
  *
- * @coversDefaultClass \Drupal\workbench_moderation\EntityOperations
- * @group workbench_moderation
+ * @coversDefaultClass \Drupal\content_moderation\EntityOperations
+ * @group content_moderation
  */
 class EntityOperationsTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['workbench_moderation', 'node', 'views', 'options', 'user', 'system'];
+  public static $modules = ['content_moderation', 'node', 'views', 'options', 'user', 'system'];
 
   /**
    * {@inheritdoc}
@@ -29,7 +29,7 @@ class EntityOperationsTest extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installSchema('node', 'node_access');
     $this->installEntitySchema('user');
-    $this->installConfig('workbench_moderation');
+    $this->installConfig('content_moderation');
 
     $this->createNodeType();
   }
@@ -42,7 +42,7 @@ class EntityOperationsTest extends KernelTestBase {
       'type' => 'page',
       'label' => 'Page',
     ]);
-    $node_type->setThirdPartySetting('workbench_moderation', 'enabled', TRUE);
+    $node_type->setThirdPartySetting('content_moderation', 'enabled', TRUE);
     $node_type->save();
   }
 

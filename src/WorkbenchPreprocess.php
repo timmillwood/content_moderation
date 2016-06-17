@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation;
+namespace Drupal\content_moderation;
 
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\node\Entity\Node;
@@ -8,7 +8,7 @@ use Drupal\node\Entity\Node;
 /**
  * Service to determine whether a route is the "Latest version" tab of a node.
  */
-class WorkbenchPreprocess {
+class ContentPreprocess {
 
   /**
    * @var \Drupal\Core\Routing\CurrentRouteMatch $routeMatch
@@ -33,7 +33,7 @@ class WorkbenchPreprocess {
    */
   public function preprocessNode(array &$variables) {
     // Set the 'page' template variable when the node is being displayed on the
-    // "Latest version" tab provided by workbench_moderation.
+    // "Latest version" tab provided by content_moderation.
     $variables['page'] = $variables['page'] || $this->isLatestVersionPage($variables['node']);
   }
 

@@ -1,26 +1,26 @@
 <?php
 
-namespace Drupal\workbench_moderation\Access;
+namespace Drupal\content_moderation\Access;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\workbench_moderation\ModerationInformationInterface;
+use Drupal\content_moderation\ModerationInformationInterface;
 use Symfony\Component\Routing\Route;
 
 class LatestRevisionCheck implements AccessInterface {
 
   /**
-   * @var \Drupal\workbench_moderation\ModerationInformationInterface
+   * @var \Drupal\content_moderation\ModerationInformationInterface
    */
   protected $moderationInfo;
 
   /**
    * Constructs a new LatestRevisionCheck.
    *
-   * @param \Drupal\workbench_moderation\ModerationInformationInterface $moderation_information
+   * @param \Drupal\content_moderation\ModerationInformationInterface $moderation_information
    *   The moderation information service.
    */
   public function __construct(ModerationInformationInterface $moderation_information) {
@@ -70,7 +70,7 @@ class LatestRevisionCheck implements AccessInterface {
    *   an HTTP 500.
    */
   protected function loadEntity(Route $route, RouteMatchInterface $route_match) {
-    $entity_type = $route->getOption('_workbench_moderation_entity_type');
+    $entity_type = $route->getOption('_content_moderation_entity_type');
 
     if ($entity = $route_match->getParameter($entity_type)) {
       if ($entity instanceof EntityInterface) {

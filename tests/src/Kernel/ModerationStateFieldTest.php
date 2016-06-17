@@ -1,19 +1,19 @@
 <?php
 
-namespace Drupal\Tests\workbench_moderation\Kernel;
+namespace Drupal\Tests\content_moderation\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
 
 /**
  * Tests moderation state field.
- * @group workbench_moderation
+ * @group content_moderation
  */
 class ModerationStateFieldTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['workbench_moderation', 'node', 'views', 'options', 'user'];
+  public static $modules = ['content_moderation', 'node', 'views', 'options', 'user'];
 
   /**
    * {@inheritdoc}

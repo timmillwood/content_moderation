@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation\Form;
+namespace Drupal\content_moderation\Form;
 
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
@@ -8,7 +8,7 @@ use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\workbench_moderation\Entity\ModerationState;
+use Drupal\content_moderation\Entity\ModerationState;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -56,11 +56,11 @@ class BundleModerationConfigurationForm extends EntityForm {
       '#type' => 'checkbox',
       '#title' => $this->t('Enable moderation states.'),
       '#description' => $this->t('Content of this type must transition through moderation states in order to be published.'),
-      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'enabled', FALSE),
+      '#default_value' => $bundle->getThirdPartySetting('content_moderation', 'enabled', FALSE),
     ];
 
     // Add a special message when moderation is being disabled.
-    if ($bundle->getThirdPartySetting('workbench_moderation', 'enabled', FALSE)) {
+    if ($bundle->getThirdPartySetting('content_moderation', 'enabled', FALSE)) {
       $form['enable_moderation_state_note'] = [
         '#type' => 'item',
         '#description' => $this->t('After disabling moderation, any existing forward drafts will be accessible via the "Revisions" tab.'),
@@ -89,7 +89,7 @@ class BundleModerationConfigurationForm extends EntityForm {
       '#type' => 'checkboxes',
       '#title' => $this->t('Allowed moderation states (Unpublished)'),
       '#description' => $this->t('The allowed unpublished moderation states this content-type can be assigned.'),
-      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', array_keys($options_unpublished)),
+      '#default_value' => $bundle->getThirdPartySetting('content_moderation', 'allowed_moderation_states', array_keys($options_unpublished)),
       '#options' => $options_unpublished,
       '#required' => TRUE,
       '#states' => [
@@ -103,7 +103,7 @@ class BundleModerationConfigurationForm extends EntityForm {
       '#type' => 'checkboxes',
       '#title' => $this->t('Allowed moderation states (Published)'),
       '#description' => $this->t('The allowed published moderation states this content-type can be assigned.'),
-      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', array_keys($options_published)),
+      '#default_value' => $bundle->getThirdPartySetting('content_moderation', 'allowed_moderation_states', array_keys($options_published)),
       '#options' => $options_published,
       '#required' => TRUE,
       '#states' => [
@@ -126,7 +126,7 @@ class BundleModerationConfigurationForm extends EntityForm {
       '#title' => $this->t('Default moderation state'),
       '#options' => $options,
       '#description' => $this->t('Select the moderation state for new content'),
-      '#default_value' => $bundle->getThirdPartySetting('workbench_moderation', 'default_moderation_state', 'draft'),
+      '#default_value' => $bundle->getThirdPartySetting('content_moderation', 'default_moderation_state', 'draft'),
       '#states' => [
         'visible' => [
           ':input[name=enable_moderation_state]' => ['checked' => TRUE],
@@ -152,9 +152,9 @@ class BundleModerationConfigurationForm extends EntityForm {
    */
   public function formBuilderCallback($entity_type, ConfigEntityInterface $bundle, &$form, FormStateInterface $form_state) {
     // @todo write a test for this.
-    $bundle->setThirdPartySetting('workbench_moderation', 'enabled', $form_state->getValue('enable_moderation_state'));
-    $bundle->setThirdPartySetting('workbench_moderation', 'allowed_moderation_states', array_keys(array_filter($form_state->getValue('allowed_moderation_states_published') + $form_state->getValue('allowed_moderation_states_unpublished'))));
-    $bundle->setThirdPartySetting('workbench_moderation', 'default_moderation_state', $form_state->getValue('default_moderation_state'));
+    $bundle->setThirdPartySetting('content_moderation', 'enabled', $form_state->getValue('enable_moderation_state'));
+    $bundle->setThirdPartySetting('content_moderation', 'allowed_moderation_states', array_keys(array_filter($form_state->getValue('allowed_moderation_states_published') + $form_state->getValue('allowed_moderation_states_unpublished'))));
+    $bundle->setThirdPartySetting('content_moderation', 'default_moderation_state', $form_state->getValue('default_moderation_state'));
   }
 
   /**

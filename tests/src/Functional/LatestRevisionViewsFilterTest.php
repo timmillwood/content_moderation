@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\workbench_moderation\Functional;
+namespace Drupal\Tests\content_moderation\Functional;
 
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
@@ -9,7 +9,7 @@ use Drupal\simpletest\BrowserTestBase;
 /**
  * Tests the "Latest Revision" views filter.
  *
- * @group workbench_moderation
+ * @group content_moderation
  * @runTestsInSeparateProcesses
  * @preserveGlobalState disabled
  *
@@ -19,7 +19,7 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['workbench_moderation_test_views', 'workbench_moderation', 'node', 'views', 'options', 'user', 'system'];
+  public static $modules = ['content_moderation_test_views', 'content_moderation', 'node', 'views', 'options', 'user', 'system'];
 
   /**
    *
@@ -46,7 +46,7 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
 
     // Now enable moderation for subsequent nodes.
 
-    $node_type->setThirdPartySetting('workbench_moderation', 'enabled', TRUE);
+    $node_type->setThirdPartySetting('content_moderation', 'enabled', TRUE);
     $node_type->save();
 
     // Make a node that is only ever in Draft.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\workbench_moderation\Kernel;
+namespace Drupal\Tests\content_moderation\Kernel;
 
 use Drupal\entity_test\Entity\EntityTest;
 use Drupal\KernelTests\KernelTestBase;
@@ -8,12 +8,12 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 
 /**
- * @coversDefaultClass \Drupal\workbench_moderation\ParamConverter\EntityRevisionConverter
- * @group workbench_moderation
+ * @coversDefaultClass \Drupal\content_moderation\ParamConverter\EntityRevisionConverter
+ * @group content_moderation
  */
 class EntityRevisionConverterTest extends KernelTestBase {
 
-  public static $modules = ['user', 'entity_test', 'system', 'workbench_moderation', 'node'];
+  public static $modules = ['user', 'entity_test', 'system', 'content_moderation', 'node'];
 
   /**
    * {@inheritdoc}
@@ -49,7 +49,7 @@ class EntityRevisionConverterTest extends KernelTestBase {
     $node_type = NodeType::create([
       'type' => 'article',
     ]);
-    $node_type->setThirdPartySetting('workbench_moderation', 'enabled', TRUE);
+    $node_type->setThirdPartySetting('content_moderation', 'enabled', TRUE);
     $node_type->save();
 
     $revision_ids = [];

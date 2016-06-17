@@ -1,27 +1,27 @@
 <?php
 
-namespace Drupal\workbench_moderation\Form;
+namespace Drupal\content_moderation\Form;
 
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\workbench_moderation\Entity\ModerationState;
-use Drupal\workbench_moderation\Entity\ModerationStateTransition;
-use Drupal\workbench_moderation\ModerationInformationInterface;
-use Drupal\workbench_moderation\StateTransitionValidation;
+use Drupal\content_moderation\Entity\ModerationState;
+use Drupal\content_moderation\Entity\ModerationStateTransition;
+use Drupal\content_moderation\ModerationInformationInterface;
+use Drupal\content_moderation\StateTransitionValidation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class EntityModerationForm extends FormBase {
 
   /**
-   * @var \Drupal\workbench_moderation\ModerationInformationInterface
+   * @var \Drupal\content_moderation\ModerationInformationInterface
    */
   protected $moderationInfo;
 
   /**
-   * @var \Drupal\workbench_moderation\StateTransitionValidation
+   * @var \Drupal\content_moderation\StateTransitionValidation
    */
   protected $validation;
 
@@ -41,8 +41,8 @@ class EntityModerationForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('workbench_moderation.moderation_information'),
-      $container->get('workbench_moderation.state_transition_validation'),
+      $container->get('content_moderation.moderation_information'),
+      $container->get('content_moderation.state_transition_validation'),
       $container->get('entity_type.manager')
     );
   }
@@ -51,7 +51,7 @@ class EntityModerationForm extends FormBase {
    * @inheritDoc
    */
   public function getFormId() {
-    return 'workbench_moderation_entity_moderation_form';
+    return 'content_moderation_entity_moderation_form';
   }
 
   /**

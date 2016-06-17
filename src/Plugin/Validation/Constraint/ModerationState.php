@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation\Plugin\Validation\Constraint;
+namespace Drupal\content_moderation\Plugin\Validation\Constraint;
 
 use Symfony\Component\Validator\Constraint;
 

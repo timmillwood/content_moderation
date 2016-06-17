@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\workbench_moderation\Tests;
+namespace Drupal\content_moderation\Tests;
 
 /**
  * Tests the moderation form, specifically on nodes.
  *
- * @group workbench_moderation
+ * @group content_moderation
  */
 class ModerationFormTest extends ModerationStateTestBase {
 
@@ -30,8 +30,8 @@ class ModerationFormTest extends ModerationStateTestBase {
    * is only a forward revision if a draft revision is created on a node where
    * the default revision is not a published moderation state.
    *
-   * @see \Drupal\workbench_moderation\EntityOperations
-   * @see \Drupal\workbench_moderation\Tests\ModerationStateBlockTest::testCustomBlockModeration
+   * @see \Drupal\content_moderation\EntityOperations
+   * @see \Drupal\content_moderation\Tests\ModerationStateBlockTest::testCustomBlockModeration
    */
   public function testModerationForm() {
     // Create new moderated content in draft.

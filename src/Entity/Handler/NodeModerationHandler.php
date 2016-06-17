@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains Drupal\workbench_moderation\Entity\Handler\NodeCustomizations.
+ * Contains Drupal\content_moderation\Entity\Handler\NodeCustomizations.
  */
 
-namespace Drupal\workbench_moderation\Entity\Handler;
+namespace Drupal\content_moderation\Entity\Handler;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -43,7 +43,7 @@ class NodeModerationHandler extends ModerationHandler {
     /* @var \Drupal\node\Entity\NodeType $entity */
     $entity = $form_state->getFormObject()->getEntity();
 
-    if ($entity->getThirdPartySetting('workbench_moderation', 'enabled', FALSE)) {
+    if ($entity->getThirdPartySetting('content_moderation', 'enabled', FALSE)) {
       // Force the revision checkbox on.
       $form['workflow']['options']['#default_value']['revision'] = 'revision';
       $form['workflow']['options']['revision']['#disabled'] = TRUE;

@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\workbench_moderation\Tests;
+namespace Drupal\content_moderation\Tests;
 
 /**
- * Test workbench_moderation functionality with localization and translation.
+ * Test content_moderation functionality with localization and translation.
  *
- * @group workbench_moderation
+ * @group content_moderation
  */
 class ModerationLocaleTest extends ModerationStateTestBase {
 
@@ -14,7 +14,7 @@ class ModerationLocaleTest extends ModerationStateTestBase {
    *
    * @var array
    */
-  public static $modules = ['node', 'workbench_moderation', 'locale', 'content_translation'];
+  public static $modules = ['node', 'content_moderation', 'locale', 'content_translation'];
 
   /**
    * Test that an article can be translated and its translations can be

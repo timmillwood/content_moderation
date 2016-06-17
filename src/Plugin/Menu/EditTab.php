@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\workbench_moderation\Plugin\Menu;
+namespace Drupal\content_moderation\Plugin\Menu;
 
 use Drupal\Core\Menu\LocalTaskDefault;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\workbench_moderation\ModerationInformation;
+use Drupal\content_moderation\ModerationInformation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,7 +20,7 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
   /**
    * The moderatio information service.
    *
-   * @var \Drupal\workbench_moderation\ModerationInformation
+   * @var \Drupal\content_moderation\ModerationInformation
    */
   protected $moderationInfo;
 
@@ -42,7 +42,7 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
    *   Plugin definition.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The translation service.
-   * @param \Drupal\workbench_moderation\ModerationInformation $moderation_information
+   * @param \Drupal\content_moderation\ModerationInformation $moderation_information
    *   The moderation information.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, TranslationInterface $string_translation, ModerationInformation $moderation_information) {
@@ -61,7 +61,7 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
       $plugin_id,
       $plugin_definition,
       $container->get('string_translation'),
-      $container->get('workbench_moderation.moderation_information')
+      $container->get('content_moderation.moderation_information')
     );
   }
 

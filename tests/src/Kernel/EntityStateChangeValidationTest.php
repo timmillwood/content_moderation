@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\workbench_moderation\Kernel;
+namespace Drupal\Tests\content_moderation\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\language\Entity\ConfigurableLanguage;
@@ -9,15 +9,15 @@ use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
 
 /**
- * @coversDefaultClass \Drupal\workbench_moderation\Plugin\Validation\Constraint\ModerationStateValidator
- * @group workbench_moderation
+ * @coversDefaultClass \Drupal\content_moderation\Plugin\Validation\Constraint\ModerationStateValidator
+ * @group content_moderation
  */
 class EntityStateChangeValidationTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'workbench_moderation', 'user', 'system', 'language', 'content_translation'];
+  public static $modules = ['node', 'content_moderation', 'user', 'system', 'language', 'content_translation'];
 
   /**
    * {@inheritdoc}
@@ -28,7 +28,7 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     $this->installSchema('node', 'node_access');
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
-    $this->installConfig('workbench_moderation');
+    $this->installConfig('content_moderation');
   }
 
   /**
@@ -61,7 +61,7 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     $node_type = NodeType::create([
       'type' => 'example',
     ]);
-    $node_type->setThirdPartySetting('workbench_moderation', 'enabled', TRUE);
+    $node_type->setThirdPartySetting('content_moderation', 'enabled', TRUE);
     $node_type->save();
     $node = Node::create([
       'type' => 'example',
@@ -97,9 +97,9 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     // Enable moderation for our node type.
     /** @var NodeType $node_type */
     $node_type = NodeType::load('example');
-    $node_type->setThirdPartySetting('workbench_moderation', 'enabled', TRUE);
-    $node_type->setThirdPartySetting('workbench_moderation', 'allowed_moderation_states', ['draft', 'needs_review', 'published']);
-    $node_type->setThirdPartySetting('workbench_moderation', 'default_moderation_state', 'draft');
+    $node_type->setThirdPartySetting('content_moderation', 'enabled', TRUE);
+    $node_type->setThirdPartySetting('content_moderation', 'allowed_moderation_states', ['draft', 'needs_review', 'published']);
+    $node_type->setThirdPartySetting('content_moderation', 'default_moderation_state', 'draft');
     $node_type->save();
 
     $node = Node::load($nid);
@@ -146,9 +146,9 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     // Enable moderation for our node type.
     /** @var NodeType $node_type */
     $node_type = NodeType::load('example');
-    $node_type->setThirdPartySetting('workbench_moderation', 'enabled', TRUE);
-    $node_type->setThirdPartySetting('workbench_moderation', 'allowed_moderation_states', ['draft', 'needs_review', 'published']);
-    $node_type->setThirdPartySetting('workbench_moderation', 'default_moderation_state', 'draft');
+    $node_type->setThirdPartySetting('content_moderation', 'enabled', TRUE);
+    $node_type->setThirdPartySetting('content_moderation', 'allowed_moderation_states', ['draft', 'needs_review', 'published']);
+    $node_type->setThirdPartySetting('content_moderation', 'default_moderation_state', 'draft');
     $node_type->save();
 
     // Reload the French version of the node.

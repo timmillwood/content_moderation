@@ -1,16 +1,16 @@
-Workbench Moderation
+Content Moderation
 ====================
 
 About this module
 -----------------
-Workbench Moderation (WBM) provides basic moderation support for revisionable content entities.  That is, it allows
+Content Moderation (WBM) provides basic moderation support for revisionable content entities.  That is, it allows
 site administrators to define States that content can be in, Transitions between those States, and rules around who
 is able to Transition content from one State to another, when.
 
 In concept, any revision-aware content entity is supportable.  In core, that includes Nodes and Block Content. However,
 there may be a small amount of work needed to support additional content entities due to inconsistencies in the
 Entity API.core. To add custom WBM integration for your entity type, annotate your entity to specify a moderation
-handler class that extends \Drupal\workbench_moderation\Entity\Handler\ModerationHandler.
+handler class that extends \Drupal\content_moderation\Entity\Handler\ModerationHandler.
 
 Installation
 ------------

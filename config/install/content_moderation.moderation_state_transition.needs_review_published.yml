@@ -2,8 +2,8 @@ langcode: en
 status: true
 dependencies:
   config:
-    - workbench_moderation.moderation_state.needs_review
-    - workbench_moderation.moderation_state.published
+    - content_moderation.moderation_state.needs_review
+    - content_moderation.moderation_state.published
 id: needs_review_published
 label: 'Publish'
 stateFrom: needs_review

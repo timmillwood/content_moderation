@@ -1,7 +1,7 @@
 # Moderation state menu items definition
-workbench_moderation.overview:
-  title: 'Workbench moderation'
-  route_name: workbench_moderation.overview
+content_moderation.overview:
+  title: 'Content moderation'
+  route_name: content_moderation.overview
   description: 'Configure states and transitions for entities.'
   parent: system.admin_config_workflow
 
@@ -9,7 +9,7 @@ entity.moderation_state.collection:
   title: 'Moderation states'
   route_name: entity.moderation_state.collection
   description: 'Administer moderation states.'
-  parent: workbench_moderation.overview
+  parent: content_moderation.overview
   weight: 10
 
 # Moderation state transition menu items definition
@@ -17,5 +17,5 @@ entity.moderation_state_transition.collection:
   title: 'Moderation state transitions'
   route_name: entity.moderation_state_transition.collection
   description: 'Administer moderation states transitions.'
-  parent: workbench_moderation.overview
+  parent: content_moderation.overview
   weight: 20

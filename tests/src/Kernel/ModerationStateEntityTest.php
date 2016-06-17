@@ -1,23 +1,23 @@
 <?php
 
-namespace Drupal\Tests\workbench_moderation\Kernel;
+namespace Drupal\Tests\content_moderation\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\workbench_moderation\Entity\ModerationState;
+use Drupal\content_moderation\Entity\ModerationState;
 
 /**
  * Class ModerationStateEntityTest
  *
- * @coversDefaultClass \Drupal\workbench_moderation\Entity\ModerationState
+ * @coversDefaultClass \Drupal\content_moderation\Entity\ModerationState
  *
- * @group workbench_moderation
+ * @group content_moderation
  */
 class ModerationStateEntityTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['workbench_moderation'];
+  public static $modules = ['content_moderation'];
 
   /**
    * {@inheritdoc}

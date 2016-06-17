@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\workbench_moderation\Tests;
+namespace Drupal\content_moderation\Tests;
 
 use Drupal\node\NodeInterface;
 
 /**
  * Tests permission access control around nodes.
  *
- * @group workbench_moderation
+ * @group content_moderation
  */
 class NodeAccessTest extends ModerationStateTestBase {
 

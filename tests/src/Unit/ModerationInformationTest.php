@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\workbench_moderation\Unit;
+namespace Drupal\Tests\content_moderation\Unit;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\ContentEntityFormInterface;
@@ -10,11 +10,11 @@ use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\workbench_moderation\ModerationInformation;
+use Drupal\content_moderation\ModerationInformation;
 
 /**
- * @coversDefaultClass \Drupal\workbench_moderation\ModerationInformation
- * @group workbench_moderation
+ * @coversDefaultClass \Drupal\content_moderation\ModerationInformation
+ * @group content_moderation
  */
 class ModerationInformationTest extends \PHPUnit_Framework_TestCase {
 
@@ -42,7 +42,7 @@ class ModerationInformationTest extends \PHPUnit_Framework_TestCase {
 
   public function setupModerationEntityManager($status) {
     $bundle = $this->prophesize(ConfigEntityInterface::class);
-    $bundle->getThirdPartySetting('workbench_moderation', 'enabled', FALSE)->willReturn($status);
+    $bundle->getThirdPartySetting('content_moderation', 'enabled', FALSE)->willReturn($status);
 
     $entity_storage = $this->prophesize(EntityStorageInterface::class);
     $entity_storage->load('test_bundle')->willReturn($bundle->reveal());

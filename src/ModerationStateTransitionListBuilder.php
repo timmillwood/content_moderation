@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation;
+namespace Drupal\content_moderation;
 
 use Drupal\Core\Config\Entity\DraggableListBuilder;
 use Drupal\Core\Entity\EntityInterface;
@@ -45,7 +45,7 @@ class ModerationStateTransitionListBuilder extends DraggableListBuilder {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'workbench_moderation_transition_list';
+    return 'content_moderation_transition_list';
   }
 
   /**

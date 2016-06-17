@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\workbench_moderation;
+namespace Drupal\content_moderation;
 
 use Drupal\Core\Routing\UrlGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\workbench_moderation\Entity\ModerationState;
-use Drupal\workbench_moderation\Entity\ModerationStateTransition;
+use Drupal\content_moderation\Entity\ModerationState;
+use Drupal\content_moderation\Entity\ModerationStateTransition;
 
 /**
  * Defines a class for dynamic permissions based on transitions.
@@ -24,9 +24,9 @@ class Permissions {
   public function transitionPermissions() {
     // @todo write a test for this.
     $perms = [];
-    /* @var \Drupal\workbench_moderation\ModerationStateInterface[] $states */
+    /* @var \Drupal\content_moderation\ModerationStateInterface[] $states */
     $states = ModerationState::loadMultiple();
-    /* @var \Drupal\workbench_moderation\ModerationStateTransitionInterface $transition */
+    /* @var \Drupal\content_moderation\ModerationStateTransitionInterface $transition */
     foreach (ModerationStateTransition::loadMultiple() as $id => $transition) {
       $perms['use ' . $id . ' transition'] = [
         'title' => $this->t('Use the %transition_name transition', [

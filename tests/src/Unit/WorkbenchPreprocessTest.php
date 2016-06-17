@@ -1,28 +1,28 @@
 <?php
 
-namespace Drupal\Tests\workbench_moderation\Unit;
+namespace Drupal\Tests\content_moderation\Unit;
 
-use Drupal\workbench_moderation\WorkbenchPreprocess;
+use Drupal\content_moderation\ContentPreprocess;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\node\Entity\Node;
 
 
 /**
- * Class WorkbenchPreprocessTest.
+ * Class ContentPreprocessTest.
  *
- * @coversDefaultClass \Drupal\workbench_moderation\WorkbenchPreprocess
- * @group workbench_moderation
+ * @coversDefaultClass \Drupal\content_moderation\ContentPreprocess
+ * @group content_moderation
  */
-class WorkbenchPreprocessTest extends \PHPUnit_Framework_TestCase {
+class ContentPreprocessTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @covers ::isLatestVersionPage
    * @dataProvider routeNodeProvider
    */
   public function testIsLatestVersionPage($route_name, $route_nid, $check_nid, $result, $message) {
-    $workbench_preprocess = new WorkbenchPreprocess($this->setupCurrentRouteMatch($route_name, $route_nid));
+    $content_preprocess = new ContentPreprocess($this->setupCurrentRouteMatch($route_name, $route_nid));
     $node = $this->setupNode($check_nid);
-    $this->assertEquals($result, $workbench_preprocess->isLatestVersionPage($node), $message);
+    $this->assertEquals($result, $content_preprocess->isLatestVersionPage($node), $message);
   }
 
   public function routeNodeProvider() {

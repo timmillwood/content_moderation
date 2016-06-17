@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\workbench_moderation\Tests;
+namespace Drupal\content_moderation\Tests;
 
 /**
  * Tests moderation state config entity.
  *
- * @group workbench_moderation
+ * @group content_moderation
  */
 class ModerationStateStatesTest extends ModerationStateTestBase {
 
@@ -14,11 +14,11 @@ class ModerationStateStatesTest extends ModerationStateTestBase {
    */
   public function testAccess() {
     $paths = [
-      'admin/structure/workbench-moderation',
-      'admin/structure/workbench-moderation/states',
-      'admin/structure/workbench-moderation/states/add',
-      'admin/structure/workbench-moderation/states/draft',
-      'admin/structure/workbench-moderation/states/draft/delete',
+      'admin/structure/content-moderation',
+      'admin/structure/content-moderation/states',
+      'admin/structure/content-moderation/states/add',
+      'admin/structure/content-moderation/states/draft',
+      'admin/structure/content-moderation/states/draft/delete',
     ];
 
     foreach ($paths as $path) {
@@ -39,7 +39,7 @@ class ModerationStateStatesTest extends ModerationStateTestBase {
    */
   public function testStateAdministration() {
     $this->drupalLogin($this->adminUser);
-    $this->drupalGet('admin/structure/workbench-moderation');
+    $this->drupalGet('admin/structure/content-moderation');
     $this->assertLink('Moderation states');
     $this->assertLink('Moderation state transitions');
     $this->clickLink('Moderation states');
@@ -53,7 +53,7 @@ class ModerationStateStatesTest extends ModerationStateTestBase {
       'label' => 'Drafty',
     ], t('Save'));
     $this->assertText('Saved the Drafty Moderation state.');
-    $this->drupalGet('admin/structure/workbench-moderation/states/draft');
+    $this->drupalGet('admin/structure/content-moderation/states/draft');
     $this->assertFieldByName('label', 'Drafty');
     $this->drupalPostForm(NULL, [
       'label' => 'Draft',
@@ -65,7 +65,7 @@ class ModerationStateStatesTest extends ModerationStateTestBase {
       'id' => 'expired',
     ], t('Save'));
     $this->assertText('Created the Expired Moderation state.');
-    $this->drupalGet('admin/structure/workbench-moderation/states/expired');
+    $this->drupalGet('admin/structure/content-moderation/states/expired');
     $this->clickLink('Delete');
     $this->assertText('Are you sure you want to delete Expired?');
     $this->drupalPostForm(NULL, [], t('Delete'));

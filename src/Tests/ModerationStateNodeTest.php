@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation\Tests;
+namespace Drupal\content_moderation\Tests;
 
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
@@ -8,7 +8,7 @@ use Drupal\node\Entity\Node;
 /**
  * Tests general content moderation workflow for nodes.
  *
- * @group workbench_moderation
+ * @group content_moderation
  */
 class ModerationStateNodeTest extends ModerationStateTestBase {
 
@@ -108,7 +108,7 @@ class ModerationStateNodeTest extends ModerationStateTestBase {
   }
 
   /**
-   * Tests pagers aren't broken by workbench_moderation.
+   * Tests pagers aren't broken by content_moderation.
    */
   public function testPagers() {
     // Create 51 nodes to force the pager.

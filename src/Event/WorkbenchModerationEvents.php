@@ -1,14 +1,14 @@
 <?php
 
-namespace Drupal\workbench_moderation\Event;
+namespace Drupal\content_moderation\Event;
 
-final class WorkbenchModerationEvents {
+final class ContentModerationEvents {
 
   /**
    * This event is fired everytime a state is changed.
    *
    * @Event
    */
-  const STATE_TRANSITION = 'workbench_moderation.state_transition';
+  const STATE_TRANSITION = 'content_moderation.state_transition';
 
 }

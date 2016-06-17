@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * Contains Drupal\workbench_moderation\Entity\Handler\BlockContentCustomizations.
+ * Contains Drupal\content_moderation\Entity\Handler\BlockContentCustomizations.
  */
 
-namespace Drupal\workbench_moderation\Entity\Handler;
+namespace Drupal\content_moderation\Entity\Handler;
 
 use Drupal\Core\Form\FormStateInterface;
 

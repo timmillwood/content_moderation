@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation;
+namespace Drupal\content_moderation;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -8,9 +8,9 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\TypedData\TranslatableInterface;
-use Drupal\workbench_moderation\Event\WorkbenchModerationEvents;
-use Drupal\workbench_moderation\Event\WorkbenchModerationTransitionEvent;
-use Drupal\workbench_moderation\Form\EntityModerationForm;
+use Drupal\content_moderation\Event\ContentModerationEvents;
+use Drupal\content_moderation\Event\ContentModerationTransitionEvent;
+use Drupal\content_moderation\Form\EntityModerationForm;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -19,7 +19,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class EntityOperations {
 
   /**
-   * @var \Drupal\workbench_moderation\ModerationInformationInterface
+   * @var \Drupal\content_moderation\ModerationInformationInterface
    */
   protected $moderationInfo;
 
@@ -41,14 +41,14 @@ class EntityOperations {
   protected $formBuilder;
 
   /**
-   * @var \Drupal\workbench_moderation\RevisionTrackerInterface
+   * @var \Drupal\content_moderation\RevisionTrackerInterface
    */
   protected $tracker;
 
   /**
    * Constructs a new EntityOperations object.
    *
-   * @param \Drupal\workbench_moderation\ModerationInformationInterface $moderation_info
+   * @param \Drupal\content_moderation\ModerationInformationInterface $moderation_info
    *   Moderation information service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity type manager service.
@@ -56,7 +56,7 @@ class EntityOperations {
    *   The form builder.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
-   * @param \Drupal\workbench_moderation\RevisionTrackerInterface $tracker
+   * @param \Drupal\content_moderation\RevisionTrackerInterface $tracker
    *   The revision tracker.
    */
   public function __construct(ModerationInformationInterface $moderation_info, EntityTypeManagerInterface $entity_type_manager, FormBuilderInterface $form_builder, EventDispatcherInterface $event_dispatcher, RevisionTrackerInterface $tracker) {
@@ -123,7 +123,7 @@ class EntityOperations {
   protected function getDefaultLoadStateId(ContentEntityInterface $entity) {
     return $this->moderationInfo
       ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle())
-      ->getThirdPartySetting('workbench_moderation', 'default_moderation_state');
+      ->getThirdPartySetting('content_moderation', 'default_moderation_state');
   }
 
   /**
@@ -161,9 +161,9 @@ class EntityOperations {
       // Allow other modules to respond to the transition. Note that this
       // does not provide any mechanism to cancel the transition, since
       // Entity API doesn't allow hook_entity_presave to short-circuit a save.
-      $event = new WorkbenchModerationTransitionEvent($entity, $state_before, $state_after);
+      $event = new ContentModerationTransitionEvent($entity, $state_before, $state_after);
 
-      $this->eventDispatcher->dispatch(WorkbenchModerationEvents::STATE_TRANSITION, $event);
+      $this->eventDispatcher->dispatch(ContentModerationEvents::STATE_TRANSITION, $event);
     }
   }
 
@@ -226,10 +226,10 @@ class EntityOperations {
       return;
     }
 
-    $component = $display->getComponent('workbench_moderation_control');
+    $component = $display->getComponent('content_moderation_control');
     if ($component) {
-      $build['workbench_moderation_control'] = $this->formBuilder->getForm(EntityModerationForm::class, $entity);
-      $build['workbench_moderation_control']['#weight'] = $component['weight'];
+      $build['content_moderation_control'] = $this->formBuilder->getForm(EntityModerationForm::class, $entity);
+      $build['content_moderation_control']['#weight'] = $component['weight'];
     }
   }
 

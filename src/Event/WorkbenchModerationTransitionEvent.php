@@ -1,14 +1,14 @@
 <?php
 
-namespace Drupal\workbench_moderation\Event;
+namespace Drupal\content_moderation\Event;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * @see \Drupal\workbench_moderation\ModerationStateEvents
+ * @see \Drupal\content_moderation\ModerationStateEvents
  */
-class WorkbenchModerationTransitionEvent extends Event {
+class ContentModerationTransitionEvent extends Event {
 
   /**
    * The entity which was changed.
@@ -28,7 +28,7 @@ class WorkbenchModerationTransitionEvent extends Event {
   protected $stateAfter;
 
   /**
-   * Creates a new WorkbenchModerationTransitionEvent instance.
+   * Creates a new ContentModerationTransitionEvent instance.
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The entity which was changed.

@@ -5,7 +5,7 @@ dependencies:
     - system.menu.main
   module:
     - user
-    - workbench_moderation
+    - content_moderation
 id: latest
 label: Latest
 module: views

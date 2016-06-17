@@ -1,12 +1,12 @@
 <?php
 
-namespace Drupal\workbench_moderation\Plugin\Action;
+namespace Drupal\content_moderation\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Plugin\Action\PublishNode;
-use Drupal\workbench_moderation\ModerationInformationInterface;
+use Drupal\content_moderation\ModerationInformationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ModerationOptOutPublishNode extends PublishNode implements ContainerFactoryPluginInterface {
 
   /**
-   * @var \Drupal\workbench_moderation\ModerationInformationInterface
+   * @var \Drupal\content_moderation\ModerationInformationInterface
    */
   protected $moderationInfo;
 
@@ -32,7 +32,7 @@ class ModerationOptOutPublishNode extends PublishNode implements ContainerFactor
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
    return new static(
      $configuration, $plugin_id, $plugin_definition,
-     $container->get('workbench_moderation.moderation_information')
+     $container->get('content_moderation.moderation_information')
    );
   }
 

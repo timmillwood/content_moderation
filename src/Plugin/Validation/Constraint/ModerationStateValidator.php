@@ -1,12 +1,12 @@
 <?php
 
-namespace Drupal\workbench_moderation\Plugin\Validation\Constraint;
+namespace Drupal\content_moderation\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\workbench_moderation\ModerationInformationInterface;
-use Drupal\workbench_moderation\StateTransitionValidation;
+use Drupal\content_moderation\ModerationInformationInterface;
+use Drupal\content_moderation\StateTransitionValidation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -16,7 +16,7 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
   /**
    * The state transition validation.
    *
-   * @var \Drupal\workbench_moderation\StateTransitionValidation
+   * @var \Drupal\content_moderation\StateTransitionValidation
    */
   protected $validation;
 
@@ -28,7 +28,7 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
   /**
    * The moderation info.
    *
-   * @var \Drupal\workbench_moderation\ModerationInformationInterface
+   * @var \Drupal\content_moderation\ModerationInformationInterface
    */
   protected $moderationInformation;
 
@@ -37,9 +37,9 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\workbench_moderation\StateTransitionValidation $validation
+   * @param \Drupal\content_moderation\StateTransitionValidation $validation
    *   The state transition validation.
-   * @param \Drupal\workbench_moderation\ModerationInformationInterface $moderation_information
+   * @param \Drupal\content_moderation\ModerationInformationInterface $moderation_information
    *   The moderation information.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, StateTransitionValidation $validation, ModerationInformationInterface $moderation_information) {
@@ -51,8 +51,8 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity_type.manager'),
-      $container->get('workbench_moderation.state_transition_validation'),
-      $container->get('workbench_moderation.moderation_information')
+      $container->get('content_moderation.state_transition_validation'),
+      $container->get('content_moderation.moderation_information')
     );
   }
 

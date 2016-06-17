@@ -2,8 +2,8 @@ langcode: en
 status: true
 dependencies:
   config:
-    - workbench_moderation.moderation_state.archived
-    - workbench_moderation.moderation_state.published
+    - content_moderation.moderation_state.archived
+    - content_moderation.moderation_state.published
 id: published_archived
 label: 'Archive'
 stateFrom: published

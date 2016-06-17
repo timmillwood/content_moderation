@@ -1,9 +1,9 @@
-name: Workbench moderation
+name: Content moderation
 type: module
 description: Provides moderation states for content
 core: 8.x
 package: Other
-configure: workbench_moderation.overview
+configure: content_moderation.overview
 dependencies:
   - views
   - options

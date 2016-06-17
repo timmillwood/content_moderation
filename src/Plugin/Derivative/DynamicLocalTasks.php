@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation\Plugin\Derivative;
+namespace Drupal\content_moderation\Plugin\Derivative;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;

@@ -1,4 +1,4 @@
-workbench_moderation.moderation_state_transition.*:
+content_moderation.moderation_state_transition.*:
   type: config_entity
   label: 'Moderation state transition config'
   mapping:

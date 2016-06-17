@@ -1,19 +1,19 @@
 <?php
 
-namespace Drupal\Tests\workbench_moderation\Unit;
+namespace Drupal\Tests\content_moderation\Unit;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\workbench_moderation\ModerationStateInterface;
-use Drupal\workbench_moderation\ModerationStateTransitionInterface;
-use Drupal\workbench_moderation\StateTransitionValidation;
+use Drupal\content_moderation\ModerationStateInterface;
+use Drupal\content_moderation\ModerationStateTransitionInterface;
+use Drupal\content_moderation\StateTransitionValidation;
 use Prophecy\Argument;
 
 /**
- * @coversDefaultClass \Drupal\workbench_moderation\StateTransitionValidation
- * @group workbench_moderation
+ * @coversDefaultClass \Drupal\content_moderation\StateTransitionValidation
+ * @group content_moderation
  */
 class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
 

@@ -1,33 +1,33 @@
 <?php
 
-namespace Drupal\workbench_moderation\Tests;
+namespace Drupal\content_moderation\Tests;
 
 use Drupal\block_content\Entity\BlockContentType;
 use Drupal\config\Tests\SchemaCheckTestTrait;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
-use Drupal\workbench_moderation\Entity\ModerationState;
-use Drupal\workbench_moderation\Entity\ModerationStateTransition;
+use Drupal\content_moderation\Entity\ModerationState;
+use Drupal\content_moderation\Entity\ModerationStateTransition;
 
 /**
- * Ensures that workbench moderation schema is correct.
+ * Ensures that content moderation schema is correct.
  *
- * @group workbench_moderation
+ * @group content_moderation
  */
-class WorkbenchModerationSchemaTest extends KernelTestBase {
+class ContentModerationSchemaTest extends KernelTestBase {
 
   use SchemaCheckTestTrait;
 
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['workbench_moderation', 'node', 'user', 'block_content', 'system'];
+  public static $modules = ['content_moderation', 'node', 'user', 'block_content', 'system'];
 
   /**
-   * Tests workbench moderation default schema.
+   * Tests content moderation default schema.
    */
-  public function testWorkbenchModerationDefaultConfig() {
-    $this->installConfig(['workbench_moderation']);
+  public function testContentModerationDefaultConfig() {
+    $this->installConfig(['content_moderation']);
     $typed_config = \Drupal::service('config.typed');
     $moderation_states = ModerationState::loadMultiple();
     foreach ($moderation_states as $moderation_state) {
@@ -41,31 +41,31 @@ class WorkbenchModerationSchemaTest extends KernelTestBase {
   }
 
   /**
-   * Tests workbench moderation third party schema for node types.
+   * Tests content moderation third party schema for node types.
    */
-  public function testWorkbenchModerationNodeTypeConfig() {
+  public function testContentModerationNodeTypeConfig() {
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
-    $this->installConfig(['workbench_moderation']);
+    $this->installConfig(['content_moderation']);
     $typed_config = \Drupal::service('config.typed');
     $moderation_states = ModerationState::loadMultiple();
     $node_type = NodeType::create([
       'type' => 'example',
     ]);
-    $node_type->setThirdPartySetting('workbench_moderation', 'enabled', TRUE);
-    $node_type->setThirdPartySetting('workbench_moderation', 'allowed_moderation_states', array_keys($moderation_states));
-    $node_type->setThirdPartySetting('workbench_moderation', 'default_moderation_state', '');
+    $node_type->setThirdPartySetting('content_moderation', 'enabled', TRUE);
+    $node_type->setThirdPartySetting('content_moderation', 'allowed_moderation_states', array_keys($moderation_states));
+    $node_type->setThirdPartySetting('content_moderation', 'default_moderation_state', '');
     $node_type->save();
     $this->assertConfigSchema($typed_config, $node_type->getEntityType()->getConfigPrefix(). '.' . $node_type->id(), $node_type->toArray());
   }
 
   /**
-   * Tests workbench moderation third party schema for block content types.
+   * Tests content moderation third party schema for block content types.
    */
-  public function testWorkbenchModerationBlockContentTypeConfig() {
+  public function testContentModerationBlockContentTypeConfig() {
     $this->installEntitySchema('block_content');
     $this->installEntitySchema('user');
-    $this->installConfig(['workbench_moderation']);
+    $this->installConfig(['content_moderation']);
     $typed_config = \Drupal::service('config.typed');
     $moderation_states = ModerationState::loadMultiple();
     $block_content_type = BlockContentType::create([
@@ -73,9 +73,9 @@ class WorkbenchModerationSchemaTest extends KernelTestBase {
       'label' => 'basic',
       'revision' => TRUE,
     ]);
-    $block_content_type->setThirdPartySetting('workbench_moderation', 'enabled', TRUE);
-    $block_content_type->setThirdPartySetting('workbench_moderation', 'allowed_moderation_states', array_keys($moderation_states));
-    $block_content_type->setThirdPartySetting('workbench_moderation', 'default_moderation_state', '');
+    $block_content_type->setThirdPartySetting('content_moderation', 'enabled', TRUE);
+    $block_content_type->setThirdPartySetting('content_moderation', 'allowed_moderation_states', array_keys($moderation_states));
+    $block_content_type->setThirdPartySetting('content_moderation', 'default_moderation_state', '');
     $block_content_type->save();
     $this->assertConfigSchema($typed_config, $block_content_type->getEntityType()->getConfigPrefix(). '.' . $block_content_type->id(), $block_content_type->toArray());
   }

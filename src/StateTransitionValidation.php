@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\workbench_moderation;
+namespace Drupal\content_moderation;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\workbench_moderation\Entity\ModerationState;
-use Drupal\workbench_moderation\Entity\ModerationStateTransition;
+use Drupal\content_moderation\Entity\ModerationState;
+use Drupal\content_moderation\Entity\ModerationStateTransition;
 
 /**
  * Validates whether a certain state transition is allowed.
@@ -61,7 +61,7 @@ class StateTransitionValidation {
     $transitions = $this->transitionStorage()->loadMultiple();
 
     $possible_transitions = [];
-    /** @var \Drupal\workbench_moderation\ModerationStateTransitionInterface $transition */
+    /** @var \Drupal\content_moderation\ModerationStateTransitionInterface $transition */
     foreach ($transitions as $transition) {
       $possible_transitions[$transition->getFromState()][] = $transition->getToState();
     }
@@ -98,7 +98,7 @@ class StateTransitionValidation {
   public function getValidTransitionTargets(ContentEntityInterface $entity, AccountInterface $user) {
     $bundle = $this->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle());
 
-    $states_for_bundle = $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', []);
+    $states_for_bundle = $bundle->getThirdPartySetting('content_moderation', 'allowed_moderation_states', []);
 
     /** @var ModerationState $state */
     $state = $entity->moderation_state->entity;
@@ -134,10 +134,10 @@ class StateTransitionValidation {
 
     /** @var ModerationState $current_state */
     $current_state = $entity->moderation_state->entity;
-    $current_state_id = $current_state ? $current_state->id(): $bundle->getThirdPartySetting('workbench_moderation', 'default_moderation_state');
+    $current_state_id = $current_state ? $current_state->id(): $bundle->getThirdPartySetting('content_moderation', 'default_moderation_state');
 
     // Determine the states that are legal on this bundle.
-    $legal_bundle_states = $bundle->getThirdPartySetting('workbench_moderation', 'allowed_moderation_states', []);
+    $legal_bundle_states = $bundle->getThirdPartySetting('content_moderation', 'allowed_moderation_states', []);
 
     // Legal transitions include those that are possible from the current state,
     // filtered by those whose target is legal on this bundle and that the

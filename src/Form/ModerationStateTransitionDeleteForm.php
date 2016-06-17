@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation\Form;
+namespace Drupal\content_moderation\Form;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;

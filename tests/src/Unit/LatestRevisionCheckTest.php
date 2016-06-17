@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\workbench_moderation\Unit;
+namespace Drupal\Tests\content_moderation\Unit;
 
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\Core\Access\AccessResult;
@@ -9,14 +9,14 @@ use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\node\Entity\Node;
-use Drupal\workbench_moderation\Access\LatestRevisionCheck;
-use Drupal\workbench_moderation\ModerationInformation;
-use Drupal\workbench_moderation\ModerationInformationInterface;
+use Drupal\content_moderation\Access\LatestRevisionCheck;
+use Drupal\content_moderation\ModerationInformation;
+use Drupal\content_moderation\ModerationInformationInterface;
 use Symfony\Component\Routing\Route;
 
 /**
- * @coversDefaultClass \Drupal\workbench_moderation\Access\LatestRevisionCheck
- * @group workbench_moderation
+ * @coversDefaultClass \Drupal\content_moderation\Access\LatestRevisionCheck
+ * @group content_moderation
  */
 class LatestRevisionCheckTest extends \PHPUnit_Framework_TestCase {
 
@@ -49,7 +49,7 @@ class LatestRevisionCheckTest extends \PHPUnit_Framework_TestCase {
 
     $route = $this->prophesize(Route::class);
 
-    $route->getOption('_workbench_moderation_entity_type')->willReturn($entity_type);
+    $route->getOption('_content_moderation_entity_type')->willReturn($entity_type);
 
     $route_match = $this->prophesize(RouteMatch::class);
     $route_match->getParameter($entity_type)->willReturn($entity->reveal());

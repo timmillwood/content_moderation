@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation\Form;
+namespace Drupal\content_moderation\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Class ModerationStateTransitionForm.
  *
- * @package Drupal\workbench_moderation\Form
+ * @package Drupal\content_moderation\Form
  */
 class ModerationStateTransitionForm extends EntityForm {
 
@@ -48,7 +48,7 @@ class ModerationStateTransitionForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    /* @var \Drupal\workbench_moderation\ModerationStateTransitionInterface $moderation_state_transition */
+    /* @var \Drupal\content_moderation\ModerationStateTransitionInterface $moderation_state_transition */
     $moderation_state_transition = $this->entity;
     $form['label'] = [
       '#type' => 'textfield',
@@ -63,7 +63,7 @@ class ModerationStateTransitionForm extends EntityForm {
       '#type' => 'machine_name',
       '#default_value' => $moderation_state_transition->id(),
       '#machine_name' => [
-        'exists' => '\Drupal\workbench_moderation\Entity\ModerationStateTransition::load',
+        'exists' => '\Drupal\content_moderation\Entity\ModerationStateTransition::load',
       ],
       '#disabled' => !$moderation_state_transition->isNew(),
     ];

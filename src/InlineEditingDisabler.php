@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation;
+namespace Drupal\content_moderation;
 
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -13,14 +13,14 @@ class InlineEditingDisabler {
   /**
    * The moderation info.
    *
-   * @var \Drupal\workbench_moderation\ModerationInformationInterface
+   * @var \Drupal\content_moderation\ModerationInformationInterface
    */
   protected $moderationInfo;
 
   /**
    * Creates a new InlineEditingDisabler instance.
    *
-   * @param \Drupal\workbench_moderation\ModerationInformationInterface $moderation_info
+   * @param \Drupal\content_moderation\ModerationInformationInterface $moderation_info
    *   The moderation info.
    */
   public function __construct(ModerationInformationInterface $moderation_info) {
@@ -43,9 +43,9 @@ class InlineEditingDisabler {
    */
   public function moduleImplementsAlter(&$implementations, $hook) {
     if ($hook == 'entity_view_alter') {
-      // Find the quickedit implementation and move workbench after it.
-      unset($implementations['workbench_moderation']);
-      $implementations['workbench_moderation'] = FALSE;
+      // Find the quickedit implementation and move content after it.
+      unset($implementations['content_moderation']);
+      $implementations['content_moderation'] = FALSE;
     }
   }
 

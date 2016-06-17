@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation\Plugin\views\filter;
+namespace Drupal\content_moderation\Plugin\views\filter;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -89,7 +89,7 @@ class LatestRevision extends FilterPluginBase implements ContainerFactoryPluginI
     // the view will still show all revisions, not just latest, but this is
     // sufficiently edge-case-y that it's probably not worth the time to
     // handle more robustly.
-    if (!$this->connection->schema()->tableExists('workbench_revision_tracker')) {
+    if (!$this->connection->schema()->tableExists('content_revision_tracker')) {
       return;
     }
 
@@ -102,7 +102,7 @@ class LatestRevision extends FilterPluginBase implements ContainerFactoryPluginI
     $keys = $definition->getKeys();
 
     $definition = [
-      'table' => 'workbench_revision_tracker',
+      'table' => 'content_revision_tracker',
       'type' => 'INNER',
       'field' => 'entity_id',
       'left_table' => $table,
@@ -116,6 +116,6 @@ class LatestRevision extends FilterPluginBase implements ContainerFactoryPluginI
 
     $join = $this->joinHandler->createInstance('standard', $definition);
 
-    $query->ensureTable('workbench_revision_tracker', $this->relationship, $join);
+    $query->ensureTable('content_revision_tracker', $this->relationship, $join);
   }
 }

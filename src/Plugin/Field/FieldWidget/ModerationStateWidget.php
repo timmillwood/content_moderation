@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation\Plugin\Field\FieldWidget;
+namespace Drupal\content_moderation\Plugin\Field\FieldWidget;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -13,9 +13,9 @@ use Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsSelectWidget;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\workbench_moderation\Entity\ModerationStateTransition;
-use Drupal\workbench_moderation\ModerationInformation;
-use Drupal\workbench_moderation\StateTransitionValidation;
+use Drupal\content_moderation\Entity\ModerationStateTransition;
+use Drupal\content_moderation\ModerationInformation;
+use Drupal\content_moderation\StateTransitionValidation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -53,7 +53,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
   protected $moderationStateStorage;
 
   /**
-   * @var \Drupal\workbench_moderation\ModerationInformation
+   * @var \Drupal\content_moderation\ModerationInformation
    */
   protected $moderationInformation;
 
@@ -70,7 +70,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
   protected $moderationStateTransitionStorage;
 
   /**
-   * @var \Drupal\workbench_moderation\StateTransitionValidation
+   * @var \Drupal\content_moderation\StateTransitionValidation
    */
   protected $validator;
 
@@ -122,8 +122,8 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       $container->get('entity_type.manager')->getStorage('moderation_state'),
       $container->get('entity_type.manager')->getStorage('moderation_state_transition'),
       $container->get('entity.query')->get('moderation_state_transition', 'AND'),
-      $container->get('workbench_moderation.moderation_information'),
-      $container->get('workbench_moderation.state_transition_validation')
+      $container->get('content_moderation.moderation_information'),
+      $container->get('content_moderation.state_transition_validation')
     );
   }
 
@@ -141,8 +141,8 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       return $element + ['#access' => FALSE];
     }
 
-    $default = $items->get($delta)->target_id ?: $bundle_entity->getThirdPartySetting('workbench_moderation', 'default_moderation_state', FALSE);
-    /** @var \Drupal\workbench_moderation\ModerationStateInterface $default_state */
+    $default = $items->get($delta)->target_id ?: $bundle_entity->getThirdPartySetting('content_moderation', 'default_moderation_state', FALSE);
+    /** @var \Drupal\content_moderation\ModerationStateInterface $default_state */
     $default_state = $this->entityTypeManager->getStorage('moderation_state')->load($default);
     if (!$default || !$default_state) {
       throw new \UnexpectedValueException(sprintf('The %s bundle has an invalid moderation state configuration, moderation states are enabled but no default is set.', $bundle_entity->label()));

@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\workbench_moderation\Tests;
+namespace Drupal\content_moderation\Tests;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\simpletest\WebTestBase;
 use Drupal\user\Entity\Role;
-use Drupal\workbench_moderation\Entity\ModerationState;
+use Drupal\content_moderation\Entity\ModerationState;
 
 /**
  * Defines a base class for moderation state tests.
@@ -50,7 +50,7 @@ abstract class ModerationStateTestBase extends WebTestBase {
    * @var array
    */
   public static $modules = [
-    'workbench_moderation',
+    'content_moderation',
     'block',
     'block_content',
     'node',

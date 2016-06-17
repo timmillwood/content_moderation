@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation\Routing;
+namespace Drupal\content_moderation\Routing;
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Routing\EntityRouteProviderInterface;

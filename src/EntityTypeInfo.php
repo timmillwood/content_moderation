@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation;
+namespace Drupal\content_moderation;
 
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -13,12 +13,12 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\workbench_moderation\Entity\Handler\BlockContentModerationHandler;
-use Drupal\workbench_moderation\Entity\Handler\ModerationHandler;
-use Drupal\workbench_moderation\Entity\Handler\NodeModerationHandler;
-use Drupal\workbench_moderation\Form\BundleModerationConfigurationForm;
-use Drupal\workbench_moderation\Routing\EntityModerationRouteProvider;
-use Drupal\workbench_moderation\Routing\EntityTypeModerationRouteProvider;
+use Drupal\content_moderation\Entity\Handler\BlockContentModerationHandler;
+use Drupal\content_moderation\Entity\Handler\ModerationHandler;
+use Drupal\content_moderation\Entity\Handler\NodeModerationHandler;
+use Drupal\content_moderation\Form\BundleModerationConfigurationForm;
+use Drupal\content_moderation\Routing\EntityModerationRouteProvider;
+use Drupal\content_moderation\Routing\EntityTypeModerationRouteProvider;
 
 /**
  * Service class for manipulating entity type information.
@@ -33,7 +33,7 @@ class EntityTypeInfo {
   /**
    * The moderation information service.
    *
-   * @var \Drupal\workbench_moderation\ModerationInformationInterface
+   * @var \Drupal\content_moderation\ModerationInformationInterface
    */
   protected $moderationInfo;
 
@@ -58,7 +58,7 @@ class EntityTypeInfo {
    *
    * @param \Drupal\Core\StringTranslation\TranslationInterface $translation
    *   The translation service. for form alters.
-   * @param \Drupal\workbench_moderation\ModerationInformationInterface $moderation_information
+   * @param \Drupal\content_moderation\ModerationInformationInterface $moderation_information
    *   The moderation information service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity type manager.
@@ -207,7 +207,7 @@ class EntityTypeInfo {
   public function entityExtraFieldInfo() {
     $return = [];
     foreach ($this->getModeratedBundles() as $bundle) {
-      $return[$bundle['entity']][$bundle['bundle']]['display']['workbench_moderation_control'] = [
+      $return[$bundle['entity']][$bundle['bundle']]['display']['content_moderation_control'] = [
         'label' => $this->t('Moderation control'),
         'description' => $this->t('Status listing and form for the entitiy\'s moderation state.'),
         'weight' => -20,
@@ -221,7 +221,7 @@ class EntityTypeInfo {
   /**
    * Returns an iterable list of entity names and bundle names under moderation.
    *
-   * That is, this method returns a list of bundles that have Workbench
+   * That is, this method returns a list of bundles that have Content
    * Moderation enabled on them.
    *
    * @return \Generator
@@ -236,7 +236,7 @@ class EntityTypeInfo {
       $result = $this->entityTypeManager
         ->getStorage($type_name)
         ->getQuery()
-        ->condition('third_party_settings.workbench_moderation.enabled', TRUE)
+        ->condition('third_party_settings.content_moderation.enabled', TRUE)
         ->execute();
 
       foreach ($result as $bundle_name) {
@@ -332,7 +332,7 @@ class EntityTypeInfo {
       $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->enforceRevisionsEntityFormAlter($form, $form_state, $form_id);
 
       // Submit handler to redirect to the
-      $form['actions']['submit']['#submit'][] = '\Drupal\workbench_moderation\EntityTypeInfo::bundleFormRedirect';
+      $form['actions']['submit']['#submit'][] = '\Drupal\content_moderation\EntityTypeInfo::bundleFormRedirect';
     }
   }
 
@@ -349,7 +349,7 @@ class EntityTypeInfo {
     /* @var ContentEntityInterface $entity */
     $entity = $form_state->getFormObject()->getEntity();
 
-    $moderation_info = \Drupal::getContainer()->get('workbench_moderation.moderation_information');
+    $moderation_info = \Drupal::getContainer()->get('content_moderation.moderation_information');
     if ($moderation_info->hasForwardRevision($entity) && $entity->hasLinkTemplate('latest-version')) {
       $entity_type_id = $entity->getEntityTypeId();
       $form_state->setRedirect("entity.$entity_type_id.latest_version", [$entity_type_id => $entity->id()]);

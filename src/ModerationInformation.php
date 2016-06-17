@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workbench_moderation;
+namespace Drupal\content_moderation;
 
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\BundleEntityFormBase;
@@ -80,7 +80,7 @@ class ModerationInformation implements ModerationInformationInterface {
    */
   public function isModeratableBundle(EntityTypeInterface $entity_type, $bundle) {
     if ($bundle_entity = $this->loadBundleEntity($entity_type->getBundleEntityType(), $bundle)) {
-      return $bundle_entity->getThirdPartySetting('workbench_moderation', 'enabled', FALSE);
+      return $bundle_entity->getThirdPartySetting('content_moderation', 'enabled', FALSE);
     }
     return FALSE;
   }

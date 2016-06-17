@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\workbench_moderation\Entity;
+namespace Drupal\content_moderation\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\workbench_moderation\ModerationStateInterface;
+use Drupal\content_moderation\ModerationStateInterface;
 
 /**
  * Defines the Moderation state entity.
@@ -12,11 +12,11 @@ use Drupal\workbench_moderation\ModerationStateInterface;
  *   id = "moderation_state",
  *   label = @Translation("Moderation state"),
  *   handlers = {
- *     "list_builder" = "Drupal\workbench_moderation\ModerationStateListBuilder",
+ *     "list_builder" = "Drupal\content_moderation\ModerationStateListBuilder",
  *     "form" = {
- *       "add" = "Drupal\workbench_moderation\Form\ModerationStateForm",
- *       "edit" = "Drupal\workbench_moderation\Form\ModerationStateForm",
- *       "delete" = "Drupal\workbench_moderation\Form\ModerationStateDeleteForm"
+ *       "add" = "Drupal\content_moderation\Form\ModerationStateForm",
+ *       "edit" = "Drupal\content_moderation\Form\ModerationStateForm",
+ *       "delete" = "Drupal\content_moderation\Form\ModerationStateDeleteForm"
  *     },
  *   },
  *   config_prefix = "moderation_state",

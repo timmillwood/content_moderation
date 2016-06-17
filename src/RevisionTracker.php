@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Drupal\workbench_moderation;
+namespace Drupal\content_moderation;
 
 
 use Drupal\Core\Database\Connection;
@@ -35,7 +35,7 @@ class RevisionTracker implements RevisionTrackerInterface {
    * @param string $table
    *   The table that should be used for tracking.
    */
-  public function __construct(Connection $connection, $table = 'workbench_revision_tracker') {
+  public function __construct(Connection $connection, $table = 'content_revision_tracker') {
     $this->connection = $connection;
     $this->tableName = $table;
   }
