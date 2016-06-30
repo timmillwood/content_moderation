@@ -245,49 +245,6 @@ class EntityTypeInfo {
   }
 
   /**
-   * Adds base field info to an entity type.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
-   *   Entity type for adding base fields to.
-   *
-   * @return \Drupal\Core\Field\BaseFieldDefinition[]
-   *   New fields added by moderation state.
-   */
-  public function entityBaseFieldInfo(EntityTypeInterface $entity_type) {
-
-    if (!$this->moderationInfo->isModeratableEntityType($entity_type)) {
-      return [];
-    }
-
-    $fields = [];
-    // @todo write a test for this.
-    $fields['moderation_state'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Moderation state'))
-      ->setDescription(t('The moderation state of this piece of content.'))
-      ->setSetting('target_type', 'moderation_state')
-      ->setTargetEntityTypeId($entity_type->id())
-      ->setRevisionable(TRUE)
-      ->setTranslatable(TRUE)
-      // @todo write a test for this.
-      ->setDisplayOptions('view', [
-        'label' => 'hidden',
-        'type' => 'hidden',
-        'weight' => -5,
-      ])
-      // @todo write a custom widget/selection handler plugin instead of
-      // manual filtering?
-      ->setDisplayOptions('form', [
-        'type' => 'moderation_state_default',
-        'weight' => 5,
-        'settings' => [],
-      ])
-      ->addConstraint('ModerationState', [])
-      ->setDisplayConfigurable('form', FALSE)
-      ->setDisplayConfigurable('view', FALSE);
-    return $fields;
-  }
-
-  /**
    * Force moderatable bundles to have a moderation_state field.
    *
    * @param \Drupal\Core\Field\FieldDefinitionInterface[] $fields
