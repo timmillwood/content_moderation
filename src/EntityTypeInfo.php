@@ -265,7 +265,20 @@ class EntityTypeInfo {
       ->setLabel(t('Moderation state'))
       ->setDescription(t('The moderation state of this piece of content.'))
       ->setComputed(TRUE)
-      ->setClass(ModerationState::class);
+      ->setClass(ModerationState::class)
+      ->setDisplayOptions('view', [
+        'label' => 'hidden',
+        'type' => 'hidden',
+        'weight' => -5,
+      ])
+      // @todo write a custom widget/selection handler plugin instead of
+      // manual filtering?
+      ->setDisplayOptions('form', [
+        'type' => 'moderation_state_default',
+        'weight' => 5,
+        'settings' => [],
+      ]);
+
 
     return $fields;
   }

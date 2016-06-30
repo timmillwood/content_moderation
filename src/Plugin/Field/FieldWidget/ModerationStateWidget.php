@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "moderation_state_default",
  *   label = @Translation("Moderation state"),
  *   field_types = {
- *     "entity_reference"
+ *     "integer"
  *   }
  * )
  */
