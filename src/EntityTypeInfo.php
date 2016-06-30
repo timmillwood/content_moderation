@@ -2,6 +2,7 @@
 
 namespace Drupal\content_moderation;
 
+use Drupal\content_moderation\Plugin\Field\ModerationState;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -242,6 +243,31 @@ class EntityTypeInfo {
         yield ['entity' => $type->getBundleOf(), 'bundle' => $bundle_name];
       }
     }
+  }
+
+  /**
+   * Adds base field info to an entity type.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   Entity type for adding base fields to.
+   *
+   * @return \Drupal\Core\Field\BaseFieldDefinition[]
+   *   New fields added by moderation state.
+   */
+  public function entityBaseFieldInfo(EntityTypeInterface $entity_type) {
+
+    if (!$this->moderationInfo->isModeratableEntityType($entity_type)) {
+      return [];
+    }
+
+    $fields = [];
+    $fields['moderation_state'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Moderation state'))
+      ->setDescription(t('The moderation state of this piece of content.'))
+      ->setComputed(TRUE)
+      ->setClass(ModerationState::class);
+
+    return $fields;
   }
 
   /**
