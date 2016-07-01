@@ -47,7 +47,7 @@ class ModerationStateAccessTest extends BrowserTestBase {
       'title' => 'Draft node',
       'uid' => $editor1->id(),
     ]);
-    $node_1->moderation_state->target_id = 'draft';
+    $node_1->moderation_state_target_id = 'draft';
     $node_1->save();
 
     /** @var Node $node_2 */
@@ -56,7 +56,7 @@ class ModerationStateAccessTest extends BrowserTestBase {
       'title' => 'Review node',
       'uid' => $editor1->id(),
     ]);
-    $node_2->moderation_state->target_id = 'needs_review';
+    $node_2->moderation_state_target_id = 'needs_review';
     $node_2->save();
 
     /** @var Node $node_3 */
@@ -65,12 +65,12 @@ class ModerationStateAccessTest extends BrowserTestBase {
       'title' => 'Published node',
       'uid' => $editor1->id(),
     ]);
-    $node_3->moderation_state->target_id = 'published';
+    $node_3->moderation_state_target_id = 'published';
     $node_3->save();
 
     // Resave the node with a new state.
     $node_3->setTitle('Archived node');
-    $node_3->moderation_state->target_id = 'archived';
+    $node_3->moderation_state_target_id = 'archived';
     $node_3->save();
 
     // Now show the View, and confirm that the state labels are showing.
