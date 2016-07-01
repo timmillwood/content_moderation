@@ -2,7 +2,6 @@
 
 namespace Drupal\content_moderation\Plugin\Field\FieldWidget;
 
-use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -24,7 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "moderation_state_default",
  *   label = @Translation("Moderation state"),
  *   field_types = {
- *     "integer"
+ *     "string"
  *   }
  * )
  */
@@ -140,7 +139,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       return $element + ['#access' => FALSE];
     }
 
-    $default = $items->get($delta)->target_id ?: $bundle_entity->getThirdPartySetting('content_moderation', 'default_moderation_state', FALSE);
+    $default = $items->get($delta)->value ?: $bundle_entity->getThirdPartySetting('content_moderation', 'default_moderation_state', FALSE);
     /** @var \Drupal\content_moderation\ModerationStateInterface $default_state */
     $default_state = $this->entityTypeManager->getStorage('moderation_state')->load($default);
     if (!$default || !$default_state) {
@@ -184,7 +183,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
   public static function updateStatus($entity_type_id, ContentEntityInterface $entity, array $form, FormStateInterface $form_state) {
     $element = $form_state->getTriggeringElement();
     if (isset($element['#moderation_state'])) {
-      $entity->moderation_state->target_id = $element['#moderation_state'];
+      $entity->moderation_state_target_id = $element['#moderation_state'];
     }
   }
 
@@ -238,29 +237,6 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
    */
   public static function isApplicable(FieldDefinitionInterface $field_definition) {
     return parent::isApplicable($field_definition) && $field_definition->getName() === 'moderation_state';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function extractFormValues(FieldItemListInterface $items, array $form, FormStateInterface $form_state) {
-    $field_name = $this->fieldDefinition->getName();
-
-    // Extract the values from $form_state->getValues().
-    $path = array_merge($form['#parents'], array($field_name));
-    $key_exists = NULL;
-    // Convert the field value into expected array format.
-    $values = $form_state->getValues();
-    $value = NestedArray::getValue($values, $path, $key_exists);
-    if (empty($value)) {
-      parent::extractFormValues($items, $form, $form_state);
-      return;
-    }
-    if (!isset($value[0]['target_id'])) {
-      NestedArray::setValue($values, $path, [['target_id' => reset($value)]]);
-      $form_state->setValues($values);
-    }
-    parent::extractFormValues($items, $form, $form_state);
   }
 
 }

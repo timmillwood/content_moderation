@@ -29,6 +29,7 @@ class EntityOperationsTest extends KernelTestBase {
     $this->installEntitySchema('node');
     $this->installSchema('node', 'node_access');
     $this->installEntitySchema('user');
+    $this->installEntitySchema('content_moderation_state');
     $this->installConfig('content_moderation');
 
     $this->createNodeType();

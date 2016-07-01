@@ -2,6 +2,7 @@
 
 namespace Drupal\content_moderation;
 
+use Drupal\content_moderation\Entity\ContentModerationState;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -189,8 +190,13 @@ class EntityOperations {
       return;
     }
 
-    /** ContentEntityInterface $entity */
+    $content_moderation_state = ContentModerationState::create();
+    $content_moderation_state->set('content_entity_type_id', $entity->getEntityTypeId());
+    $content_moderation_state->set('content_entity_id', $entity->id());
+    $content_moderation_state->set('moderation_state', $entity->moderation_state_target_id);
+    $content_moderation_state->save();
 
+    /** ContentEntityInterface $entity */
     // Update our own record keeping.
     $this->tracker->setLatestRevision($entity->getEntityTypeId(), $entity->id(), $entity->language()->getId(), $entity->getRevisionId());
   }
@@ -208,8 +214,19 @@ class EntityOperations {
       return;
     }
 
-    /** ContentEntityInterface $entity */
+    $entities = \Drupal::entityTypeManager()
+      ->getStorage('content_moderation_state')
+      ->loadByProperties([
+        'content_entity_type_id' => $entity->getEntityTypeId(),
+        'content_entity_id' => $entity->id()
+      ]);
+    $content_moderation_state = reset($entities);
+    if ($content_moderation_state instanceof ContentModerationStateInterface) {
+      $content_moderation_state->set('moderation_state', $entity->moderation_state_target_id);
+      $content_moderation_state->save();
+    }
 
+    /** ContentEntityInterface $entity */
     // Update our own record keeping.
     $this->tracker->setLatestRevision($entity->getEntityTypeId(), $entity->id(), $entity->language()->getId(), $entity->getRevisionId());
   }

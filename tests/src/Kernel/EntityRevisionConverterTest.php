@@ -24,6 +24,7 @@ class EntityRevisionConverterTest extends KernelTestBase {
     $this->installEntitySchema('entity_test');
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
+    $this->installEntitySchema('content_moderation_state');
     $this->installSchema('system', 'router');
     $this->installSchema('system', 'sequences');
     $this->installSchema('node', 'node_access');

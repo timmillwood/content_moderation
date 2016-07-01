@@ -261,7 +261,7 @@ class EntityTypeInfo {
     }
 
     $fields = [];
-    $fields['moderation_state'] = BaseFieldDefinition::create('integer')
+    $fields['moderation_state'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Moderation state'))
       ->setDescription(t('The moderation state of this piece of content.'))
       ->setComputed(TRUE)

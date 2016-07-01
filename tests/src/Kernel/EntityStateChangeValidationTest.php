@@ -27,6 +27,7 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     $this->installSchema('node', 'node_access');
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
+    $this->installEntitySchema('content_moderation_state');
     $this->installConfig('content_moderation');
   }
 
@@ -43,11 +44,11 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     $node = Node::create([
       'type' => 'example',
       'title' => 'Test title',
-      'moderation_state' => 'draft',
     ]);
+    $node->moderation_state_target_id = 'draft';
     $node->save();
 
-    $node->moderation_state->target_id = 'needs_review';
+    $node->moderation_state_target_id = 'needs_review';
     $this->assertCount(0, $node->validate());
   }
 
@@ -65,11 +66,11 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     $node = Node::create([
       'type' => 'example',
       'title' => 'Test title',
-      'moderation_state' => 'draft',
     ]);
+    $node->moderation_state_target_id = 'draft';
     $node->save();
 
-    $node->moderation_state->target_id = 'archived';
+    $node->moderation_state_target_id = 'archived';
     $violations = $node->validate();
     $this->assertCount(1, $violations);
 

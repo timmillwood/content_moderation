@@ -31,6 +31,7 @@ class ViewsDataIntegrationTest extends ViewsKernelTestBase {
 
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
+    $this->installEntitySchema('content_moderation_state');
     $this->installSchema('node', 'node_access');
     $this->installConfig('content_moderation_test_views');
   }
