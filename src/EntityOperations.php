@@ -77,40 +77,6 @@ class EntityOperations {
   }
 
   /**
-   * Hook bridge.
-   *
-   * @see hook_entity_storage_load()
-   *
-   * @param EntityInterface[] $entities
-   *   An array of entity objects that have just been loaded.
-   * @param string $entity_type_id
-   *   The type of entity being loaded, such as "node" or "user".
-   */
-  public function entityStorageLoad(array $entities, $entity_type_id) {
-
-    // Ensure that all moderatable entities always have a moderation_state field
-    // with data, in all translations. That avoids us needing to have a thousand
-    // NULL checks elsewhere in the code.
-
-    // Quickly exclude any non-moderatable entities.
-    $to_check = array_filter($entities, [$this->moderationInfo, 'isModeratableEntity']);
-    if (!$to_check) {
-      return;
-    }
-
-    // @todo make this more functional, less iterative.
-    // https://www.drupal.org/node/2755099
-    foreach ($to_check as $entity) {
-      foreach ($entity->getTranslationLanguages() as $language) {
-        $translation = $entity->getTranslation($language->getId());
-        if ($translation->moderation_state->target_id == NULL) {
-          $translation->moderation_state->target_id = $this->getDefaultLoadStateId($translation);
-        }
-      }
-    }
-  }
-
-  /**
    * Determines the default moderation state on load for an entity.
    *
    * This method is only applicable when an entity is loaded that has

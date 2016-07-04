@@ -3,14 +3,15 @@
 namespace Drupal\content_moderation\Plugin\Field;
 
 use Drupal\content_moderation\ContentModerationStateInterface;
-use Drupal\Core\Field\FieldItemList;
+use Drupal\Core\Field\EntityReferenceFieldItemList;
+use \Drupal\content_moderation\Entity\ModerationState as ModerationStateEntity;
 
-class ModerationState extends FieldItemList {
+class ModerationState extends EntityReferenceFieldItemList {
 
   /**
-   * {@inheritdoc}
+   * @return \Drupal\Core\Entity\EntityInterface
    */
-  public function getValue() {
+  protected function getModerationState() {
     $entity = $this->getEntity();
 
     /** @var \Drupal\content_moderation\ContentModerationStateInterface[] $entities */
@@ -24,8 +25,25 @@ class ModerationState extends FieldItemList {
     /** @var \Drupal\content_moderation\ContentModerationStateInterface $content_moderation_state */
     $content_moderation_state = reset($entities);
     if ($content_moderation_state instanceof ContentModerationStateInterface) {
-      return $content_moderation_state->get('moderation_state')->target_id;
+      return $content_moderation_state->get('moderation_state')->entity;
     }
+    $default = \Drupal::service('content_moderation.moderation_information')
+      ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle())
+      ->getThirdPartySetting('content_moderation', 'default_moderation_state');
+    return ModerationStateEntity::load($default);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function __get($property_name) {
+    if ($property_name == 'entity') {
+      return $this->getModerationState();
+    }
+    elseif ($property_name = 'target_id') {
+      return $this->getModerationState()->id();
+    }
+    return parent::__get($property_name);
   }
 
 }

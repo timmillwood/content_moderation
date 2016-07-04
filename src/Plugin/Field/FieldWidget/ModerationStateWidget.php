@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "moderation_state_default",
  *   label = @Translation("Moderation state"),
  *   field_types = {
- *     "string"
+ *     "entity_reference"
  *   }
  * )
  */
@@ -184,6 +184,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
     $element = $form_state->getTriggeringElement();
     if (isset($element['#moderation_state'])) {
       $entity->moderation_state_target_id = $element['#moderation_state'];
+      $entity->moderation_state->target_id = $element['#moderation_state'];
     }
   }
 

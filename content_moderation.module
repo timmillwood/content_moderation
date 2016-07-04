@@ -120,18 +120,6 @@ function _content_moderation_create_entity_operations() {
 }
 
 /**
- * Implements hook_entity_storage_load().
- */
-function content_moderation_entity_storage_load(array $entities, $entity_type_id) {
-  // Work around the fact that this hook might be called when the container is
-  // not fully initialized after the module has been enabled.
-  // @todo Remove this check after https://www.drupal.org/node/2753733 is fixed.
-  if (\Drupal::hasService('content_moderation.moderation_information')) {
-    _content_moderation_create_entity_operations()->entityStorageLoad($entities, $entity_type_id);
-  }
-}
-
-/**
  * Implements hook_entity_presave().
  */
 function content_moderation_entity_presave(EntityInterface $entity) {

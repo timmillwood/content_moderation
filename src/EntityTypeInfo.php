@@ -261,11 +261,15 @@ class EntityTypeInfo {
     }
 
     $fields = [];
-    $fields['moderation_state'] = BaseFieldDefinition::create('string')
+    $fields['moderation_state'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Moderation state'))
       ->setDescription(t('The moderation state of this piece of content.'))
       ->setComputed(TRUE)
       ->setClass(ModerationState::class)
+      ->setSetting('target_type', 'moderation_state')
+      ->setRevisionable(TRUE)
+      ->setTranslatable(TRUE)
+      // @todo write a test for this.
       ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'hidden',
@@ -277,7 +281,10 @@ class EntityTypeInfo {
         'type' => 'moderation_state_default',
         'weight' => 5,
         'settings' => [],
-      ]);
+      ])
+      ->addConstraint('ModerationState', [])
+      ->setDisplayConfigurable('form', FALSE)
+      ->setDisplayConfigurable('view', FALSE);
 
 
     return $fields;
