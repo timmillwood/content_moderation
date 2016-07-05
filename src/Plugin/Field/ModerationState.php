@@ -13,19 +13,23 @@ class ModerationState extends EntityReferenceFieldItemList {
    */
   protected function getModerationState() {
     $entity = $this->getEntity();
+    $revision = $entity->getEntityType()->getKey('revision');
 
-    /** @var \Drupal\content_moderation\ContentModerationStateInterface[] $entities */
-    $entities = \Drupal::entityTypeManager()
-      ->getStorage('content_moderation_state')
-      ->loadByProperties([
-        'content_entity_type_id' => $entity->getEntityTypeId(),
-        'content_entity_id' => $entity->id()
-      ]);
+    if ($entity->id() && $entity->get($revision)->value) {
+      /** @var \Drupal\content_moderation\ContentModerationStateInterface[] $entities */
+      $entities = \Drupal::entityTypeManager()
+        ->getStorage('content_moderation_state')
+        ->loadByProperties([
+          'content_entity_type_id' => $entity->getEntityTypeId(),
+          'content_entity_id' => $entity->id(),
+          'content_entity_revision_id' => $entity->get($revision)->value,
+        ]);
 
-    /** @var \Drupal\content_moderation\ContentModerationStateInterface $content_moderation_state */
-    $content_moderation_state = reset($entities);
-    if ($content_moderation_state instanceof ContentModerationStateInterface) {
-      return $content_moderation_state->get('moderation_state')->entity;
+      /** @var \Drupal\content_moderation\ContentModerationStateInterface $content_moderation_state */
+      $content_moderation_state = reset($entities);
+      if ($content_moderation_state instanceof ContentModerationStateInterface) {
+        return $content_moderation_state->get('moderation_state')->entity;
+      }
     }
     $default = \Drupal::service('content_moderation.moderation_information')
       ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle())

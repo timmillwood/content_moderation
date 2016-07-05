@@ -156,9 +156,14 @@ class EntityOperations {
       return;
     }
 
+    // Get the revision entity key for the entity.
+    $revision = $entity->getEntityType()->getKey('revision');
+
+    // Create the ContentModerationState entity for the inserted entity.
     $content_moderation_state = ContentModerationState::create();
     $content_moderation_state->set('content_entity_type_id', $entity->getEntityTypeId());
     $content_moderation_state->set('content_entity_id', $entity->id());
+    $content_moderation_state->set('content_entity_revision_id', $entity->get($revision));
     $content_moderation_state->set('moderation_state', $entity->moderation_state_target_id);
     $content_moderation_state->save();
 
@@ -180,17 +185,16 @@ class EntityOperations {
       return;
     }
 
-    $entities = \Drupal::entityTypeManager()
-      ->getStorage('content_moderation_state')
-      ->loadByProperties([
-        'content_entity_type_id' => $entity->getEntityTypeId(),
-        'content_entity_id' => $entity->id()
-      ]);
-    $content_moderation_state = reset($entities);
-    if ($content_moderation_state instanceof ContentModerationStateInterface) {
-      $content_moderation_state->set('moderation_state', $entity->moderation_state_target_id);
-      $content_moderation_state->save();
-    }
+    // Get the revision entity key for the entity.
+    $revision = $entity->getEntityType()->getKey('revision');
+
+    // Create the ContentModerationState entity for the inserted entity.
+    $content_moderation_state = ContentModerationState::create();
+    $content_moderation_state->set('content_entity_type_id', $entity->getEntityTypeId());
+    $content_moderation_state->set('content_entity_id', $entity->id());
+    $content_moderation_state->set('content_entity_revision_id', $entity->get($revision));
+    $content_moderation_state->set('moderation_state', $entity->moderation_state_target_id);
+    $content_moderation_state->save();
 
     /** ContentEntityInterface $entity */
     // Update our own record keeping.
