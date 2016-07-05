@@ -34,6 +34,7 @@ class ViewsDataIntegrationTest extends ViewsKernelTestBase {
     $this->installEntitySchema('content_moderation_state');
     $this->installSchema('node', 'node_access');
     $this->installConfig('content_moderation_test_views');
+    $this->installConfig('content_moderation');
   }
 
   public function testViewsData() {
@@ -46,15 +47,15 @@ class ViewsDataIntegrationTest extends ViewsKernelTestBase {
     $node = Node::create([
       'type' => 'page',
       'title' => 'Test title first revision',
-      'moderation_state' => 'published',
     ]);
+    $node->moderation_state_target_id = 'published';
     $node->save();
 
     $revision = clone $node;
     $revision->setNewRevision(TRUE);
     $revision->isDefaultRevision(FALSE);
     $revision->title->value = 'Test title second revision';
-    $revision->moderation_state->target_id = 'draft';
+    $revision->moderation_state_target_id = 'draft';
     $revision->save();
 
     $view = Views::getView('test_content_moderation_latest_revision');
