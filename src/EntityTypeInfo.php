@@ -267,9 +267,6 @@ class EntityTypeInfo {
       ->setComputed(TRUE)
       ->setClass(ModerationState::class)
       ->setSetting('target_type', 'moderation_state')
-      ->setRevisionable(TRUE)
-      ->setTranslatable(TRUE)
-      // @todo write a test for this.
       ->setDisplayOptions('view', [
         'label' => 'hidden',
         'type' => 'hidden',
