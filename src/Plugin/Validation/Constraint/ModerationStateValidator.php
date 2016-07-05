@@ -89,9 +89,19 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
       $original_entity = $original_entity->getTranslation($entity->language()->getId());
     }
 
-    $new_state = ModerationStateEntity::load($entity->moderation_state_target_id);
-    // @todo - what if moderation_state_target_id references something that does
-    //   not exist.
+    if ($entity->moderation_state_target_id) {
+      $new_state_id = $entity->moderation_state_target_id;
+    }
+    else {
+      $new_state_id = $default = $this->moderationInformation
+        ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle())
+        ->getThirdPartySetting('content_moderation', 'default_moderation_state');
+    }
+    if ($new_state_id) {
+      $new_state = ModerationStateEntity::load($new_state_id);
+    }
+    // @todo - what if $new_state_id references something that does not exist or
+    //    is null.
     if (!$this->validation->isTransitionAllowed($original_entity->moderation_state->entity, $new_state)) {
       $this->context->addViolation($constraint->message, ['%from' => $original_entity->moderation_state->entity->label(), '%to' => $new_state->label()]);
     }
