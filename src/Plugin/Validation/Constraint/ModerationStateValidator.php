@@ -2,6 +2,7 @@
 
 namespace Drupal\content_moderation\Plugin\Validation\Constraint;
 
+use Drupal\content_moderation\Entity\ModerationState as ModerationStateEntity;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -87,11 +88,12 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
     if (!$entity->isDefaultTranslation() && $original_entity->hasTranslation($entity->language()->getId())) {
       $original_entity = $original_entity->getTranslation($entity->language()->getId());
     }
-    $next_moderation_state_id = $entity->moderation_state->target_id;
-    $original_moderation_state_id = $original_entity->moderation_state->target_id;
 
-    if (!$this->validation->isTransitionAllowed($original_moderation_state_id, $next_moderation_state_id)) {
-      $this->context->addViolation($constraint->message, ['%from' => $original_entity->moderation_state->entity->label(), '%to' => $entity->moderation_state->entity->label()]);
+    $new_state = ModerationStateEntity::load($entity->moderation_state_target_id);
+    // @todo - what if moderation_state_target_id references something that does
+    //   not exist.
+    if (!$this->validation->isTransitionAllowed($original_entity->moderation_state->entity, $new_state)) {
+      $this->context->addViolation($constraint->message, ['%from' => $original_entity->moderation_state->entity->label(), '%to' => $new_state->label()]);
     }
   }
 

@@ -43,10 +43,10 @@ class ModerationState extends EntityReferenceFieldItemList {
    * @inheritDoc
    */
   public function __get($property_name) {
-    if ($property_name == 'entity' || $property_name = 'target_id') {
+    if ($property_name === 'entity' || $property_name === 'target_id') {
       $moderation_state = $this->getModerationState();
       if ($moderation_state) {
-        if ($property_name = 'target_id') {
+        if ($property_name === 'target_id') {
           return $this->getModerationState()->id();
         }
         return $moderation_state;
