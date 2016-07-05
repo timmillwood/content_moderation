@@ -2,6 +2,7 @@
 
 namespace Drupal\content_moderation\Entity\Handler;
 
+use Drupal\content_moderation\Entity\ModerationState;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -57,7 +58,7 @@ class NodeModerationHandler extends ModerationHandler {
     // First condition is needed so you can add a translation.
     // Second condition is needed when you want to publish a translation.
     // Third condition is needed when you want to create a new draft for a published translation.
-    return $entity->isDefaultTranslation() || $entity->moderation_state->entity->isPublishedState() || $entity->isPublished();
+    return $entity->isDefaultTranslation() || ModerationState::load($entity->moderation_state->value)->isPublishedState() || $entity->isPublished();
   }
 
 }

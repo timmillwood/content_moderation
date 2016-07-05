@@ -54,7 +54,7 @@ class ViewsDataIntegrationTest extends ViewsKernelTestBase {
     $revision->setNewRevision(TRUE);
     $revision->isDefaultRevision(FALSE);
     $revision->title->value = 'Test title second revision';
-    $revision->moderation_state->target_id = 'draft';
+    $revision->moderation_state->value = 'draft';
     $revision->save();
 
     $view = Views::getView('test_content_moderation_latest_revision');

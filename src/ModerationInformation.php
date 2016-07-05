@@ -2,6 +2,7 @@
 
 namespace Drupal\content_moderation;
 
+use Drupal\content_moderation\Entity\ModerationState;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\BundleEntityFormBase;
 use Drupal\Core\Entity\ContentEntityFormInterface;
@@ -206,8 +207,8 @@ class ModerationInformation implements ModerationInformationInterface {
   public function isLiveRevision(ContentEntityInterface $entity) {
     return $this->isLatestRevision($entity)
       && $entity->isDefaultRevision()
-      && $entity->moderation_state->entity
-      && $entity->moderation_state->entity->isPublishedState();
+      && ModerationState::load($entity->moderation_state->value)
+      && ModerationState::load($entity->moderation_state->value)->isPublishedState();
   }
 
 }

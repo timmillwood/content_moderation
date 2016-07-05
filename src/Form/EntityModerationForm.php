@@ -2,6 +2,7 @@
 
 namespace Drupal\content_moderation\Form;
 
+use Drupal\content_moderation\Entity\ModerationState;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -57,7 +58,7 @@ class EntityModerationForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, ContentEntityInterface $entity = NULL) {
     /** @var \Drupal\content_moderation\Entity\ModerationState $current_state */
-    $current_state = $entity->moderation_state->entity;
+    $current_state = ModerationState::load($entity->moderation_state->value);
 
     $transitions = $this->validation->getValidTransitions($entity, $this->currentUser());
 
@@ -117,7 +118,7 @@ class EntityModerationForm extends FormBase {
     $entity = $form_state->get('entity');
 
     $new_state = $form_state->getValue('new_state');
-    $entity->moderation_state->target_id = $new_state;
+    $entity->moderation_state->value = $new_state;
 
     $entity->revision_log = $form_state->getValue('revision_log');
 

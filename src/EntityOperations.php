@@ -3,6 +3,7 @@
 namespace Drupal\content_moderation;
 
 use Drupal\content_moderation\Entity\ContentModerationState;
+use Drupal\content_moderation\Entity\ModerationState;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -103,8 +104,8 @@ class EntityOperations {
     foreach ($to_check as $entity) {
       foreach ($entity->getTranslationLanguages() as $language) {
         $translation = $entity->getTranslation($language->getId());
-        if ($translation->moderation_state->target_id == NULL) {
-          $translation->moderation_state->target_id = $this->getDefaultLoadStateId($translation);
+        if ($translation->moderation_state->value == NULL) {
+          $translation->moderation_state->value = $this->getDefaultLoadStateId($translation);
         }
       }
     }
@@ -146,13 +147,13 @@ class EntityOperations {
     if (!$this->moderationInfo->isModeratableEntity($entity)) {
       return;
     }
-    if ($entity->moderation_state->entity) {
-      $published_state = $entity->moderation_state->entity->isPublishedState();
+    if (ModerationState::load($entity->moderation_state->value)) {
+      $published_state = ModerationState::load($entity->moderation_state->value)->isPublishedState();
 
       // This entity is default if it is new, the default revision, or the
       // default revision is not published.
       $update_default_revision = $entity->isNew()
-        || $entity->moderation_state->entity->isDefaultRevisionState()
+        || ModerationState::load($entity->moderation_state->value)->isDefaultRevisionState()
         || !$this->isDefaultRevisionPublished($entity);
 
       // Fire per-entity-type logic for handling the save process.
@@ -162,11 +163,11 @@ class EntityOperations {
       // to the default revision, for now work around this by loading the latest
       // revision.
       $latest_revision = $this->moderationInfo->getLatestRevision($entity->getEntityTypeId(), $entity->id());
-      $state_before = !empty($latest_revision) ? $latest_revision->moderation_state->target_id : NULL;
+      $state_before = !empty($latest_revision) ? $latest_revision->moderation_state->value : NULL;
       // @todo: Revert to this simpler version when https://www.drupal.org/node/2700747 is fixed.
-      // $state_before = isset($entity->original) ? $entity->original->moderation_state->target_id : NULL;
+      // $state_before = isset($entity->original) ? $entity->original->moderation_state->value : NULL;
 
-      $state_after = $entity->moderation_state->target_id;
+      $state_after = $entity->moderation_state->value;
 
       // Allow other modules to respond to the transition. Note that this
       // does not provide any mechanism to cancel the transition, since

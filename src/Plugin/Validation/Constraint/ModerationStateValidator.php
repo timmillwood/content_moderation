@@ -2,6 +2,7 @@
 
 namespace Drupal\content_moderation\Plugin\Validation\Constraint;
 
+use Drupal\content_moderation\Entity\ModerationState;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -87,11 +88,11 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
     if (!$entity->isDefaultTranslation() && $original_entity->hasTranslation($entity->language()->getId())) {
       $original_entity = $original_entity->getTranslation($entity->language()->getId());
     }
-    $next_moderation_state_id = $entity->moderation_state->target_id;
-    $original_moderation_state_id = $original_entity->moderation_state->target_id;
+    $next_moderation_state_id = $entity->moderation_state->value;
+    $original_moderation_state_id = $original_entity->moderation_state->value;
 
     if (!$this->validation->isTransitionAllowed($original_moderation_state_id, $next_moderation_state_id)) {
-      $this->context->addViolation($constraint->message, ['%from' => $original_entity->moderation_state->entity->label(), '%to' => $entity->moderation_state->entity->label()]);
+      $this->context->addViolation($constraint->message, ['%from' => $original_entity->moderation_state->entity->label(), '%to' => ModerationState::load($entity->moderation_state->value)->label()]);
     }
   }
 
@@ -109,9 +110,9 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
   protected function isFirstTimeModeration(EntityInterface $entity) {
     $original_entity = $this->moderationInformation->getLatestRevision($entity->getEntityTypeId(), $entity->id());
 
-    $original_id = $original_entity->moderation_state->target_id;
+    $original_id = $original_entity->moderation_state->value;
 
-    return !($entity->moderation_state->target_id && $original_entity && $original_id);
+    return !($entity->moderation_state->value && $original_entity && $original_id);
   }
 
 }

@@ -2,6 +2,7 @@
 
 namespace Drupal\content_moderation;
 
+use Drupal\content_moderation\Entity\ModerationState;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
@@ -91,7 +92,7 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
     $states_for_bundle = $bundle->getThirdPartySetting('content_moderation', 'allowed_moderation_states', []);
 
     /** @var \Drupal\content_moderation\Entity\ModerationState $state */
-    $state = $entity->moderation_state->entity;
+    $state = ModerationState::load($entity->moderation_state->value);
     $current_state_id = $state->id();
 
     $all_transitions = $this->getPossibleTransitions();
@@ -113,7 +114,7 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
     $bundle = $this->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle());
 
     /** @var \Drupal\content_moderation\Entity\ModerationState $current_state */
-    $current_state = $entity->moderation_state->entity;
+    $current_state = ModerationState::load($entity->moderation_state->value);
     $current_state_id = $current_state ? $current_state->id() : $bundle->getThirdPartySetting('content_moderation', 'default_moderation_state');
 
     // Determine the states that are legal on this bundle.

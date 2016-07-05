@@ -90,9 +90,9 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->assertText(t('Article English node has been updated.'));
     $english_node = $this->drupalGetNodeByTitle('English node', TRUE);
     $french_node = $english_node->getTranslation('fr');
-    $this->assertEqual($english_node->moderation_state->target_id, 'published');
+    $this->assertEqual($english_node->moderation_state->value, 'published');
     $this->assertTrue($english_node->isPublished());
-    $this->assertEqual($french_node->moderation_state->target_id, 'draft');
+    $this->assertEqual($french_node->moderation_state->value, 'draft');
     $this->assertFalse($french_node->isPublished());
 
     // Create another article with its translation. This time we will publish
@@ -121,9 +121,9 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->assertText(t('Article Translated node has been updated.'));
     $english_node = $this->drupalGetNodeByTitle('Another node', TRUE);
     $french_node = $english_node->getTranslation('fr');
-    $this->assertEqual($french_node->moderation_state->target_id, 'published');
+    $this->assertEqual($french_node->moderation_state->value, 'published');
     $this->assertTrue($french_node->isPublished());
-    $this->assertEqual($english_node->moderation_state->target_id, 'draft');
+    $this->assertEqual($english_node->moderation_state->value, 'draft');
     $this->assertFalse($english_node->isPublished());
 
     // Now check that we can create a new draft of the translation and then
@@ -135,7 +135,7 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->assertText(t('Article New draft of translated node has been updated.'));
     $english_node = $this->drupalGetNodeByTitle('Another node', TRUE);
     $french_node = $english_node->getTranslation('fr');
-    $this->assertEqual($french_node->moderation_state->target_id, 'published');
+    $this->assertEqual($french_node->moderation_state->value, 'published');
     $this->assertTrue($french_node->isPublished());
     $this->assertEqual($french_node->getTitle(), 'Translated node', 'The default revision of the published translation remains the same.');
 
@@ -147,7 +147,7 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->assertText(t('The moderation state has been updated.'));
     $english_node = $this->drupalGetNodeByTitle('Another node', TRUE);
     $french_node = $english_node->getTranslation('fr');
-    $this->assertEqual($french_node->moderation_state->target_id, 'published');
+    $this->assertEqual($french_node->moderation_state->value, 'published');
     $this->assertTrue($french_node->isPublished());
     $this->assertEqual($french_node->getTitle(), 'New draft of translated node', 'The draft has replaced the published revision.');
 
@@ -162,9 +162,9 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->assertText(t('Article New draft of translated node has been updated.'));
     $english_node = $this->drupalGetNodeByTitle('Another node', TRUE);
     $french_node = $english_node->getTranslation('fr');
-    $this->assertEqual($english_node->moderation_state->target_id, 'archived');
+    $this->assertEqual($english_node->moderation_state->value, 'archived');
     $this->assertFalse($english_node->isPublished());
-    $this->assertEqual($french_node->moderation_state->target_id, 'archived');
+    $this->assertEqual($french_node->moderation_state->value, 'archived');
     $this->assertFalse($french_node->isPublished());
   }
 
