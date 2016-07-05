@@ -14,34 +14,41 @@ class ModerationState extends EntityReferenceFieldItemList {
   protected function getModerationState() {
     $entity = $this->getEntity();
 
-    /** @var \Drupal\content_moderation\ContentModerationStateInterface[] $entities */
-    $entities = \Drupal::entityTypeManager()
-      ->getStorage('content_moderation_state')
-      ->loadByProperties([
-        'content_entity_type_id' => $entity->getEntityTypeId(),
-        'content_entity_id' => $entity->id()
-      ]);
+    if ($entity->id()) {
+      /** @var \Drupal\content_moderation\ContentModerationStateInterface[] $entities */
+      $entities = \Drupal::entityTypeManager()
+        ->getStorage('content_moderation_state')
+        ->loadByProperties([
+          'content_entity_type_id' => $entity->getEntityTypeId(),
+          'content_entity_id' => $entity->id()
+        ]);
 
-    /** @var \Drupal\content_moderation\ContentModerationStateInterface $content_moderation_state */
-    $content_moderation_state = reset($entities);
-    if ($content_moderation_state instanceof ContentModerationStateInterface) {
-      return $content_moderation_state->get('moderation_state')->entity;
+      /** @var \Drupal\content_moderation\ContentModerationStateInterface $content_moderation_state */
+      $content_moderation_state = reset($entities);
+      if ($content_moderation_state instanceof ContentModerationStateInterface) {
+        return $content_moderation_state->get('moderation_state')->entity;
+      }
     }
     $default = \Drupal::service('content_moderation.moderation_information')
       ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle())
       ->getThirdPartySetting('content_moderation', 'default_moderation_state');
-    return ModerationStateEntity::load($default);
+    if ($default) {
+      return ModerationStateEntity::load($default);
+    }
   }
 
   /**
    * @inheritDoc
    */
   public function __get($property_name) {
-    if ($property_name == 'entity') {
-      return $this->getModerationState();
-    }
-    elseif ($property_name = 'target_id') {
-      return $this->getModerationState()->id();
+    if ($property_name == 'entity' || $property_name = 'target_id') {
+      $moderation_state = $this->getModerationState();
+      if ($moderation_state) {
+        if ($property_name = 'target_id') {
+          $this->getModerationState()->id();
+        }
+        return $moderation_state;
+      }
     }
     return parent::__get($property_name);
   }
