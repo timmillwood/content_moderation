@@ -13,16 +13,15 @@ class ModerationState extends EntityReferenceFieldItemList {
    */
   protected function getModerationState() {
     $entity = $this->getEntity();
-    $revision = $entity->getEntityType()->getKey('revision');
 
-    if ($entity->id() && $entity->get($revision)->value) {
+    if ($entity->id() && $entity->getRevisionId()) {
       /** @var \Drupal\content_moderation\ContentModerationStateInterface[] $entities */
       $entities = \Drupal::entityTypeManager()
         ->getStorage('content_moderation_state')
         ->loadByProperties([
           'content_entity_type_id' => $entity->getEntityTypeId(),
           'content_entity_id' => $entity->id(),
-          'content_entity_revision_id' => $entity->get($revision)->value,
+          'content_entity_revision_id' => $entity->getRevisionId(),
         ]);
 
       /** @var \Drupal\content_moderation\ContentModerationStateInterface $content_moderation_state */

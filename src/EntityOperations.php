@@ -3,6 +3,7 @@
 namespace Drupal\content_moderation;
 
 use Drupal\content_moderation\Entity\ContentModerationState;
+use Drupal\content_moderation\Entity\ModerationState;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -112,13 +113,14 @@ class EntityOperations {
     if (!$this->moderationInfo->isModeratableEntity($entity)) {
       return;
     }
-    if ($entity->moderation_state->entity) {
-      $published_state = $entity->moderation_state->entity->isPublishedState();
+    if ($entity->moderation_state_target_id) {
+      $moderation_state = ModerationState::load($entity->moderation_state_target_id);
+      $published_state = $moderation_state->isPublishedState();
 
       // This entity is default if it is new, the default revision, or the
       // default revision is not published.
       $update_default_revision = $entity->isNew()
-        || $entity->moderation_state->entity->isDefaultRevisionState()
+        || $moderation_state->isDefaultRevisionState()
         || !$this->isDefaultRevisionPublished($entity);
 
       // Fire per-entity-type logic for handling the save process.
@@ -132,7 +134,7 @@ class EntityOperations {
       // @todo: Revert to this simpler version when https://www.drupal.org/node/2700747 is fixed.
       // $state_before = isset($entity->original) ? $entity->original->moderation_state->target_id : NULL;
 
-      $state_after = $entity->moderation_state->target_id;
+      $state_after = $entity->moderation_state_target_id;
 
       // Allow other modules to respond to the transition. Note that this
       // does not provide any mechanism to cancel the transition, since
@@ -156,14 +158,11 @@ class EntityOperations {
       return;
     }
 
-    // Get the revision entity key for the entity.
-    $revision = $entity->getEntityType()->getKey('revision');
-
     // Create the ContentModerationState entity for the inserted entity.
     $content_moderation_state = ContentModerationState::create();
     $content_moderation_state->set('content_entity_type_id', $entity->getEntityTypeId());
     $content_moderation_state->set('content_entity_id', $entity->id());
-    $content_moderation_state->set('content_entity_revision_id', $entity->get($revision));
+    $content_moderation_state->set('content_entity_revision_id', $entity->getRevisionId());
     $content_moderation_state->set('moderation_state', $entity->moderation_state_target_id);
     $content_moderation_state->save();
 
@@ -185,14 +184,11 @@ class EntityOperations {
       return;
     }
 
-    // Get the revision entity key for the entity.
-    $revision = $entity->getEntityType()->getKey('revision');
-
     // Create the ContentModerationState entity for the inserted entity.
     $content_moderation_state = ContentModerationState::create();
     $content_moderation_state->set('content_entity_type_id', $entity->getEntityTypeId());
     $content_moderation_state->set('content_entity_id', $entity->id());
-    $content_moderation_state->set('content_entity_revision_id', $entity->get($revision));
+    $content_moderation_state->set('content_entity_revision_id', $entity->getRevisionId());
     $content_moderation_state->set('moderation_state', $entity->moderation_state_target_id);
     $content_moderation_state->save();
 
