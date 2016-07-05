@@ -15,12 +15,20 @@ use Drupal\user\UserInterface;
  * @ContentEntityType(
  *   id = "content_moderation_state",
  *   label = @Translation("Content Moderation State"),
+ *   label_singular = @Translation("content moderation state"),
+ *   label_plural = @Translation("content moderation states"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count content moderation state",
+ *     plural = "@count content moderation states"
+ *   ),
  *   base_table = "content_moderation_state",
  *   data_table = "content_moderation_state_field_data",
+ *   translatable = TRUE,
  *   entity_keys = {
  *     "id" = "id",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
+ *     "langcode" = "langcode",
  *   }
  * )
  */
