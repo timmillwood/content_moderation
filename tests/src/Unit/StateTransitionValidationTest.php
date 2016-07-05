@@ -116,13 +116,31 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
     $states['needs_review'] = $state->reveal();
 
     $state = $this->prophesize(ModerationStateInterface::class);
+    $state->id()->willReturn('staging');
+    $state->label()->willReturn('Staging');
+    $state->isPublishedState()->willReturn(FALSE);
+    $state->isDefaultRevisionState()->willReturn(FALSE);
+    $states['staging'] = $state->reveal();
+
+    $state = $this->prophesize(ModerationStateInterface::class);
     $state->id()->willReturn('published');
     $state->label()->willReturn('Published');
     $state->isPublishedState()->willReturn(TRUE);
     $state->isDefaultRevisionState()->willReturn(TRUE);
     $states['published'] = $state->reveal();
 
+    $state = $this->prophesize(ModerationStateInterface::class);
+    $state->id()->willReturn('archived');
+    $state->label()->willReturn('Archived');
+    $state->isPublishedState()->willReturn(TRUE);
+    $state->isDefaultRevisionState()->willReturn(TRUE);
+    $states['archived'] = $state->reveal();
+
     $entity_storage->loadMultiple()->willReturn($states);
+
+    foreach ($states as $id => $state) {
+      $entity_storage->load($id)->willReturn($state);
+    }
 
     return $entity_storage->reveal();
   }
@@ -132,9 +150,9 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
    *
    * @return EntityTypeManagerInterface
    */
-  protected function setupEntityTypeManager() {
+  protected function setupEntityTypeManager(EntityStorageInterface $storage) {
     $entityTypeManager = $this->prophesize(EntityTypeManagerInterface::class);
-    $entityTypeManager->getStorage('moderation_state')->willReturn($this->setupStateStorage());
+    $entityTypeManager->getStorage('moderation_state')->willReturn($storage);
     $entityTypeManager->getStorage('moderation_state_transition')->willReturn($this->setupTransitionStorage());
 
     return $entityTypeManager->reveal();
@@ -154,40 +172,56 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @covers ::isTransitionAllowed
    * @covers ::calculatePossibleTransitions
+   *
+   * @dataProvider providerIsTransitionAllowedWithValidTransition
    */
-  public function testIsTransitionAllowedWithValidTransition() {
-    $state_transition_validation = new StateTransitionValidation($this->setupEntityTypeManager(), $this->setupQueryFactory());
+  public function testIsTransitionAllowedWithValidTransition($from_id, $to_id) {
+    $storage = $this->setupStateStorage();
+    $state_transition_validation = new StateTransitionValidation($this->setupEntityTypeManager($storage), $this->setupQueryFactory());
+    $this->assertTrue($state_transition_validation->isTransitionAllowed($storage->load($from_id), $storage->load($to_id)));
+  }
 
-    $this->assertTrue($state_transition_validation->isTransitionAllowed('draft', 'draft'));
-    $this->assertTrue($state_transition_validation->isTransitionAllowed('draft', 'needs_review'));
-    $this->assertTrue($state_transition_validation->isTransitionAllowed('needs_review', 'needs_review'));
-    $this->assertTrue($state_transition_validation->isTransitionAllowed('needs_review', 'staging'));
-    $this->assertTrue($state_transition_validation->isTransitionAllowed('staging', 'published'));
-    $this->assertTrue($state_transition_validation->isTransitionAllowed('needs_review', 'draft'));
+  public function providerIsTransitionAllowedWithValidTransition() {
+    return [
+      ['draft', 'draft'],
+      ['draft', 'needs_review'],
+      ['needs_review', 'needs_review'],
+      ['needs_review', 'staging'],
+      ['staging', 'published'],
+      ['needs_review', 'draft'],
+    ];
   }
 
   /**
    * @covers ::isTransitionAllowed
    * @covers ::calculatePossibleTransitions
+   *
+   * @dataProvider providerIsTransitionAllowedWithInValidTransition
    */
-  public function testIsTransitionAllowedWithInValidTransition() {
-    $state_transition_validation = new StateTransitionValidation($this->setupEntityTypeManager(), $this->setupQueryFactory());
+  public function testIsTransitionAllowedWithInValidTransition($from_id, $to_id) {
+    $storage = $this->setupStateStorage();
+    $state_transition_validation = new StateTransitionValidation($this->setupEntityTypeManager($storage), $this->setupQueryFactory());
+    $this->assertFalse($state_transition_validation->isTransitionAllowed($storage->load($from_id), $storage->load($to_id)));
+  }
 
-    $this->assertFalse($state_transition_validation->isTransitionAllowed('published', 'needs_review'));
-    $this->assertFalse($state_transition_validation->isTransitionAllowed('published', 'staging'));
-    $this->assertFalse($state_transition_validation->isTransitionAllowed('staging', 'needs_review'));
-    $this->assertFalse($state_transition_validation->isTransitionAllowed('staging', 'staging'));
-    $this->assertFalse($state_transition_validation->isTransitionAllowed('needs_review', 'published'));
-    $this->assertFalse($state_transition_validation->isTransitionAllowed('published', 'archived'));
-    $this->assertFalse($state_transition_validation->isTransitionAllowed('archived', 'published'));
+  public function providerIsTransitionAllowedWithInValidTransition() {
+    return [
+      ['published', 'needs_review'],
+      ['published', 'staging'],
+      ['staging', 'needs_review'],
+      ['staging', 'staging'],
+      ['needs_review', 'published'],
+      ['published', 'archived'],
+      ['archived', 'published'],
+    ];
   }
 
   /**
    * Verifies user-aware transition validation.
    *
-   * @param string $from
+   * @param string $from_id
    *   The state to transition from.
-   * @param string $to
+   * @param string $to_id
    *   The state to transition to.
    * @param string $permission
    *   The permission to give the user, or not.
@@ -198,16 +232,17 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
    *
    * @dataProvider userTransitionsProvider
    */
-  public function testUserSensitiveValidTransitions($from, $to, $permission, $allowed, $result) {
+  public function testUserSensitiveValidTransitions($from_id, $to_id, $permission, $allowed, $result) {
     $user = $this->prophesize(AccountInterface::class);
     // The one listed permission will be returned as instructed; Any others are
     // always denied.
     $user->hasPermission($permission)->willReturn($allowed);
     $user->hasPermission(Argument::type('string'))->willReturn(FALSE);
 
-    $validator = new Validator($this->setupEntityTypeManager(), $this->setupQueryFactory());
+    $storage = $this->setupStateStorage();
+    $validator = new Validator($this->setupEntityTypeManager($storage), $this->setupQueryFactory());
 
-    $this->assertEquals($result, $validator->userMayTransition($from, $to, $user->reveal()));
+    $this->assertEquals($result, $validator->userMayTransition($storage->load($from_id), $storage->load($to_id), $user->reveal()));
   }
 
   /**
@@ -243,8 +278,8 @@ class Validator extends StateTransitionValidation {
   /**
    * @inheritDoc
    */
-  protected function getTransitionFromStates($from, $to) {
-    if ($from == 'draft' && $to == 'draft') {
+  protected function getTransitionFromStates(ModerationStateInterface $from, ModerationStateInterface $to) {
+    if ($from->id() === 'draft' && $to->id() === 'draft') {
       return $this->transitionStorage()->loadMultiple(['draft__draft'])[0];
     }
   }

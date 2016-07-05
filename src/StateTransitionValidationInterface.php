@@ -2,7 +2,6 @@
 
 namespace Drupal\content_moderation;
 
-use Drupal\content_moderation\Entity\ModerationState;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
@@ -43,29 +42,29 @@ interface StateTransitionValidationInterface {
    * This method will also return FALSE if there is no transition between the
    * specified states at all.
    *
-   * @param string $from
-   *   The origin state machine name.
-   * @param string $to
-   *   The destination state machine name.
+   * @param \Drupal\content_moderation\ModerationStateInterface $from
+   *   The origin state.
+   * @param \Drupal\content_moderation\ModerationStateInterface $to
+   *   The destination state.
    * @param \Drupal\Core\Session\AccountInterface $user
    *   The user to validate.
    *
    * @return bool
    *   TRUE if the given user may transition between those two states.
    */
-  public function userMayTransition(ModerationState $from, ModerationState $to, AccountInterface $user);
+  public function userMayTransition(ModerationStateInterface $from, ModerationStateInterface $to, AccountInterface $user);
 
   /**
    * Determines a transition allowed.
    *
-   * @param string $from
-   *   The from state.
-   * @param string $to
-   *   The to state.
+   * @param \Drupal\content_moderation\ModerationStateInterface $from
+   *   The origin state.
+   * @param \Drupal\content_moderation\ModerationStateInterface $to
+   *   The destination state.
    *
    * @return bool
    *   Is the transition allowed.
    */
-  public function isTransitionAllowed(ModerationState $from, ModerationState $to);
+  public function isTransitionAllowed(ModerationStateInterface $from, ModerationStateInterface $to);
 
 }

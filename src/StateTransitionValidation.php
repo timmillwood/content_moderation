@@ -154,7 +154,7 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
   /**
    * {@inheritdoc}
    */
-  public function userMayTransition(ModerationState $from, ModerationState $to, AccountInterface $user) {
+  public function userMayTransition(ModerationStateInterface $from, ModerationStateInterface $to, AccountInterface $user) {
     if ($transition = $this->getTransitionFromStates($from, $to)) {
       return $user->hasPermission('use ' . $transition->id() . ' transition');
     }
@@ -164,15 +164,15 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
   /**
    * Returns the transition object that transitions from one state to another.
    *
-   * @param string $from
-   *   The name of the "from" state.
-   * @param string $to
-   *   The name of the "to" state.
+   * @param \Drupal\content_moderation\ModerationStateInterface $from
+   *   The origin state.
+   * @param \Drupal\content_moderation\ModerationStateInterface $to
+   *   The destination state.
    *
    * @return ModerationStateTransition|null
    *   A transition object, or NULL if there is no such transition in the system.
    */
-  protected function getTransitionFromStates(ModerationState $from, ModerationState $to) {
+  protected function getTransitionFromStates(ModerationStateInterface $from, ModerationStateInterface $to) {
     $from = $this->transitionStateQuery()
       ->condition('stateFrom', $from->id())
       ->condition('stateTo', $to->id())
@@ -189,7 +189,7 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
   /**
    * {@inheritdoc}
    */
-  public function isTransitionAllowed(ModerationState $from, ModerationState $to) {
+  public function isTransitionAllowed(ModerationStateInterface $from, ModerationStateInterface $to) {
     $allowed_transitions = $this->calculatePossibleTransitions();
     if (isset($allowed_transitions[$from->id()])) {
       return in_array($to->id(), $allowed_transitions[$from->id()], TRUE);
