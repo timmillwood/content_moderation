@@ -33,18 +33,23 @@ class ModerationState extends EntityReferenceFieldItemList {
     $default = \Drupal::service('content_moderation.moderation_information')
       ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle())
       ->getThirdPartySetting('content_moderation', 'default_moderation_state');
-    return ModerationStateEntity::load($default);
+    if ($default) {
+      return ModerationStateEntity::load($default);
+    }
   }
 
   /**
    * @inheritDoc
    */
   public function __get($property_name) {
-    if ($property_name == 'entity') {
-      return $this->getModerationState();
-    }
-    elseif ($property_name = 'target_id') {
-      return $this->getModerationState()->id();
+    if ($property_name === 'entity' || $property_name === 'target_id') {
+      $moderation_state = $this->getModerationState();
+      if ($moderation_state) {
+        if ($property_name === 'target_id') {
+          return $this->getModerationState()->id();
+        }
+        return $moderation_state;
+      }
     }
     return parent::__get($property_name);
   }

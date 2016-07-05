@@ -2,6 +2,7 @@
 
 namespace Drupal\content_moderation;
 
+use Drupal\content_moderation\Entity\ModerationState;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
@@ -52,7 +53,7 @@ interface StateTransitionValidationInterface {
    * @return bool
    *   TRUE if the given user may transition between those two states.
    */
-  public function userMayTransition($from, $to, AccountInterface $user);
+  public function userMayTransition(ModerationState $from, ModerationState $to, AccountInterface $user);
 
   /**
    * Determines a transition allowed.
@@ -65,6 +66,6 @@ interface StateTransitionValidationInterface {
    * @return bool
    *   Is the transition allowed.
    */
-  public function isTransitionAllowed($from, $to);
+  public function isTransitionAllowed(ModerationState $from, ModerationState $to);
 
 }

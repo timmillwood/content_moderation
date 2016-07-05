@@ -2,6 +2,7 @@
 
 namespace Drupal\content_moderation;
 
+use Drupal\content_moderation\Entity\ModerationState;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
@@ -153,7 +154,7 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
   /**
    * {@inheritdoc}
    */
-  public function userMayTransition($from, $to, AccountInterface $user) {
+  public function userMayTransition(ModerationState $from, ModerationState $to, AccountInterface $user) {
     if ($transition = $this->getTransitionFromStates($from, $to)) {
       return $user->hasPermission('use ' . $transition->id() . ' transition');
     }
@@ -171,10 +172,10 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
    * @return ModerationStateTransition|null
    *   A transition object, or NULL if there is no such transition in the system.
    */
-  protected function getTransitionFromStates($from, $to) {
+  protected function getTransitionFromStates(ModerationState $from, ModerationState $to) {
     $from = $this->transitionStateQuery()
-      ->condition('stateFrom', $from)
-      ->condition('stateTo', $to)
+      ->condition('stateFrom', $from->id())
+      ->condition('stateTo', $to->id())
       ->execute();
 
     $transitions = $this->transitionStorage()->loadMultiple($from);
@@ -188,10 +189,10 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
   /**
    * {@inheritdoc}
    */
-  public function isTransitionAllowed($from, $to) {
+  public function isTransitionAllowed(ModerationState $from, ModerationState $to) {
     $allowed_transitions = $this->calculatePossibleTransitions();
-    if (isset($allowed_transitions[$from])) {
-      return in_array($to, $allowed_transitions[$from], TRUE);
+    if (isset($allowed_transitions[$from->id()])) {
+      return in_array($to->id(), $allowed_transitions[$from->id()], TRUE);
     }
     return FALSE;
   }

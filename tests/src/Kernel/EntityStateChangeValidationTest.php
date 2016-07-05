@@ -40,6 +40,7 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     $node_type = NodeType::create([
       'type' => 'example',
     ]);
+    $node_type->setThirdPartySetting('content_moderation', 'enabled', TRUE);
     $node_type->save();
     $node = Node::create([
       'type' => 'example',
@@ -50,6 +51,9 @@ class EntityStateChangeValidationTest extends KernelTestBase {
 
     $node->moderation_state_target_id = 'needs_review';
     $this->assertCount(0, $node->validate());
+    $node->save();
+
+    $this->assertEquals('needs_review', $node->moderation_state->entity->id());
   }
 
   /**

@@ -2,6 +2,7 @@
 
 namespace Drupal\content_moderation\Plugin\Validation\Constraint;
 
+use Drupal\content_moderation\Entity\ModerationState as ModerationStateEntity;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -87,11 +88,22 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
     if (!$entity->isDefaultTranslation() && $original_entity->hasTranslation($entity->language()->getId())) {
       $original_entity = $original_entity->getTranslation($entity->language()->getId());
     }
-    $next_moderation_state_id = $entity->moderation_state->target_id;
-    $original_moderation_state_id = $original_entity->moderation_state->target_id;
 
-    if (!$this->validation->isTransitionAllowed($original_moderation_state_id, $next_moderation_state_id)) {
-      $this->context->addViolation($constraint->message, ['%from' => $original_entity->moderation_state->entity->label(), '%to' => $entity->moderation_state->entity->label()]);
+    if ($entity->moderation_state_target_id) {
+      $new_state_id = $entity->moderation_state_target_id;
+    }
+    else {
+      $new_state_id = $default = $this->moderationInformation
+        ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle())
+        ->getThirdPartySetting('content_moderation', 'default_moderation_state');
+    }
+    if ($new_state_id) {
+      $new_state = ModerationStateEntity::load($new_state_id);
+    }
+    // @todo - what if $new_state_id references something that does not exist or
+    //    is null.
+    if (!$this->validation->isTransitionAllowed($original_entity->moderation_state->entity, $new_state)) {
+      $this->context->addViolation($constraint->message, ['%from' => $original_entity->moderation_state->entity->label(), '%to' => $new_state->label()]);
     }
   }
 
