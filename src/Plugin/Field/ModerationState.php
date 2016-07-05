@@ -45,7 +45,7 @@ class ModerationState extends EntityReferenceFieldItemList {
       $moderation_state = $this->getModerationState();
       if ($moderation_state) {
         if ($property_name = 'target_id') {
-          $this->getModerationState()->id();
+          return $this->getModerationState()->id();
         }
         return $moderation_state;
       }
