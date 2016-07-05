@@ -161,7 +161,9 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       '#options' => $target_states,
       '#default_value' => $default,
       '#published' => $default ? $default_state->isPublishedState() : FALSE,
+      '#key_column' => $this->column,
     ];
+    $element['#element_validate'][] = array(get_class($this), 'validateElement');
 
     // Use the dropbutton.
     $element['#process'][] = [get_called_class(), 'processActions'];
