@@ -24,6 +24,7 @@ use Drupal\user\UserInterface;
  *   base_table = "content_moderation_state",
  *   revision_table = "content_moderation_state_revision",
  *   data_table = "content_moderation_state_field_data",
+ *   revision_data_table = "content_moderation_state_field_revision",
  *   translatable = TRUE,
  *   entity_keys = {
  *     "id" = "id",
@@ -48,28 +49,41 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
       ->setDescription(t('The username of the entity creator.'))
       ->setSetting('target_type', 'user')
       ->setDefaultValueCallback('Drupal\content_moderation\Entity\ContentModerationState::getCurrentUserId')
-      ->setTranslatable(TRUE);
+      ->setTranslatable(TRUE)
+      ->setRevisionable(TRUE);
 
     $fields['moderation_state'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Moderation state'))
       ->setDescription(t('The moderation state of the referenced content.'))
       ->setSetting('target_type', 'moderation_state')
+      ->setRequired(TRUE)
+      ->setTranslatable(TRUE)
+      ->setRevisionable(TRUE)
       ->addConstraint('ModerationState', []);
 
     $fields['content_entity_type_id'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Content entity type ID'))
-      ->setDescription(t('The ID of the content entity type this moderation state is for.'));
+      ->setDescription(t('The ID of the content entity type this moderation state is for.'))
+      ->setRequired(TRUE)
+      ->setTranslatable(TRUE)
+      ->setRevisionable(TRUE);
 
     $fields['content_entity_id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Content entity ID'))
-      ->setDescription(t('The ID of the content entity this moderation state is for.'));
+      ->setDescription(t('The ID of the content entity this moderation state is for.'))
+      ->setRequired(TRUE)
+      ->setTranslatable(TRUE)
+      ->setRevisionable(TRUE);
 
     // @todo Add constraint that enforces unique content_entity_type_id / content_entity_id
     // @todo Index on content_entity_type_id, content_entity_id and content_entity_revision_id
 
     $fields['content_entity_revision_id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Content entity revision ID'))
-      ->setDescription(t('The revision ID of the content entity this moderation state is for.'));
+      ->setDescription(t('The revision ID of the content entity this moderation state is for.'))
+      ->setRequired(TRUE)
+      ->setTranslatable(TRUE)
+      ->setRevisionable(TRUE);
 
     return $fields;
   }

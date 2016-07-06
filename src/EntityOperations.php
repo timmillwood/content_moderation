@@ -179,6 +179,14 @@ class EntityOperations {
     if (!$this->moderationInfo->isModeratableEntity($entity)) {
       return;
     }
+    $moderation_state_target_id = $entity->moderation_state_target_id;
+    if (!$moderation_state_target_id) {
+      $moderation_state_target_id = $this->moderationInfo
+        ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle())
+        ->getThirdPartySetting('content_moderation', 'default_moderation_state');
+    }
+
+    // @todo what if $moderation_state_target_id is null at this point?
 
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     $entity_type_id = $entity->getEntityTypeId();
@@ -217,7 +225,7 @@ class EntityOperations {
 
     // Create the ContentModerationState entity for the inserted entity.
     $content_moderation_state->set('content_entity_revision_id', $entity_revision_id);
-    $content_moderation_state->set('moderation_state', $entity->moderation_state_target_id);
+    $content_moderation_state->set('moderation_state', $moderation_state_target_id);
     $content_moderation_state->save();
 
     // Update our own record keeping.
