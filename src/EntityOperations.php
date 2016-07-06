@@ -154,7 +154,11 @@ class EntityOperations {
    *   The entity that was just saved.
    */
   public function entityInsert(EntityInterface $entity) {
-    $this->createContentModerationStateEntity($entity);
+    if (!$this->moderationInfo->isModeratableEntity($entity)) {
+      return;
+    }
+    $this->setLatestRevision($entity);
+    ContentModerationState::createFromEntity($entity);
   }
 
   /**
@@ -166,59 +170,25 @@ class EntityOperations {
    *   The entity that was just saved.
    */
   public function entityUpdate(EntityInterface $entity) {
-    $this->createContentModerationStateEntity($entity);
+    if (!$this->moderationInfo->isModeratableEntity($entity)) {
+      return;
+    }
+    $this->setLatestRevision($entity);
+    ContentModerationState::createFromEntity($entity);
   }
 
   /**
-   * Creates a content_moderation_state entity from a content entity.
+   * Set the latest revision.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The content entity to create content_moderation_state entity for.
    */
-  protected function createContentModerationStateEntity(EntityInterface $entity) {
-    if (!$this->moderationInfo->isModeratableEntity($entity)) {
-      return;
-    }
-
+  protected function setLatestRevision(EntityInterface $entity) {
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     $entity_type_id = $entity->getEntityTypeId();
     $entity_id = $entity->id();
     $entity_revision_id = $entity->getRevisionId();
     $entity_langcode = $entity->language()->getId();
-
-    // @todo maybe just try and get it from the computed field?
-    $entities = $this->entityTypeManager
-      ->getStorage('content_moderation_state')
-      ->loadByProperties([
-        'content_entity_type_id' => $entity_type_id,
-        'content_entity_id' => $entity_id,
-      ]);
-
-    /** @var \Drupal\content_moderation\ContentModerationStateInterface $content_moderation_state */
-    $content_moderation_state = reset($entities);
-    if (!($content_moderation_state instanceof ContentModerationStateInterface)) {
-      $content_moderation_state = ContentModerationState::create([
-        'content_entity_type_id' => $entity_type_id,
-        'content_entity_id' => $entity_id,
-      ]);
-    }
-    else {
-      // Create a new revision.
-      $content_moderation_state->setNewRevision(TRUE);
-    }
-
-    // Sync translations.
-    if (!$content_moderation_state->hasTranslation($entity_langcode)) {
-      $content_moderation_state->addTranslation($entity_langcode);
-    }
-    if ($content_moderation_state->language()->getId() !== $entity_langcode) {
-      $content_moderation_state = $content_moderation_state->getTranslation($entity_langcode);
-    }
-
-    // Create the ContentModerationState entity for the inserted entity.
-    $content_moderation_state->set('content_entity_revision_id', $entity_revision_id);
-    $content_moderation_state->set('moderation_state', $entity->moderation_state_target_id);
-    $content_moderation_state->save();
 
     // Update our own record keeping.
     $this->tracker->setLatestRevision($entity_type_id, $entity_id, $entity_langcode, $entity_revision_id);
