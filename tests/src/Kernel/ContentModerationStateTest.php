@@ -7,6 +7,7 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
+use Drupal\node\NodeInterface;
 
 /**
  * Tests links between a content entity and a content_moderation_state entity.
@@ -48,11 +49,13 @@ class ContentModerationStateTest extends KernelTestBase {
       'title' => 'Test title',
     ]);
     $node->save();
+    $node = $this->reloadNode($node);
     $this->assertEquals('draft', $node->moderation_state->entity->id());
 
     $node->moderation_state_target_id = 'needs_review';
     $node->save();
 
+    $node = $this->reloadNode($node);
     $this->assertEquals('needs_review', $node->moderation_state->entity->id());
 
     // Change the state without saving the node.
@@ -61,11 +64,13 @@ class ContentModerationStateTest extends KernelTestBase {
     $content_moderation_state->setNewRevision(TRUE);
     $content_moderation_state->save();
 
+    $node = $this->reloadNode($node);
     $this->assertEquals('draft', $node->moderation_state->entity->id());
 
     $node->moderation_state_target_id = 'needs_review';
     $node->save();
 
+    $node = $this->reloadNode($node);
     $this->assertEquals('needs_review', $node->moderation_state->entity->id());
   }
 
@@ -100,12 +105,13 @@ class ContentModerationStateTest extends KernelTestBase {
     $this->assertFalse($french_node->isPublished());
 
     // Move English node to needs review.
+    $english_node = $this->reloadNode($english_node);
     $english_node->moderation_state_target_id = 'needs_review';
     $english_node->save();
     $this->assertEquals('needs_review', $english_node->moderation_state->entity->id());
 
     // French node should still be in draft.
-    $french_node = $english_node->getTranslation('fr');
+    $french_node = $this->reloadNode($english_node)->getTranslation('fr');
     $this->assertEquals('draft', $french_node->moderation_state->entity->id());
 
     // Publish the French node.
@@ -114,7 +120,7 @@ class ContentModerationStateTest extends KernelTestBase {
     $this->assertTrue($french_node->isPublished());
     $this->assertEquals('published', $french_node->moderation_state->entity->id());
     $this->assertTrue($french_node->isPublished());
-    $english_node = $french_node->getTranslation('en');
+    $english_node = $this->reloadNode($french_node)->getTranslation('en');
     $this->assertEquals('needs_review', $english_node->moderation_state->entity->id());
 
     // Publish the English node.
@@ -123,7 +129,7 @@ class ContentModerationStateTest extends KernelTestBase {
     $this->assertTrue($english_node->isPublished());
 
     // Move the French node back to draft.
-    $french_node = $english_node->getTranslation('fr');
+    $french_node = $this->reloadNode($english_node)->getTranslation('fr');
     $this->assertTrue($french_node->isPublished());
     $french_node->moderation_state_target_id = 'draft';
     $french_node->save();
@@ -135,23 +141,35 @@ class ContentModerationStateTest extends KernelTestBase {
     $french_node->save();
 
     // Change the state without saving the node.
-    $english_node = $french_node->getTranslation('en');
+    $english_node = $this->reloadNode($french_node);
     ContentModerationState::updateOrCreateFromEntity($english_node, 'draft');
 
     // $node = Node::load($node->id());
     $this->assertEquals('draft', $english_node->moderation_state->entity->id());
-    $french_node = $english_node->getTranslation('fr');
+    $french_node = $this->reloadNode($english_node)->getTranslation('fr');
     $this->assertEquals('published', $french_node->moderation_state->entity->id());
 
     // This should unpublish the French node.
     ContentModerationState::updateOrCreateFromEntity($french_node, 'needs_review');
 
-    $english_node = $french_node->getTranslation('en');
+    $english_node = $this->reloadNode($french_node);
     $this->assertEquals('draft', $english_node->moderation_state->entity->id());
-    $french_node = $english_node->getTranslation('fr');
+    $french_node = $this->reloadNode($english_node)->getTranslation('fr');
     $this->assertEquals('needs_review', $french_node->moderation_state->entity->id());
     // @todo this doesn't work.
     $this->assertFalse($french_node->isPublished());
+  }
+
+  /**
+   * Reloads the node after clearing the static cache.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *
+   * @return \Drupal\node\NodeInterface
+   */
+  protected function reloadNode(NodeInterface $node) {
+    \Drupal::entityTypeManager()->getStorage('node')->resetCache([$node->id()]);
+    return Node::load($node->id());
   }
 
 }
