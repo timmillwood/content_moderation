@@ -122,10 +122,11 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The content entity to moderate.
+   * @param string $moderation_state_target_id
+   *   (optional) The ID of the state to give the entity.
    */
-  public static function createFromEntity(EntityInterface $entity) {
+  public static function updateOrCreateFromEntity(EntityInterface $entity, $moderation_state_target_id = NULL) {
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
-    $moderation_state_target_id = $entity->moderation_state_target_id;
     if (!$moderation_state_target_id) {
       $moderation_state_target_id = \Drupal::service('content_moderation.moderation_information')
         ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle())

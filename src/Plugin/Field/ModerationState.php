@@ -75,7 +75,7 @@ class ModerationState extends EntityReferenceFieldItemList {
       else {
         $entity->moderation_state_target_id = $value;
       }
-      ContentModerationState::createFromEntity($entity);
+      ContentModerationState::updateOrCreateFromEntity($entity, $entity->moderation_state_target_id);
     }
     return parent::__set($property_name, $value);
   }

@@ -14,7 +14,7 @@ class NodeModerationHandler extends ModerationHandler {
    * {@inheritdoc}
    */
   public function onPresave(ContentEntityInterface $entity, $default_revision, $published_state) {
-    if ($this->shouldModerate($entity)) {
+    if ($this->shouldModerate($entity, $published_state)) {
       parent::onPresave($entity, $default_revision, $published_state);
       // Only nodes have a concept of published.
       /** @var \Drupal\node\NodeInterface $entity */
@@ -49,15 +49,18 @@ class NodeModerationHandler extends ModerationHandler {
    * Check if an entity's default revision and/or state needs adjusting.
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The entity to check
+   * @param bool $published_state
+   *   Whether the state being transitioned to is a published state or not.
    *
    * @return bool
    *   TRUE when either the default revision or the state needs to be updated.
    */
-  protected function shouldModerate(ContentEntityInterface $entity) {
+  protected function shouldModerate(ContentEntityInterface $entity, $published_state) {
+    // @todo clarify the first condition.
     // First condition is needed so you can add a translation.
-    // Second condition is needed when you want to publish a translation.
-    // Third condition is needed when you want to create a new draft for a published translation.
-    return $entity->isDefaultTranslation() || $entity->moderation_state->entity->isPublishedState() || $entity->isPublished();
+    // Second condition checks to see if the published status has changed.
+    return $entity->isDefaultTranslation() || $entity->isPublished() !== $published_state;
   }
 
 }

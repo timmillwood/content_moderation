@@ -157,7 +157,7 @@ class EntityOperations {
     if (!$this->moderationInfo->isModeratableEntity($entity)) {
       return;
     }
-    ContentModerationState::createFromEntity($entity);
+    ContentModerationState::updateOrCreateFromEntity($entity, $entity->moderation_state_target_id);
     $this->setLatestRevision($entity);
   }
 
@@ -173,7 +173,7 @@ class EntityOperations {
     if (!$this->moderationInfo->isModeratableEntity($entity)) {
       return;
     }
-    ContentModerationState::createFromEntity($entity);
+    ContentModerationState::updateOrCreateFromEntity($entity, $entity->moderation_state_target_id);
     $this->setLatestRevision($entity);
   }
 
