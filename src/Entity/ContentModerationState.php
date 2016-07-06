@@ -22,10 +22,12 @@ use Drupal\user\UserInterface;
  *     plural = "@count content moderation states"
  *   ),
  *   base_table = "content_moderation_state",
+ *   revision_table = "content_moderation_state_revision",
  *   data_table = "content_moderation_state_field_data",
  *   translatable = TRUE,
  *   entity_keys = {
  *     "id" = "id",
+ *     "revision" = "revision_id",
  *     "uuid" = "uuid",
  *     "uid" = "uid",
  *     "langcode" = "langcode",
@@ -54,6 +56,9 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
     $fields['content_entity_id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Content entity ID'))
       ->setDescription(t('The ID of the content entity this moderation state is for.'));
+
+    // @todo Add constraint that enforces unique content_entity_type_id / content_entity_id
+    // @todo Index on content_entity_type_id, content_entity_id and content_entity_revision_id
 
     $fields['content_entity_revision_id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Content entity revision ID'))

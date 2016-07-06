@@ -2,7 +2,6 @@
 
 namespace Drupal\content_moderation\Plugin\Field;
 
-use Drupal\content_moderation\ContentModerationStateInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemList;
 use \Drupal\content_moderation\Entity\ModerationState as ModerationStateEntity;
 
@@ -15,18 +14,29 @@ class ModerationState extends EntityReferenceFieldItemList {
     $entity = $this->getEntity();
 
     if ($entity->id() && $entity->getRevisionId()) {
-      /** @var \Drupal\content_moderation\ContentModerationStateInterface[] $entities */
-      $entities = \Drupal::entityTypeManager()
-        ->getStorage('content_moderation_state')
-        ->loadByProperties([
-          'content_entity_type_id' => $entity->getEntityTypeId(),
-          'content_entity_id' => $entity->id(),
-          'content_entity_revision_id' => $entity->getRevisionId(),
-        ]);
+      $revisions = \Drupal::service('entity.query')->get('content_moderation_state')
+        ->condition('content_entity_type_id', $entity->getEntityTypeId())
+        ->condition('content_entity_id', $entity->id())
+        ->condition('content_entity_revision_id', $entity->getRevisionId())
+        ->allRevisions()
+        ->sort('revision_id', 'DESC')
+        ->execute();
 
-      /** @var \Drupal\content_moderation\ContentModerationStateInterface $content_moderation_state */
-      $content_moderation_state = reset($entities);
-      if ($content_moderation_state instanceof ContentModerationStateInterface) {
+      if ($revision_to_load = key($revisions)) {
+        /** @var \Drupal\content_moderation\ContentModerationStateInterface $content_moderation_state */
+        $content_moderation_state = \Drupal::entityTypeManager()
+          ->getStorage('content_moderation_state')
+          ->loadRevision($revision_to_load);
+
+        // Return the correct translation.
+        $langcode = $entity->language()->getId();
+        if (!$content_moderation_state->hasTranslation($langcode)) {
+          $content_moderation_state->addTranslation($langcode);
+        }
+        if ($content_moderation_state->language()->getId() !== $langcode) {
+          $content_moderation_state = $content_moderation_state->getTranslation($langcode);
+        }
+
         return $content_moderation_state->get('moderation_state')->entity;
       }
     }
@@ -46,7 +56,7 @@ class ModerationState extends EntityReferenceFieldItemList {
       $moderation_state = $this->getModerationState();
       if ($moderation_state) {
         if ($property_name === 'target_id') {
-          return $this->getModerationState()->id();
+          return $moderation_state->id();
         }
         return $moderation_state;
       }

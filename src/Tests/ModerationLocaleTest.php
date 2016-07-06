@@ -41,6 +41,10 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     ];
     $this->drupalPostForm(NULL, $edit, t('Save configuration'));
 
+    // Adding languages requires a container rebuild in the test running
+    // environment so that multilingual services are used.
+    $this->rebuildContainer();
+
     // Create a published article in English.
     $edit = [
       'title[0][value]' => 'Published English node',
@@ -61,8 +65,6 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     // Please try again later."
     // If the translation has got lost.
     $this->assertText(t('Article French node Draft has been updated.'));
-    $english_node = $this->drupalGetNodeByTitle('Published English node', TRUE);
-    $french_node = $english_node->getTranslation('fr');
 
     // Create an article in English.
     $edit = [
@@ -82,7 +84,6 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->drupalPostForm(NULL, $edit, t('Save and Create New Draft (this translation)'));
     $this->assertText(t('Article French node has been updated.'));
     $english_node = $this->drupalGetNodeByTitle('English node', TRUE);
-    $french_node = $english_node->getTranslation('fr');
 
     // Publish the English article and check that the translation stays
     // unpublished.
@@ -90,6 +91,8 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->assertText(t('Article English node has been updated.'));
     $english_node = $this->drupalGetNodeByTitle('English node', TRUE);
     $french_node = $english_node->getTranslation('fr');
+    $this->assertEqual('French node', $french_node->label());
+
     $this->assertEqual($english_node->moderation_state->target_id, 'published');
     $this->assertTrue($english_node->isPublished());
     $this->assertEqual($french_node->moderation_state->target_id, 'draft');
