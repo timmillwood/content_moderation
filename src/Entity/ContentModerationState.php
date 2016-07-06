@@ -67,14 +67,12 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
       ->setLabel(t('Content entity type ID'))
       ->setDescription(t('The ID of the content entity type this moderation state is for.'))
       ->setRequired(TRUE)
-      ->setTranslatable(TRUE)
       ->setRevisionable(TRUE);
 
     $fields['content_entity_id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Content entity ID'))
       ->setDescription(t('The ID of the content entity this moderation state is for.'))
       ->setRequired(TRUE)
-      ->setTranslatable(TRUE)
       ->setRevisionable(TRUE);
 
     // @todo Add constraint that enforces unique content_entity_type_id / content_entity_id
@@ -84,7 +82,6 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
       ->setLabel(t('Content entity revision ID'))
       ->setDescription(t('The revision ID of the content entity this moderation state is for.'))
       ->setRequired(TRUE)
-      ->setTranslatable(TRUE)
       ->setRevisionable(TRUE);
 
     return $fields;

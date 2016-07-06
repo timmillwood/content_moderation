@@ -92,6 +92,7 @@ class ContentModerationStateTest extends KernelTestBase {
     // Create a french translation.
     $french_node = $node->addTranslation('fr', ['title' => 'French title']);
     $french_node->save();
+    $this->assertEquals('draft', $french_node->moderation_state->entity->id());
 
     // Reload the node.
     $node = Node::load($node->id());
@@ -112,6 +113,27 @@ class ContentModerationStateTest extends KernelTestBase {
     $this->assertEquals('needs_review', $node->moderation_state->entity->id());
     $french_node = $node->getTranslation('fr');
     $this->assertEquals('published', $french_node->moderation_state->entity->id());
+
+    // Change the state without saving the node.
+    $content_moderation_state = ContentModerationState::load(1);
+    $content_moderation_state->set('moderation_state', 'draft');
+    $content_moderation_state->setNewRevision(TRUE);
+    $content_moderation_state->save();
+
+    $node = Node::load($node->id());
+    $this->assertEquals('draft', $node->moderation_state->entity->id());
+    $french_node = $node->getTranslation('fr');
+    $this->assertEquals('published', $french_node->moderation_state->entity->id());
+
+    $content_moderation_state = ContentModerationState::load(1)->getTranslation('fr');
+    $content_moderation_state->set('moderation_state', 'needs_review');
+    $content_moderation_state->setNewRevision(TRUE);
+    $content_moderation_state->save();
+
+    $node = Node::load($node->id());
+    $this->assertEquals('draft', $node->moderation_state->entity->id());
+    $french_node = $node->getTranslation('fr');
+    $this->assertEquals('needs_review', $french_node->moderation_state->entity->id());
   }
 
 }

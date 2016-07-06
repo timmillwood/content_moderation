@@ -281,7 +281,8 @@ class EntityTypeInfo {
       ])
       ->addConstraint('ModerationState', [])
       ->setDisplayConfigurable('form', FALSE)
-      ->setDisplayConfigurable('view', FALSE);
+      ->setDisplayConfigurable('view', FALSE)
+      ->setTranslatable(TRUE);
 
 
     return $fields;
