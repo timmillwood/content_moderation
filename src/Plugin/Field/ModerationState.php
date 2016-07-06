@@ -2,7 +2,6 @@
 
 namespace Drupal\content_moderation\Plugin\Field;
 
-use Drupal\content_moderation\ContentModerationStateInterface;
 use Drupal\content_moderation\Entity\ContentModerationState;
 use Drupal\Core\Field\EntityReferenceFieldItemList;
 use \Drupal\content_moderation\Entity\ModerationState as ModerationStateEntity;
