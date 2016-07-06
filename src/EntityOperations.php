@@ -157,8 +157,8 @@ class EntityOperations {
     if (!$this->moderationInfo->isModeratableEntity($entity)) {
       return;
     }
-    $this->setLatestRevision($entity);
     ContentModerationState::createFromEntity($entity);
+    $this->setLatestRevision($entity);
   }
 
   /**
@@ -173,8 +173,8 @@ class EntityOperations {
     if (!$this->moderationInfo->isModeratableEntity($entity)) {
       return;
     }
-    $this->setLatestRevision($entity);
     ContentModerationState::createFromEntity($entity);
+    $this->setLatestRevision($entity);
   }
 
   /**
@@ -185,13 +185,12 @@ class EntityOperations {
    */
   protected function setLatestRevision(EntityInterface $entity) {
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
-    $entity_type_id = $entity->getEntityTypeId();
-    $entity_id = $entity->id();
-    $entity_revision_id = $entity->getRevisionId();
-    $entity_langcode = $entity->language()->getId();
-
-    // Update our own record keeping.
-    $this->tracker->setLatestRevision($entity_type_id, $entity_id, $entity_langcode, $entity_revision_id);
+    $this->tracker->setLatestRevision(
+      $entity->getEntityTypeId(),
+      $entity->id(),
+      $entity->language()->getId(),
+      $entity->getRevisionId()
+    );
   }
 
   /**
