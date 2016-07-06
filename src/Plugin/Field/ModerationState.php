@@ -2,6 +2,8 @@
 
 namespace Drupal\content_moderation\Plugin\Field;
 
+use Drupal\content_moderation\ContentModerationStateInterface;
+use Drupal\content_moderation\Entity\ContentModerationState;
 use Drupal\Core\Field\EntityReferenceFieldItemList;
 use \Drupal\content_moderation\Entity\ModerationState as ModerationStateEntity;
 
@@ -62,6 +64,25 @@ class ModerationState extends EntityReferenceFieldItemList {
       }
     }
     return parent::__get($property_name);
+  }
+
+  public function __set($property_name, $value) {
+    if ($property_name === 'entity' || $property_name === 'target_id') {
+      $entity = $this->getEntity();
+      $content_moderation_state = ContentModerationState::create();
+      $content_moderation_state->set('content_entity_type_id', $entity->getEntityTypeId());
+      $content_moderation_state->set('content_entity_id', $entity->id());
+      $content_moderation_state->set('content_entity_revision_id', $entity->getRevisionId());
+      if ($property_name === 'entity') {
+        /** @var \Drupal\content_moderation\ModerationStateInterface $value */
+        $content_moderation_state->set('moderation_state', $value->id());
+      }
+      else {
+        $content_moderation_state->set('moderation_state', $value);
+      }
+      $content_moderation_state->save();
+    }
+    return parent::__set($property_name, $value);
   }
 
 }

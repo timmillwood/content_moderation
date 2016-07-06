@@ -43,6 +43,13 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
 
+    $fields['uid'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('User'))
+      ->setDescription(t('The username of the entity creator.'))
+      ->setSetting('target_type', 'user')
+      ->setDefaultValueCallback('Drupal\content_moderation\Entity\ContentModerationState::getCurrentUserId')
+      ->setTranslatable(TRUE);
+
     $fields['moderation_state'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Moderation state'))
       ->setDescription(t('The moderation state of the referenced content.'))
@@ -97,5 +104,16 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
     return $this;
   }
 
+  /**
+   * Default value callback for 'uid' base field definition.
+   *
+   * @see ::baseFieldDefinitions()
+   *
+   * @return array
+   *   An array of default values.
+   */
+  public static function getCurrentUserId() {
+    return array(\Drupal::currentUser()->id());
+  }
 
 }
