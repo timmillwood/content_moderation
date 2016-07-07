@@ -3,10 +3,10 @@
 namespace Drupal\content_moderation\Plugin\Field;
 
 use Drupal\content_moderation\Entity\ContentModerationState;
-use Drupal\Core\Field\EntityReferenceFieldItemList;
 use \Drupal\content_moderation\Entity\ModerationState as ModerationStateEntity;
+use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 
-class ModerationState extends EntityReferenceFieldItemList {
+class ModerationState extends EntityReferenceItem {
 
   /**
    * @return \Drupal\Core\Entity\EntityInterface

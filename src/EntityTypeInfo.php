@@ -265,7 +265,6 @@ class EntityTypeInfo {
       ->setLabel(t('Moderation state'))
       ->setDescription(t('The moderation state of this piece of content.'))
       ->setComputed(TRUE)
-      ->setClass(ModerationState::class)
       ->setSetting('target_type', 'moderation_state')
       ->setDisplayOptions('view', [
         'label' => 'hidden',
@@ -283,7 +282,7 @@ class EntityTypeInfo {
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', FALSE)
       ->setTranslatable(TRUE);
-
+    $fields['moderation_state']->getItemDefinition()->setClass(ModerationState::class);
 
     return $fields;
   }
