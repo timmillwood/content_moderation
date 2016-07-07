@@ -2,14 +2,23 @@
 
 namespace Drupal\content_moderation\Plugin\Field;
 
-use Drupal\content_moderation\Entity\ContentModerationState;
-use \Drupal\content_moderation\Entity\ModerationState as ModerationStateEntity;
+use Drupal\content_moderation\Entity\ModerationState as ModerationStateEntity;
 use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 
+/**
+ * A computed field that provides a content entity's moderation state.
+ *
+ * It links content entities to a moderation state configuration entity via a
+ * moderation state content entity.
+ */
 class ModerationState extends EntityReferenceItem {
 
   /**
-   * @return \Drupal\Core\Entity\EntityInterface
+   * Gets the moderation state entity linked to a content entity revision.
+   *
+   * @return \Drupal\content_moderation\ModerationStateInterface|null
+   *   The moderation state configuration entity linked to a content entity
+   *   revision.
    */
   protected function getModerationState() {
     $entity = $this->getEntity();
@@ -41,10 +50,9 @@ class ModerationState extends EntityReferenceItem {
         return $content_moderation_state->get('moderation_state')->entity;
       }
     }
-    $default = \Drupal::service('content_moderation.moderation_information')
-      ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle())
-      ->getThirdPartySetting('content_moderation', 'default_moderation_state');
-    if ($default) {
+    $bundle_entity = \Drupal::service('content_moderation.moderation_information')
+      ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle());
+    if ($bundle_entity && ($default = $bundle_entity->getThirdPartySetting('content_moderation', 'default_moderation_state'))) {
       return ModerationStateEntity::load($default);
     }
   }
@@ -65,6 +73,9 @@ class ModerationState extends EntityReferenceItem {
     return parent::__get($property_name);
   }
 
+  /**
+   * @inheritDoc
+   */
   public function __set($property_name, $value) {
     if ($property_name === 'entity' || $property_name === 'target_id') {
       $entity = $this->getEntity();
@@ -75,7 +86,6 @@ class ModerationState extends EntityReferenceItem {
       else {
         $entity->moderation_state_target_id = $value;
       }
-      ContentModerationState::updateOrCreateFromEntity($entity, $entity->moderation_state_target_id);
     }
     return parent::__set($property_name, $value);
   }
