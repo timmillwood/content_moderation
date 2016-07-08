@@ -2,7 +2,7 @@
 
 namespace Drupal\content_moderation;
 
-use Drupal\content_moderation\Plugin\Field\ModerationState;
+use Drupal\content_moderation\Plugin\Field\ModerationStateFieldItemList;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -265,6 +265,7 @@ class EntityTypeInfo {
       ->setLabel(t('Moderation state'))
       ->setDescription(t('The moderation state of this piece of content.'))
       ->setComputed(TRUE)
+      ->setClass(ModerationStateFieldItemList::class)
       ->setSetting('target_type', 'moderation_state')
       ->setDisplayOptions('view', [
         'label' => 'hidden',
@@ -282,7 +283,6 @@ class EntityTypeInfo {
       ->setDisplayConfigurable('form', FALSE)
       ->setDisplayConfigurable('view', FALSE)
       ->setTranslatable(TRUE);
-    $fields['moderation_state']->getItemDefinition()->setClass(ModerationState::class);
 
     return $fields;
   }

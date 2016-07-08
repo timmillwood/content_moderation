@@ -2,8 +2,8 @@
 
 namespace Drupal\content_moderation\Plugin\Field;
 
-use Drupal\content_moderation\Entity\ModerationState as ModerationStateEntity;
-use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
+use Drupal\content_moderation\Entity\ModerationState;
+use Drupal\Core\Field\EntityReferenceFieldItemList;
 
 /**
  * A computed field that provides a content entity's moderation state.
@@ -11,7 +11,7 @@ use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
  * It links content entities to a moderation state configuration entity via a
  * moderation state content entity.
  */
-class ModerationState extends EntityReferenceItem {
+class ModerationStateFieldItemList extends EntityReferenceFieldItemList {
 
   /**
    * Gets the moderation state entity linked to a content entity revision.
@@ -56,28 +56,24 @@ class ModerationState extends EntityReferenceItem {
     $bundle_entity = \Drupal::service('content_moderation.moderation_information')
       ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle());
     if ($bundle_entity && ($default = $bundle_entity->getThirdPartySetting('content_moderation', 'default_moderation_state'))) {
-      return ModerationStateEntity::load($default);
+      return ModerationState::load($default);
     }
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
-  public function __get($property_name) {
-    $property = parent::__get($property_name);
-    if ($property) {
-      return $property;
+  public function get($index) {
+    if ($index !== 0) {
+      throw new \InvalidArgumentException('An entity can not have multiple moderation states at the same time.');
+    }
+    // Compute the value of the moderation state.
+    if (!isset($this->list[$index])) {
+      $moderation_state = $this->getModerationState();
+      $this->list[$index] = $this->createItem($index, ['entity' => $moderation_state]);
     }
 
-    if ($property_name === 'entity' || $property_name === 'target_id') {
-      $moderation_state = $this->getModerationState();
-      if ($moderation_state) {
-        if ($property_name === 'target_id') {
-          return $moderation_state->id();
-        }
-        return $moderation_state;
-      }
-    }
+    return isset($this->list[$index]) ? $this->list[$index] : NULL;
   }
 
 }
