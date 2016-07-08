@@ -46,10 +46,10 @@ class EntityStateChangeValidationTest extends KernelTestBase {
       'type' => 'example',
       'title' => 'Test title',
     ]);
-    $node->moderation_state_target_id = 'draft';
+    $node->moderation_state->target_id = 'draft';
     $node->save();
 
-    $node->moderation_state_target_id = 'needs_review';
+    $node->moderation_state->target_id = 'needs_review';
     $this->assertCount(0, $node->validate());
     $node->save();
 
@@ -71,10 +71,10 @@ class EntityStateChangeValidationTest extends KernelTestBase {
       'type' => 'example',
       'title' => 'Test title',
     ]);
-    $node->moderation_state_target_id = 'draft';
+    $node->moderation_state->target_id = 'draft';
     $node->save();
 
-    $node->moderation_state_target_id = 'archived';
+    $node->moderation_state->target_id = 'archived';
     $violations = $node->validate();
     $this->assertCount(1, $violations);
 

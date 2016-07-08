@@ -66,12 +66,6 @@ class ContentModerationStateTest extends KernelTestBase {
     $node = $this->reloadNode($node);
     $this->assertEquals('published', $node->moderation_state->entity->id());
 
-    $node->moderation_state_target_id = 'archived';
-    $node->save();
-
-    $node = $this->reloadNode($node);
-    $this->assertEquals('archived', $node->moderation_state->entity->id());
-
     // Change the state without saving the node.
     $content_moderation_state = ContentModerationState::load(1);
     $content_moderation_state->set('moderation_state', 'draft');
@@ -81,7 +75,7 @@ class ContentModerationStateTest extends KernelTestBase {
     $node = $this->reloadNode($node);
     $this->assertEquals('draft', $node->moderation_state->entity->id());
 
-    $node->moderation_state_target_id = 'needs_review';
+    $node->moderation_state->target_id = 'needs_review';
     $node->save();
 
     $node = $this->reloadNode($node);
@@ -120,7 +114,7 @@ class ContentModerationStateTest extends KernelTestBase {
 
     // Move English node to needs review.
     $english_node = $this->reloadNode($english_node);
-    $english_node->moderation_state_target_id = 'needs_review';
+    $english_node->moderation_state->target_id = 'needs_review';
     $english_node->save();
     $this->assertEquals('needs_review', $english_node->moderation_state->entity->id());
 
@@ -129,7 +123,7 @@ class ContentModerationStateTest extends KernelTestBase {
     $this->assertEquals('draft', $french_node->moderation_state->entity->id());
 
     // Publish the French node.
-    $french_node->moderation_state_target_id = 'published';
+    $french_node->moderation_state->target_id = 'published';
     $french_node->save();
     $this->assertTrue($french_node->isPublished());
     $this->assertEquals('published', $french_node->moderation_state->entity->id());
@@ -138,20 +132,20 @@ class ContentModerationStateTest extends KernelTestBase {
     $this->assertEquals('needs_review', $english_node->moderation_state->entity->id());
 
     // Publish the English node.
-    $english_node->moderation_state_target_id = 'published';
+    $english_node->moderation_state->target_id = 'published';
     $english_node->save();
     $this->assertTrue($english_node->isPublished());
 
     // Move the French node back to draft.
     $french_node = $this->reloadNode($english_node)->getTranslation('fr');
     $this->assertTrue($french_node->isPublished());
-    $french_node->moderation_state_target_id = 'draft';
+    $french_node->moderation_state->target_id = 'draft';
     $french_node->save();
     $this->assertFalse($french_node->isPublished());
     $this->assertTrue($french_node->getTranslation('en')->isPublished());
 
     // Republish the French node.
-    $french_node->moderation_state_target_id = 'published';
+    $french_node->moderation_state->target_id = 'published';
     $french_node->save();
 
     // Change the state without saving the node.

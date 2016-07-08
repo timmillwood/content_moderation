@@ -113,8 +113,8 @@ class EntityOperations {
     if (!$this->moderationInfo->isModeratableEntity($entity)) {
       return;
     }
-    if ($entity->moderation_state_target_id) {
-      $moderation_state = ModerationState::load($entity->moderation_state_target_id);
+    if ($entity->moderation_state->target_id) {
+      $moderation_state = ModerationState::load($entity->moderation_state->target_id);
       $published_state = $moderation_state->isPublishedState();
 
       // This entity is default if it is new, the default revision, or the
@@ -134,7 +134,7 @@ class EntityOperations {
       // @todo: Revert to this simpler version when https://www.drupal.org/node/2700747 is fixed.
       // $state_before = isset($entity->original) ? $entity->original->moderation_state->target_id : NULL;
 
-      $state_after = $entity->moderation_state_target_id;
+      $state_after = $entity->moderation_state->target_id;
 
       // Allow other modules to respond to the transition. Note that this
       // does not provide any mechanism to cancel the transition, since
@@ -157,7 +157,7 @@ class EntityOperations {
     if (!$this->moderationInfo->isModeratableEntity($entity)) {
       return;
     }
-    ContentModerationState::updateOrCreateFromEntity($entity, $entity->moderation_state_target_id);
+    ContentModerationState::updateOrCreateFromEntity($entity);
     $this->setLatestRevision($entity);
   }
 
@@ -173,7 +173,7 @@ class EntityOperations {
     if (!$this->moderationInfo->isModeratableEntity($entity)) {
       return;
     }
-    ContentModerationState::updateOrCreateFromEntity($entity, $entity->moderation_state_target_id);
+    ContentModerationState::updateOrCreateFromEntity($entity);
     $this->setLatestRevision($entity);
   }
 

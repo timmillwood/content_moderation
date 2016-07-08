@@ -185,7 +185,7 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
   public static function updateStatus($entity_type_id, ContentEntityInterface $entity, array $form, FormStateInterface $form_state) {
     $element = $form_state->getTriggeringElement();
     if (isset($element['#moderation_state'])) {
-      $entity->moderation_state_target_id = $element['#moderation_state'];
+      $entity->moderation_state->target_id = $element['#moderation_state'];
     }
   }
 

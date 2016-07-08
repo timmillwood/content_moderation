@@ -120,7 +120,7 @@ class EntityModerationForm extends FormBase {
 
     // @todo should we just just be updating the content moderation state
     //   entity? That would prevent setting the revision log.
-    $entity->moderation_state_target_id = $new_state;
+    $entity->moderation_state->target_id = $new_state;
     $entity->revision_log = $form_state->getValue('revision_log');
 
     $entity->save();

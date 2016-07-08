@@ -64,6 +64,11 @@ class ModerationState extends EntityReferenceItem {
    * @inheritDoc
    */
   public function __get($property_name) {
+    $property = parent::__get($property_name);
+    if ($property) {
+      return $property;
+    }
+
     if ($property_name === 'entity' || $property_name === 'target_id') {
       $moderation_state = $this->getModerationState();
       if ($moderation_state) {
@@ -73,22 +78,6 @@ class ModerationState extends EntityReferenceItem {
         return $moderation_state;
       }
     }
-    return parent::__get($property_name);
   }
-
-  /**
-   * @inheritDoc
-   */
-  public function onChange($property_name, $notify = TRUE) {
-    $entity = $this->getEntity();
-    if ($property_name == 'entity') {
-      $entity->moderation_state_target_id = $this->get($property_name)->getValue()->id();
-    }
-    elseif ($property_name == 'target_id') {
-      $entity->moderation_state_target_id = $this->get($property_name)->getValue();
-    }
-    parent::onChange($property_name, $notify);
-  }
-
 
 }

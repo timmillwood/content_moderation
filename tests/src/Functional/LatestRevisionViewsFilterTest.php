@@ -54,7 +54,7 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
       'title' => 'Node 1 - Rev 1',
       'uid' => $editor1->id(),
     ]);
-    $node_1->moderation_state_target_id = 'draft';
+    $node_1->moderation_state->target_id = 'draft';
     $node_1->save();
 
     // Make a node that is in Draft, then Published.
@@ -65,11 +65,11 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
       'title' => 'Node 2 - Rev 1',
       'uid' => $editor1->id(),
     ]);
-    $node_2->moderation_state_target_id = 'draft';
+    $node_2->moderation_state->target_id = 'draft';
     $node_2->save();
 
     $node_2->setTitle('Node 2 - Rev 2');
-    $node_2->moderation_state_target_id = 'published';
+    $node_2->moderation_state->target_id = 'published';
     $node_2->save();
 
     // Make a node that is in Draft, then Published, then Draft.
@@ -80,15 +80,15 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
       'title' => 'Node 3 - Rev 1',
       'uid' => $editor1->id(),
     ]);
-    $node_3->moderation_state_target_id = 'draft';
+    $node_3->moderation_state->target_id = 'draft';
     $node_3->save();
 
     $node_3->setTitle('Node 3 - Rev 2');
-    $node_3->moderation_state_target_id = 'published';
+    $node_3->moderation_state->target_id = 'published';
     $node_3->save();
 
     $node_3->setTitle('Node 3 - Rev 3');
-    $node_3->moderation_state_target_id = 'draft';
+    $node_3->moderation_state->target_id = 'draft';
     $node_3->save();
 
 

@@ -122,18 +122,19 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The content entity to moderate.
-   * @param string $moderation_state_target_id
+   * @param string $moderation_state->target_id
    *   (optional) The ID of the state to give the entity.
    */
-  public static function updateOrCreateFromEntity(EntityInterface $entity, $moderation_state_target_id = NULL) {
+  public static function updateOrCreateFromEntity(EntityInterface $entity, $moderation_state = NULL) {
+    $moderation_state = $moderation_state ?: $entity->moderation_state->target_id;
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
-    if (!$moderation_state_target_id) {
-      $moderation_state_target_id = \Drupal::service('content_moderation.moderation_information')
+    if (!$moderation_state) {
+      $moderation_state = \Drupal::service('content_moderation.moderation_information')
         ->loadBundleEntity($entity->getEntityType()->getBundleEntityType(), $entity->bundle())
         ->getThirdPartySetting('content_moderation', 'default_moderation_state');
     }
 
-    // @todo what if $moderation_state_target_id is null at this point?
+    // @todo what if $moderation_state->target_id is null at this point?
 
     $entity_type_id = $entity->getEntityTypeId();
     $entity_id = $entity->id();
@@ -171,7 +172,7 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
 
     // Create the ContentModerationState entity for the inserted entity.
     $content_moderation_state->set('content_entity_revision_id', $entity_revision_id);
-    $content_moderation_state->set('moderation_state', $moderation_state_target_id);
+    $content_moderation_state->set('moderation_state', $moderation_state);
     $content_moderation_state->save();
   }
 
