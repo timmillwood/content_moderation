@@ -79,18 +79,16 @@ class ModerationState extends EntityReferenceItem {
   /**
    * @inheritDoc
    */
-  public function __set($property_name, $value) {
-    if ($property_name === 'entity' || $property_name === 'target_id') {
-      $entity = $this->getEntity();
-      if ($property_name === 'entity') {
-        /** @var \Drupal\content_moderation\ModerationStateInterface $value */
-        $entity->moderation_state_target_id = $value->id();
-      }
-      else {
-        $entity->moderation_state_target_id = $value;
-      }
+  public function onChange($property_name, $notify = TRUE) {
+    $entity = $this->getEntity();
+    if ($property_name == 'entity') {
+      $entity->moderation_state_target_id = $this->get($property_name)->getValue()->id();
     }
-    return parent::__set($property_name, $value);
+    elseif ($property_name == 'target_id') {
+      $entity->moderation_state_target_id = $this->get($property_name)->getValue();
+    }
+    parent::onChange($property_name, $notify);
   }
+
 
 }

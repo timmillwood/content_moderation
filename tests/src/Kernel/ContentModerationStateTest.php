@@ -3,6 +3,7 @@
 namespace Drupal\Tests\content_moderation\Kernel;
 
 use Drupal\content_moderation\Entity\ContentModerationState;
+use Drupal\content_moderation\Entity\ModerationState;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\node\Entity\Node;
@@ -52,11 +53,24 @@ class ContentModerationStateTest extends KernelTestBase {
     $node = $this->reloadNode($node);
     $this->assertEquals('draft', $node->moderation_state->entity->id());
 
-    $node->moderation_state_target_id = 'needs_review';
+    $node->moderation_state->target_id = 'needs_review';
     $node->save();
 
     $node = $this->reloadNode($node);
     $this->assertEquals('needs_review', $node->moderation_state->entity->id());
+
+    $published = ModerationState::load('published');
+    $node->moderation_state->entity = $published;
+    $node->save();
+
+    $node = $this->reloadNode($node);
+    $this->assertEquals('published', $node->moderation_state->entity->id());
+
+    $node->moderation_state_target_id = 'archived';
+    $node->save();
+
+    $node = $this->reloadNode($node);
+    $this->assertEquals('archived', $node->moderation_state->entity->id());
 
     // Change the state without saving the node.
     $content_moderation_state = ContentModerationState::load(1);
