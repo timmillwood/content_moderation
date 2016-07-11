@@ -15,7 +15,7 @@ class ModerationStateNodeTypeTest extends ModerationStateTestBase {
    */
   public function testNotModerated() {
     $this->drupalLogin($this->adminUser);
-    $this->createContentTypeFromUI('Not moderated', 'not_moderated');
+    $this->createContentTypeFromUi('Not moderated', 'not_moderated');
     $this->assertText('The content type Not moderated has been added.');
     $this->grantUserPermissionToCreateContentOfType($this->adminUser, 'not_moderated');
     $this->drupalGet('node/add/not_moderated');
@@ -29,14 +29,10 @@ class ModerationStateNodeTypeTest extends ModerationStateTestBase {
   /**
    * Tests enabling moderation on an existing node-type, with content.
    */
-  /**
-   * A node type without moderation state enabled.
-   */
   public function testEnablingOnExistingContent() {
-
     // Create a node type that is not moderated.
     $this->drupalLogin($this->adminUser);
-    $this->createContentTypeFromUI('Not moderated', 'not_moderated');
+    $this->createContentTypeFromUi('Not moderated', 'not_moderated');
     $this->grantUserPermissionToCreateContentOfType($this->adminUser, 'not_moderated');
 
     // Create content.
@@ -47,12 +43,15 @@ class ModerationStateNodeTypeTest extends ModerationStateTestBase {
     $this->assertText('Not moderated Test has been created.');
 
     // Now enable moderation state.
-    $this->enableModerationThroughUI('not_moderated', ['draft', 'needs_review', 'published'], 'draft');
+    $this->enableModerationThroughUi(
+      'not_moderated',
+      ['draft', 'needs_review', 'published'],
+      'draft'
+    );
 
     // And make sure it works.
-    $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
-      'title' => 'Test'
-    ]);
+    $nodes = \Drupal::entityTypeManager()->getStorage('node')
+      ->loadByProperties(['title' => 'Test']);
     if (empty($nodes)) {
       $this->fail('Could not load node with title Test');
       return;

@@ -20,7 +20,14 @@ class ContentModerationStateTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'content_moderation', 'user', 'system', 'language', 'content_translation'];
+  public static $modules = [
+    'node',
+    'content_moderation',
+    'user',
+    'system',
+    'language',
+    'content_translation',
+  ];
 
   /**
    * {@inheritdoc}
@@ -83,12 +90,11 @@ class ContentModerationStateTest extends KernelTestBase {
     $this->assertEquals('needs_review', $node->moderation_state->entity->id());
   }
 
-
   /**
    * Tests basic multilingual content moderation through the API.
    */
   public function testMultilingualModeration() {
-    // Enable French
+    // Enable French.
     ConfigurableLanguage::createFromLangcode('fr')->save();
     $node_type = NodeType::create([
       'type' => 'example',
@@ -107,7 +113,7 @@ class ContentModerationStateTest extends KernelTestBase {
     $this->assertEquals('draft', $english_node->moderation_state->entity->id());
     $this->assertFalse($english_node->isPublished());
 
-    // Create a french translation.
+    // Create a French translation.
     $french_node = $english_node->addTranslation('fr', ['title' => 'French title']);
     $french_node->setPublished(FALSE);
     $french_node->save();
@@ -168,15 +174,17 @@ class ContentModerationStateTest extends KernelTestBase {
     $this->assertEquals('needs_review', $french_node->moderation_state->entity->id());
     // @todo Switching the moderation state to an unpublished state should
     // update the entity, but currently doesn't.
-    //$this->assertFalse($french_node->isPublished());
+    // $this->assertFalse($french_node->isPublished());
   }
 
   /**
    * Reloads the node after clearing the static cache.
    *
    * @param \Drupal\node\NodeInterface $node
+   *   The node to reload.
    *
    * @return \Drupal\node\NodeInterface
+   *   The reloaded node.
    */
   protected function reloadNode(NodeInterface $node) {
     \Drupal::entityTypeManager()->getStorage('node')->resetCache([$node->id()]);

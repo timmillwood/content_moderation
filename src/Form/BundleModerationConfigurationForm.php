@@ -2,8 +2,9 @@
 
 namespace Drupal\content_moderation\Form;
 
-use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Config\Entity\ThirdPartySettingsInterface;
 use Drupal\Core\Entity\EntityForm;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\content_moderation\Entity\ModerationState;
@@ -143,16 +144,22 @@ class BundleModerationConfigurationForm extends EntityForm {
    *
    * @todo This should be folded into the form method.
    *
-   * @param $entity_type
-   * @param \Drupal\Core\Config\Entity\ConfigEntityInterface $bundle
+   * @param string $entity_type_id
+   *   The entity type identifier.
+   * @param \Drupal\Core\Entity\EntityInterface $bundle
+   *   The bundle entity updated with the submitted values.
    * @param array $form
+   *   The complete form array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    */
-  public function formBuilderCallback($entity_type, ConfigEntityInterface $bundle, &$form, FormStateInterface $form_state) {
+  public function formBuilderCallback($entity_type_id, EntityInterface $bundle, &$form, FormStateInterface $form_state) {
     // @todo write a test for this.
-    $bundle->setThirdPartySetting('content_moderation', 'enabled', $form_state->getValue('enable_moderation_state'));
-    $bundle->setThirdPartySetting('content_moderation', 'allowed_moderation_states', array_keys(array_filter($form_state->getValue('allowed_moderation_states_published') + $form_state->getValue('allowed_moderation_states_unpublished'))));
-    $bundle->setThirdPartySetting('content_moderation', 'default_moderation_state', $form_state->getValue('default_moderation_state'));
+    if ($bundle instanceof ThirdPartySettingsInterface) {
+      $bundle->setThirdPartySetting('content_moderation', 'enabled', $form_state->getValue('enable_moderation_state'));
+      $bundle->setThirdPartySetting('content_moderation', 'allowed_moderation_states', array_keys(array_filter($form_state->getValue('allowed_moderation_states_published') + $form_state->getValue('allowed_moderation_states_unpublished'))));
+      $bundle->setThirdPartySetting('content_moderation', 'default_moderation_state', $form_state->getValue('default_moderation_state'));
+    }
   }
 
   /**
@@ -172,8 +179,8 @@ class BundleModerationConfigurationForm extends EntityForm {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // If moderation is enabled, revisions MUST be enabled as well.
-    // Otherwise we can't have forward revisions.
+    // If moderation is enabled, revisions MUST be enabled as well. Otherwise we
+    // can't have forward revisions.
     if ($form_state->getValue('enable_moderation_state')) {
       /* @var \Drupal\Core\Config\Entity\ConfigEntityTypeInterface $bundle */
       $bundle = $form_state->getFormObject()->getEntity();
@@ -181,7 +188,7 @@ class BundleModerationConfigurationForm extends EntityForm {
       $this->entityTypeManager->getHandler($bundle->getEntityType()->getBundleOf(), 'moderation')->onBundleModerationConfigurationFormSubmit($bundle);
     }
 
-    parent::submitForm( $form, $form_state);
+    parent::submitForm($form, $form_state);
 
     drupal_set_message($this->t('Your settings have been saved.'));
   }

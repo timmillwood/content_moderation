@@ -12,8 +12,9 @@ use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
- * Provides the following routes:
+ * Dynamic route provider for the Content moderation module.
  *
+ * Provides the following routes:
  * - The latest version tab, showing the latest revision of an entity, not the
  *   default one.
  */
@@ -86,7 +87,7 @@ class EntityModerationRouteProvider implements EntityRouteProviderInterface, Ent
         ->setOption('parameters', [
           $entity_type_id => [
             'type' => 'entity:' . $entity_type_id,
-            'load_forward_revision' => 1
+            'load_forward_revision' => 1,
           ],
         ]);
 

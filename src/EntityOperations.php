@@ -148,10 +148,10 @@ class EntityOperations {
   /**
    * Hook bridge.
    *
-   * @see hook_entity_insert()
-   *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity that was just saved.
+   *
+   * @see hook_entity_insert()
    */
   public function entityInsert(EntityInterface $entity) {
     if (!$this->moderationInfo->isModeratableEntity($entity)) {
@@ -164,10 +164,10 @@ class EntityOperations {
   /**
    * Hook bridge.
    *
-   * @see hook_entity_update()
-   *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity that was just saved.
+   *
+   * @see hook_entity_update()
    */
   public function entityUpdate(EntityInterface $entity) {
     if (!$this->moderationInfo->isModeratableEntity($entity)) {

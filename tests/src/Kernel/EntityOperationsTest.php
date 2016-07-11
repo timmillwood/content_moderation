@@ -9,9 +9,8 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 
 /**
- * Class EntityOperationsTest
- *
  * @coversDefaultClass \Drupal\content_moderation\EntityOperations
+ *
  * @group content_moderation
  */
 class EntityOperationsTest extends KernelTestBase {
@@ -19,7 +18,14 @@ class EntityOperationsTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['content_moderation', 'node', 'views', 'options', 'user', 'system'];
+  public static $modules = [
+    'content_moderation',
+    'node',
+    'views',
+    'options',
+    'user',
+    'system',
+  ];
 
   /**
    * {@inheritdoc}

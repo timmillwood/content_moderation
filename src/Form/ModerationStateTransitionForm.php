@@ -16,11 +16,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ModerationStateTransitionForm extends EntityForm {
 
   /**
+   * The entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
+   * The entity query factory.
+   *
    * @var \Drupal\Core\Entity\Query\QueryFactory
    */
   protected $queryFactory;
@@ -29,6 +33,9 @@ class ModerationStateTransitionForm extends EntityForm {
    * Constructs a new ModerationStateTransitionForm.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Entity\Query\QueryFactory $query_factory
+   *   The entity query factory.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, QueryFactory $query_factory) {
     $this->entityTypeManager = $entity_type_manager;

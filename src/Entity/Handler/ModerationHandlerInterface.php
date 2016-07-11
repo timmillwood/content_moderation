@@ -16,6 +16,8 @@ use Drupal\Core\Form\FormStateInterface;
 interface ModerationHandlerInterface {
 
   /**
+   * Operates on moderatable content entities preSave().
+   *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The entity to modify.
    * @param bool $default_revision
@@ -37,8 +39,6 @@ interface ModerationHandlerInterface {
    *
    * @param \Drupal\Core\Config\Entity\ConfigEntityInterface $bundle
    *   The bundle definition that is being saved.
-   *
-   * @return mixed
    */
   public function onBundleModerationConfigurationFormSubmit(ConfigEntityInterface $bundle);
 

@@ -10,6 +10,7 @@ use Drupal\Core\Url;
  * Builds the form to delete Moderation state entities.
  */
 class ModerationStateDeleteForm extends EntityConfirmFormBase {
+
   /**
    * {@inheritdoc}
    */
@@ -37,13 +38,10 @@ class ModerationStateDeleteForm extends EntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
 
-    drupal_set_message(
-      $this->t('Moderation state %label deleted.',
-        [
-          '%label' => $this->entity->label()
-        ]
-        )
-    );
+    drupal_set_message($this->t(
+      'Moderation state %label deleted.',
+      ['%label' => $this->entity->label()]
+    ));
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }

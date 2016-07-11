@@ -10,16 +10,15 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 interface ModerationStateInterface extends ConfigEntityInterface {
 
   /**
-   * Determines if this state represents a published node.
+   * Determines if content updated to this state should be published.
    *
    * @return bool
-   *   TRUE if this state deems the node published.
+   *   TRUE if content updated to this state should be published.
    */
   public function isPublishedState();
 
   /**
-   * Determines if a revision should be made the default revision upon transition to
-   * this state.
+   * Determines if content updated to this state should be the default revision.
    *
    * @return bool
    *   TRUE if content in this state should be the default revision.

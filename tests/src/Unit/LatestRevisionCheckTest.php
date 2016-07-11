@@ -20,8 +20,6 @@ class LatestRevisionCheckTest extends \PHPUnit_Framework_TestCase {
   /**
    * Test the access check of the LatestRevisionCheck service.
    *
-   * @dataProvider accessSituationProvider
-   *
    * @param string $entity_class
    *   The class of the entity to mock.
    * @param string $entity_type
@@ -31,6 +29,8 @@ class LatestRevisionCheckTest extends \PHPUnit_Framework_TestCase {
    * @param string $result_class
    *   The AccessResult class that should result. One of AccessResultAllowed,
    *   AccessResultForbidden, AccessResultNeutral.
+   *
+   * @dataProvider accessSituationProvider
    */
   public function testLatestAccessPermissions($entity_class, $entity_type, $has_forward, $result_class) {
 
@@ -62,8 +62,6 @@ class LatestRevisionCheckTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * Data provider for testLastAccessPermissions().
-   *
-   * @return array
    */
   public function accessSituationProvider() {
     return [

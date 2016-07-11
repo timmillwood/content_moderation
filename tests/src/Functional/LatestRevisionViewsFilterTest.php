@@ -16,7 +16,15 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['content_moderation_test_views', 'content_moderation', 'node', 'views', 'options', 'user', 'system'];
+  public static $modules = [
+    'content_moderation_test_views',
+    'content_moderation',
+    'node',
+    'views',
+    'options',
+    'user',
+    'system',
+  ];
 
   /**
    * Tests view shows the correct node IDs.
@@ -42,12 +50,10 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
     $node_0->save();
 
     // Now enable moderation for subsequent nodes.
-
     $node_type->setThirdPartySetting('content_moderation', 'enabled', TRUE);
     $node_type->save();
 
     // Make a node that is only ever in Draft.
-
     /** @var Node $node_1 */
     $node_1 = Node::create([
       'type' => 'test',
@@ -58,7 +64,6 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
     $node_1->save();
 
     // Make a node that is in Draft, then Published.
-
     /** @var Node $node_2 */
     $node_2 = Node::create([
       'type' => 'test',
@@ -73,7 +78,6 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
     $node_2->save();
 
     // Make a node that is in Draft, then Published, then Draft.
-
     /** @var Node $node_3 */
     $node_3 = Node::create([
       'type' => 'test',
@@ -91,9 +95,7 @@ class LatestRevisionViewsFilterTest extends BrowserTestBase {
     $node_3->moderation_state->target_id = 'draft';
     $node_3->save();
 
-
     // Now show the View, and confirm that only the correct titles are showing.
-
     $this->drupalGet('/latest');
     $page = $this->getSession()->getPage();
     $this->assertEquals(200, $this->getSession()->getStatusCode());

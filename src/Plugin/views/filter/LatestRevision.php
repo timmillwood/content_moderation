@@ -44,8 +44,11 @@ class LatestRevision extends FilterPluginBase implements ContainerFactoryPluginI
    * Constructs a new LatestRevision.
    *
    * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
+   *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity Type Manager Service.
    * @param \Drupal\views\Plugin\ViewsHandlerManager $join_handler
@@ -75,17 +78,21 @@ class LatestRevision extends FilterPluginBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public function adminSummary() { }
+  public function adminSummary() {
+  }
 
   /**
    * {@inheritdoc}
    */
-  protected function operatorForm(&$form, FormStateInterface $form_state) { }
+  protected function operatorForm(&$form, FormStateInterface $form_state) {
+  }
 
   /**
    * {@inheritdoc}
    */
-  public function canExpose() { return FALSE; }
+  public function canExpose() {
+    return FALSE;
+  }
 
   /**
    * {@inheritdoc}

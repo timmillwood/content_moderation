@@ -20,7 +20,7 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   use StringTranslationTrait;
 
   /**
-   * The base plugin ID
+   * The base plugin ID.
    *
    * @var string
    */
@@ -68,12 +68,12 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
 
     foreach ($this->moderatableEntityTypeDefinitions() as $entity_type_id => $entity_type) {
       $this->derivatives["$entity_type_id.moderation_tab"] = [
-          'route_name' => "entity.$entity_type_id.moderation",
-          'title' => $this->t('Manage moderation'),
-          // @todo - are we sure they all have an edit_form?
-          'base_route' => "entity.$entity_type_id.edit_form",
-          'weight' => 30,
-        ] + $base_plugin_definition;
+        'route_name' => "entity.$entity_type_id.moderation",
+        'title' => $this->t('Manage moderation'),
+        // @todo - are we sure they all have an edit_form?
+        'base_route' => "entity.$entity_type_id.edit_form",
+        'weight' => 30,
+      ] + $base_plugin_definition;
     }
 
     $latest_version_entities = array_filter($this->moderatableEntityDefinitions(), function (EntityTypeInterface $type) {
@@ -82,11 +82,11 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
 
     foreach ($latest_version_entities as $entity_type_id => $entity_type) {
       $this->derivatives["$entity_type_id.latest_version_tab"] = [
-          'route_name' => "entity.$entity_type_id.latest_version",
-          'title' => $this->t('Latest version'),
-          'base_route' => "entity.$entity_type_id.canonical",
-          'weight' => 1,
-        ] + $base_plugin_definition;
+        'route_name' => "entity.$entity_type_id.latest_version",
+        'title' => $this->t('Latest version'),
+        'base_route' => "entity.$entity_type_id.canonical",
+        'weight' => 1,
+      ] + $base_plugin_definition;
     }
 
     return $this->derivatives;
@@ -107,10 +107,10 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   }
 
   /**
-   * Returns an iterable of the config entities representing moderatable content.
+   * Returns entity types that represent bundles that can be moderated.
    *
    * @return EntityTypeInterface[]
-   *   An array of just those entity types we care about.
+   *   An array of entity types that represent bundles that can be moderated.
    */
   protected function moderatableEntityTypeDefinitions() {
     $entity_types = $this->entityTypeManager->getDefinitions();

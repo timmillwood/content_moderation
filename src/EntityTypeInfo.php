@@ -38,12 +38,15 @@ class EntityTypeInfo {
   protected $moderationInfo;
 
   /**
+   * The entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
    * A keyed array of custom moderation handlers for given entity types.
+   *
    * Any entity not specified will use a common default.
    *
    * @var array
@@ -120,7 +123,7 @@ class EntityTypeInfo {
   }
 
   /**
-   * Modifies an entity type definition to include moderation configuration support.
+   * Configures moderation configuration support on a entity type definition.
    *
    * That "configuration support" includes a configuration form, a hypermedia
    * link, and a route provider to tie it all together. There's also a
@@ -209,7 +212,7 @@ class EntityTypeInfo {
     foreach ($this->getModeratedBundles() as $bundle) {
       $return[$bundle['entity']][$bundle['bundle']]['display']['content_moderation_control'] = [
         'label' => $this->t('Moderation control'),
-        'description' => $this->t('Status listing and form for the entity\'s moderation state.'),
+        'description' => $this->t("Status listing and form for the entity's moderation state."),
         'weight' => -20,
         'visible' => TRUE,
       ];
@@ -330,7 +333,7 @@ class EntityTypeInfo {
 
       $this->entityTypeManager->getHandler($entity->getEntityTypeId(), 'moderation')->enforceRevisionsEntityFormAlter($form, $form_state, $form_id);
 
-      // Submit handler to redirect to the
+      // Submit handler to redirect to the latest version, if available.
       $form['actions']['submit']['#submit'][] = [EntityTypeInfo::class, 'bundleFormRedirect'];
     }
   }

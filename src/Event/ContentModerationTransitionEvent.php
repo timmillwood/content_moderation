@@ -28,7 +28,7 @@ class ContentModerationTransitionEvent extends Event {
 
   /**
    * The state after the transition.
-   * 
+   *
    * @var string
    */
   protected $stateAfter;
@@ -53,6 +53,7 @@ class ContentModerationTransitionEvent extends Event {
    * Returns the changed entity.
    *
    * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   The content entity being moderated.
    */
   public function getEntity() {
     return $this->entity;
@@ -62,6 +63,7 @@ class ContentModerationTransitionEvent extends Event {
    * Returns state before the transition.
    *
    * @return string
+   *   The state before the transition.
    */
   public function getStateBefore() {
     return $this->stateBefore;
@@ -71,6 +73,7 @@ class ContentModerationTransitionEvent extends Event {
    * Returns state after the transition.
    *
    * @return string
+   *   The state after the transition.
    */
   public function getStateAfter() {
     return $this->stateAfter;

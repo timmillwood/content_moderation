@@ -21,6 +21,7 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
    * Builds a mock storage object for Transitions.
    *
    * @return EntityStorageInterface
+   *   The mocked storage object for Transitions.
    */
   protected function setupTransitionStorage() {
     $entity_storage = $this->prophesize(EntityStorageInterface::class);
@@ -46,6 +47,7 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
    * Builds an array of mocked Transition objects.
    *
    * @return ModerationStateTransitionInterface[]
+   *   An array of mocked Transition objects.
    */
   protected function setupTransitionEntityList() {
     $transition = $this->prophesize(ModerationStateTransitionInterface::class);
@@ -97,6 +99,7 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
    * Builds a mock storage object for States.
    *
    * @return EntityStorageInterface
+   *   The mocked storage object for States.
    */
   protected function setupStateStorage() {
     $entity_storage = $this->prophesize(EntityStorageInterface::class);
@@ -149,6 +152,7 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
    * Builds a mocked Entity Type Manager.
    *
    * @return EntityTypeManagerInterface
+   *   The mocked Entity Type Manager.
    */
   protected function setupEntityTypeManager(EntityStorageInterface $storage) {
     $entityTypeManager = $this->prophesize(EntityTypeManagerInterface::class);
@@ -162,6 +166,7 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
    * Builds a mocked query factory that does nothing.
    *
    * @return QueryFactory
+   *   The mocked query factory that does nothing.
    */
   protected function setupQueryFactory() {
     $factory = $this->prophesize(QueryFactory::class);
@@ -181,6 +186,9 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
     $this->assertTrue($state_transition_validation->isTransitionAllowed($storage->load($from_id), $storage->load($to_id)));
   }
 
+  /**
+   * Data provider for self::testIsTransitionAllowedWithValidTransition().
+   */
   public function providerIsTransitionAllowedWithValidTransition() {
     return [
       ['draft', 'draft'],
@@ -204,6 +212,9 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
     $this->assertFalse($state_transition_validation->isTransitionAllowed($storage->load($from_id), $storage->load($to_id)));
   }
 
+  /**
+   * Data provider for self::testIsTransitionAllowedWithInValidTransition().
+   */
   public function providerIsTransitionAllowedWithInValidTransition() {
     return [
       ['published', 'needs_review'],
@@ -247,8 +258,6 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * Data provider for the user transition test.
-   *
-   * @return array
    */
   public function userTransitionsProvider() {
     // The user has the right permission, so let it through.
@@ -275,8 +284,9 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
  * method that uses it.
  */
 class Validator extends StateTransitionValidation {
+
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   protected function getTransitionFromStates(ModerationStateInterface $from, ModerationStateInterface $to) {
     if ($from->id() === 'draft' && $to->id() === 'draft') {

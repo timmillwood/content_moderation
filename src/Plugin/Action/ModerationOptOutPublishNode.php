@@ -18,24 +18,36 @@ class ModerationOptOutPublishNode extends PublishNode implements ContainerFactor
 
   /**
    * Moderation information service.
-   * 
+   *
    * @var \Drupal\content_moderation\ModerationInformationInterface
    */
   protected $moderationInfo;
 
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModerationInformationInterface $mod_info) {
+  /**
+   * ModerationOptOutPublishNode constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\content_moderation\ModerationInformationInterface $moderation_info
+   *   The moderation information service.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModerationInformationInterface $moderation_info) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->moderationInfo = $mod_info;
+    $this->moderationInfo = $moderation_info;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-   return new static(
-     $configuration, $plugin_id, $plugin_definition,
-     $container->get('content_moderation.moderation_information')
-   );
+    return new static(
+      $configuration, $plugin_id, $plugin_definition,
+      $container->get('content_moderation.moderation_information')
+    );
   }
 
   /**

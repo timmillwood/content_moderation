@@ -61,7 +61,7 @@ interface ModerationInformationInterface {
   public function isModeratableBundle(EntityTypeInterface $entity_type, $bundle);
 
   /**
-   * Filters an entity list to just bundle definitions for revisionable entities.
+   * Filters entity lists to just bundle definitions for revisionable entities.
    *
    * @param EntityTypeInterface[] $entity_types
    *   The master entity type list filter.
@@ -72,9 +72,10 @@ interface ModerationInformationInterface {
   public function selectRevisionableEntityTypes(array $entity_types);
 
   /**
-   * Filters an entity list to just the definitions for moderatable entities.
+   * Filters entity lists to just the definitions for moderatable entities.
    *
-   * An entity type is moderatable only if it is both revisionable and bundable.
+   * An entity type is moderatable only if it is both revisionable and
+   * bundleable.
    *
    * @param EntityTypeInterface[] $entity_types
    *   The master entity type list filter.
@@ -200,9 +201,9 @@ interface ModerationInformationInterface {
    * A "live" entity revision is one whose latest revision is also the default,
    * and whose moderation state, if any, is a published state.
    *
-   *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The entity to check.
+   *
    * @return bool
    *   TRUE if the specified entity is a live revision, FALSE otherwise.
    */

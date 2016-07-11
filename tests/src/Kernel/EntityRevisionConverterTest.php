@@ -13,7 +13,13 @@ use Drupal\node\Entity\NodeType;
  */
 class EntityRevisionConverterTest extends KernelTestBase {
 
-  public static $modules = ['user', 'entity_test', 'system', 'content_moderation', 'node'];
+  public static $modules = [
+    'user',
+    'entity_test',
+    'system',
+    'content_moderation',
+    'node',
+  ];
 
   /**
    * {@inheritdoc}
@@ -31,6 +37,9 @@ class EntityRevisionConverterTest extends KernelTestBase {
     \Drupal::service('router.builder')->rebuild();
   }
 
+  /**
+   * @covers ::convert
+   */
   public function testConvertNonRevisionableEntityType() {
     $entity_test = EntityTest::create([
       'name' => 'test',
@@ -46,6 +55,9 @@ class EntityRevisionConverterTest extends KernelTestBase {
     $this->assertEquals($entity_test->getRevisionId(), $result['entity_test']->getRevisionId());
   }
 
+  /**
+   * @covers ::convert
+   */
   public function testConvertWithRevisionableEntityType() {
     $node_type = NodeType::create([
       'type' => 'article',
@@ -56,7 +68,7 @@ class EntityRevisionConverterTest extends KernelTestBase {
     $revision_ids = [];
     $node = Node::create([
       'title' => 'test',
-      'type' => 'article'
+      'type' => 'article',
     ]);
     $node->save();
 

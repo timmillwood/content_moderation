@@ -51,7 +51,8 @@ class ModerationStateBlockTest extends ModerationStateTestBase {
   public function testCustomBlockModeration() {
     $this->drupalLogin($this->rootUser);
 
-    // Enable moderation for custom blocks at admin/structure/block/block-content/manage/basic/moderation.
+    // Enable moderation for custom blocks at
+    // admin/structure/block/block-content/manage/basic/moderation.
     $edit = [
       'enable_moderation_state' => TRUE,
       'allowed_moderation_states_unpublished[draft]' => TRUE,

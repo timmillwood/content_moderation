@@ -6,8 +6,6 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\content_moderation\Entity\ModerationState;
 
 /**
- * Class ModerationStateEntityTest
- *
  * @coversDefaultClass \Drupal\content_moderation\Entity\ModerationState
  *
  * @group content_moderation

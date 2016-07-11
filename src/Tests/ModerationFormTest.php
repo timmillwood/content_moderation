@@ -15,10 +15,10 @@ class ModerationFormTest extends ModerationStateTestBase {
   protected function setUp() {
     parent::setUp();
     $this->drupalLogin($this->adminUser);
-    $this->createContentTypeFromUI('Moderated content', 'moderated_content', TRUE, [
+    $this->createContentTypeFromUi('Moderated content', 'moderated_content', TRUE, [
       'draft',
       'needs_review',
-      'published'
+      'published',
     ], 'draft');
     $this->grantUserPermissionToCreateContentOfType($this->adminUser, 'moderated_content');
   }

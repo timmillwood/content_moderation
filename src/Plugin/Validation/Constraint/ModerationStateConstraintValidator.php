@@ -55,8 +55,7 @@ class ModerationStateConstraintValidator extends ConstraintValidator implements 
   }
 
   /**
-   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
-   * @return static
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -106,7 +105,7 @@ class ModerationStateConstraintValidator extends ConstraintValidator implements 
       $new_state = ModerationStateEntity::load($new_state_id);
     }
     // @todo - what if $new_state_id references something that does not exist or
-    //    is null.
+    //   is null.
     if (!$this->validation->isTransitionAllowed($original_entity->moderation_state->entity, $new_state)) {
       $this->context->addViolation($constraint->message, ['%from' => $original_entity->moderation_state->entity->label(), '%to' => $new_state->label()]);
     }
@@ -119,6 +118,7 @@ class ModerationStateConstraintValidator extends ConstraintValidator implements 
    * that means it predates the presence of moderation states.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity being moderated.
    *
    * @return bool
    *   TRUE if this is the entity's first time being moderated, FALSE otherwise.

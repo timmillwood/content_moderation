@@ -15,11 +15,13 @@ class NodeAccessTest extends ModerationStateTestBase {
   protected function setUp() {
     parent::setUp();
     $this->drupalLogin($this->adminUser);
-    $this->createContentTypeFromUI('Moderated content', 'moderated_content', TRUE, [
-      'draft',
-      'needs_review',
-      'published'
-    ], 'draft');
+    $this->createContentTypeFromUi(
+      'Moderated content',
+      'moderated_content',
+      TRUE,
+      ['draft', 'needs_review', 'published'],
+      'draft'
+    );
     $this->grantUserPermissionToCreateContentOfType($this->adminUser, 'moderated_content');
   }
 

@@ -51,6 +51,8 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
   protected $moderationStateStorage;
 
   /**
+   * Moderation information service.
+   *
    * @var \Drupal\content_moderation\ModerationInformation
    */
   protected $moderationInformation;
@@ -63,11 +65,15 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
   protected $entityTypeManager;
 
   /**
+   * Moderation state transition storage.
+   *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $moderationStateTransitionStorage;
 
   /**
+   * Moderation state transition validation service.
+   *
    * @var \Drupal\content_moderation\StateTransitionValidation
    */
   protected $validator;
@@ -194,9 +200,9 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
    */
   public static function processActions($element, FormStateInterface $form_state, array &$form) {
 
-    // We'll steal most of the button configuration from the default submit button.
-    // However, NodeForm also hides that button for admins (as it adds its own,
-    // too), so we have to restore it.
+    // We'll steal most of the button configuration from the default submit
+    // button. However, NodeForm also hides that button for admins (as it adds
+    // its own, too), so we have to restore it.
     $default_button = $form['actions']['submit'];
     $default_button['#access'] = TRUE;
 
@@ -216,7 +222,6 @@ class ModerationStateWidget extends OptionsSelectWidget implements ContainerFact
       $button['#value'] = $translatable
         ? t('Save and @transition (this translation)', ['@transition' => $label])
         : t('Save and @transition', ['@transition' => $label]);
-
 
       $form['actions']['moderation_state_' . $id] = $button + $default_button;
     }

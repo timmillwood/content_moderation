@@ -14,17 +14,27 @@ class ModerationLocaleTest extends ModerationStateTestBase {
    *
    * @var array
    */
-  public static $modules = ['node', 'content_moderation', 'locale', 'content_translation'];
+  public static $modules = [
+    'node',
+    'content_moderation',
+    'locale',
+    'content_translation',
+  ];
 
   /**
-   * Test that an article can be translated and its translations can be
-   * moderated separately as core does.
+   * Tests article translations can be moderated separately.
    */
   public function testTranslateModeratedContent() {
     $this->drupalLogin($this->rootUser);
 
     // Enable moderation on Article node type.
-    $this->createContentTypeFromUI('Article', 'article', TRUE, ['draft', 'published', 'archived'], 'draft');
+    $this->createContentTypeFromUi(
+      'Article',
+      'article',
+      TRUE,
+      ['draft', 'published', 'archived'],
+      'draft'
+    );
 
     // Add French language.
     $edit = [
@@ -119,7 +129,7 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $french_node = $english_node->getTranslation('fr');
 
     // Publish the translation and check that the source language version stays
-    // unpublished
+    // unpublished.
     $this->drupalPostForm('fr/node/' . $english_node->id() . '/edit', [], t('Save and Publish (this translation)'));
     $this->assertText(t('Article Translated node has been updated.'));
     $english_node = $this->drupalGetNodeByTitle('Another node', TRUE);

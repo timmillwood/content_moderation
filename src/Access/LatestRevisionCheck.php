@@ -40,7 +40,7 @@ class LatestRevisionCheck implements AccessInterface {
    * @param \Symfony\Component\Routing\Route $route
    *   The route to check against.
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *   The parametrized route
+   *   The parametrized route.
    *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
@@ -61,7 +61,7 @@ class LatestRevisionCheck implements AccessInterface {
    * @param \Symfony\Component\Routing\Route $route
    *   The route to check against.
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *   The parametrized route
+   *   The parametrized route.
    *
    * @return \Drupal\Core\Entity\ContentEntityInterface
    *   returns the Entity in question.

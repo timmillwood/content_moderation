@@ -21,7 +21,13 @@ class ContentModerationSchemaTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['content_moderation', 'node', 'user', 'block_content', 'system'];
+  public static $modules = [
+    'content_moderation',
+    'node',
+    'user',
+    'block_content',
+    'system',
+  ];
 
   /**
    * Tests content moderation default schema.

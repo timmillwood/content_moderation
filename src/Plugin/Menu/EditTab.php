@@ -11,7 +11,7 @@ use Drupal\content_moderation\ModerationInformation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Defines a class for making the edit tab use 'Edit draft' or 'New draft'
+ * Defines a class for making the edit tab use 'Edit draft' or 'New draft'.
  */
 class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterface {
 

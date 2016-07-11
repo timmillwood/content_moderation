@@ -33,6 +33,7 @@ interface StateTransitionValidationInterface {
    *   The account that wants to perform a transition.
    *
    * @return \Drupal\content_moderation\Entity\ModerationStateTransition[]
+   *   The list of transitions that are legal for this user on this entity.
    */
   public function getValidTransitions(ContentEntityInterface $entity, AccountInterface $user);
 

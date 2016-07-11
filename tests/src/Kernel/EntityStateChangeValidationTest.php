@@ -16,7 +16,14 @@ class EntityStateChangeValidationTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'content_moderation', 'user', 'system', 'language', 'content_translation'];
+  public static $modules = [
+    'node',
+    'content_moderation',
+    'user',
+    'system',
+    'language',
+    'content_translation',
+  ];
 
   /**
    * {@inheritdoc}
@@ -82,7 +89,7 @@ class EntityStateChangeValidationTest extends KernelTestBase {
   }
 
   /**
-   * Verifies that content without prior moderation information can be moderated.
+   * Tests that content without prior moderation information can be moderated.
    */
   public function testLegacyContent() {
     $node_type = NodeType::create([
@@ -119,10 +126,10 @@ class EntityStateChangeValidationTest extends KernelTestBase {
   }
 
   /**
-   * Verifies that content without prior moderation information can be translated.
+   * Tests that content without prior moderation information can be translated.
    */
   public function testLegacyMultilingualContent() {
-    // Enable French
+    // Enable French.
     ConfigurableLanguage::createFromLangcode('fr')->save();
 
     $node_type = NodeType::create([

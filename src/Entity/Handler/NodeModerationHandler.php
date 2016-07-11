@@ -49,7 +49,7 @@ class NodeModerationHandler extends ModerationHandler {
    * Check if an entity's default revision and/or state needs adjusting.
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
-   *   The entity to check
+   *   The entity to check.
    * @param bool $published_state
    *   Whether the state being transitioned to is a published state or not.
    *

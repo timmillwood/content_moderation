@@ -22,6 +22,7 @@ class ModerationInformationTest extends \PHPUnit_Framework_TestCase {
    * Builds a mock user.
    *
    * @return AccountInterface
+   *   The mocked user.
    */
   protected function getUser() {
     return $this->prophesize(AccountInterface::class)->reveal();
@@ -31,8 +32,10 @@ class ModerationInformationTest extends \PHPUnit_Framework_TestCase {
    * Returns a mock Entity Type Manager.
    *
    * @param \Drupal\Core\Entity\EntityStorageInterface $entity_bundle_storage
+   *   Entity bundle storage.
    *
    * @return EntityTypeManagerInterface
+   *   The mocked entity type manager.
    */
   protected function getEntityTypeManager(EntityStorageInterface $entity_bundle_storage) {
     $entity_type_manager = $this->prophesize(EntityTypeManagerInterface::class);
@@ -40,6 +43,15 @@ class ModerationInformationTest extends \PHPUnit_Framework_TestCase {
     return $entity_type_manager->reveal();
   }
 
+  /**
+   * Sets up content moderation and entity manager mocking.
+   *
+   * @param bool $status
+   *   TRUE if content_moderation should be enabled, FALSE if not.
+   *
+   * @return \Drupal\Core\Entity\EntityTypeManagerInterface
+   *   The mocked entity type manager.
+   */
   public function setupModerationEntityManager($status) {
     $bundle = $this->prophesize(ConfigEntityInterface::class);
     $bundle->getThirdPartySetting('content_moderation', 'enabled', FALSE)->willReturn($status);
@@ -123,6 +135,9 @@ class ModerationInformationTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($status, $moderation_information->isModeratedEntityForm($form->reveal()));
   }
 
+  /**
+   * @covers ::isModeratedEntityForm
+   */
   public function testIsModeratedEntityFormWithNonContentEntityForm() {
     $form = $this->prophesize(EntityFormInterface::class);
     $moderation_information = new ModerationInformation($this->setupModerationEntityManager(TRUE), $this->getUser());
@@ -130,6 +145,9 @@ class ModerationInformationTest extends \PHPUnit_Framework_TestCase {
     $this->assertFalse($moderation_information->isModeratedEntityForm($form->reveal()));
   }
 
+  /**
+   * Data provider for several tests.
+   */
   public function providerBoolean() {
     return [
       [FALSE],

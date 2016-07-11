@@ -18,7 +18,7 @@ abstract class ModerationStateTestBase extends WebTestBase {
   protected $profile = 'testing';
 
   /**
-   * Admin user
+   * Admin user.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
@@ -80,13 +80,13 @@ abstract class ModerationStateTestBase extends WebTestBase {
    * @param string $content_type_id
    *   Machine name.
    * @param bool $moderated
-   *   TRUE if should be moderated
+   *   TRUE if should be moderated.
    * @param string[] $allowed_states
-   *   Array of allowed state IDs
+   *   Array of allowed state IDs.
    * @param string $default_state
    *   Default state.
    */
-  protected function createContentTypeFromUI($content_type_name, $content_type_id, $moderated = FALSE, array $allowed_states = [], $default_state = NULL) {
+  protected function createContentTypeFromUi($content_type_name, $content_type_id, $moderated = FALSE, array $allowed_states = [], $default_state = NULL) {
     $this->drupalGet('admin/structure/types');
     $this->clickLink('Add content type');
     $edit = [
@@ -96,7 +96,7 @@ abstract class ModerationStateTestBase extends WebTestBase {
     $this->drupalPostForm(NULL, $edit, t('Save content type'));
 
     if ($moderated) {
-      $this->enableModerationThroughUI($content_type_id, $allowed_states, $default_state);
+      $this->enableModerationThroughUi($content_type_id, $allowed_states, $default_state);
     }
   }
 
@@ -110,7 +110,7 @@ abstract class ModerationStateTestBase extends WebTestBase {
    * @param string $default_state
    *   Default state.
    */
-  protected function enableModerationThroughUI($content_type_id, array $allowed_states, $default_state) {
+  protected function enableModerationThroughUi($content_type_id, array $allowed_states, $default_state) {
     $this->drupalGet('admin/structure/types/manage/' . $content_type_id . '/moderation');
     $this->assertFieldByName('enable_moderation_state');
     $this->assertNoFieldChecked('edit-enable-moderation-state');
@@ -127,7 +127,6 @@ abstract class ModerationStateTestBase extends WebTestBase {
 
     $this->drupalPostForm(NULL, $edit, t('Save'));
   }
-
 
   /**
    * Grants given user permission to create content of given type.

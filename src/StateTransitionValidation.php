@@ -14,11 +14,15 @@ use Drupal\content_moderation\Entity\ModerationStateTransition;
 class StateTransitionValidation implements StateTransitionValidationInterface {
 
   /**
+   * Entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
+   * Entity query factory.
+   *
    * @var \Drupal\Core\Entity\Query\QueryFactory
    */
   protected $queryFactory;
@@ -129,7 +133,7 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
   }
 
   /**
-   * Returns a list of transitions from a given state.
+   * Returns a list of possible transitions from a given state.
    *
    * This list is based only on those transitions that exist, not what
    * transitions are legal in a given context.
@@ -138,6 +142,7 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
    *   The machine name of the state from which we are transitioning.
    *
    * @return ModerationStateTransition[]
+   *   A list of possible transitions from a given state.
    */
   protected function getTransitionsFrom($state_name) {
     $result = $this->transitionStateQuery()
@@ -167,7 +172,7 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
    *   The destination state.
    *
    * @return ModerationStateTransition|null
-   *   A transition object, or NULL if there is no such transition in the system.
+   *   A transition object, or NULL if there is no such transition.
    */
   protected function getTransitionFromStates(ModerationStateInterface $from, ModerationStateInterface $to) {
     $from = $this->transitionStateQuery()
@@ -195,9 +200,10 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
   }
 
   /**
+   * Returns a transition state entity query.
    *
    * @return \Drupal\Core\Entity\Query\QueryInterface
-   *   A transition state query.
+   *   A transition state entity query.
    */
   protected function transitionStateQuery() {
     return $this->queryFactory->get('moderation_state_transition', 'AND');
@@ -207,6 +213,7 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
    * Returns the transition entity storage service.
    *
    * @return \Drupal\Core\Entity\EntityStorageInterface
+   *   The transition state entity storage.
    */
   protected function transitionStorage() {
     return $this->entityTypeManager->getStorage('moderation_state_transition');
@@ -216,6 +223,7 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
    * Returns the state entity storage service.
    *
    * @return \Drupal\Core\Entity\EntityStorageInterface
+   *   The moderation state entity storage.
    */
   protected function stateStorage() {
     return $this->entityTypeManager->getStorage('moderation_state');
@@ -230,11 +238,10 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
    *   The bundle ID.
    *
    * @return \Drupal\Core\Config\Entity\ConfigEntityInterface|null
+   *   The specific bundle entity.
    */
   protected function loadBundleEntity($bundle_entity_type_id, $bundle_id) {
-    if ($bundle_entity_type_id) {
-      return $this->entityTypeManager->getStorage($bundle_entity_type_id)->load($bundle_id);
-    }
+    return $this->entityTypeManager->getStorage($bundle_entity_type_id)->load($bundle_id);
   }
 
 }

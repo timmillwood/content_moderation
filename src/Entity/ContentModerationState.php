@@ -41,7 +41,7 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
   use EntityChangedTrait;
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
@@ -125,7 +125,7 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
    * @param string $moderation_state_id
    *   (optional) The ID of the state to give the entity.
    */
-  public static function updateOrCreateFromEntity(EntityInterface $entity, $moderation_state_id= NULL) {
+  public static function updateOrCreateFromEntity(EntityInterface $entity, $moderation_state_id = NULL) {
     $moderation_state = $moderation_state_id ?: $entity->moderation_state->target_id;
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     if (!$moderation_state) {

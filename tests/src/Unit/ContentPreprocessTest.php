@@ -7,9 +7,8 @@ use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\node\Entity\Node;
 
 /**
- * Class ContentPreprocessTest.
- *
  * @coversDefaultClass \Drupal\content_moderation\ContentPreprocess
+ *
  * @group content_moderation
  */
 class ContentPreprocessTest extends \PHPUnit_Framework_TestCase {
@@ -24,6 +23,9 @@ class ContentPreprocessTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($result, $content_preprocess->isLatestVersionPage($node), $message);
   }
 
+  /**
+   * Data provider for self::testIsLatestVersionPage().
+   */
   public function routeNodeProvider() {
     return [
       ['entity.node.cannonical', 1, 1, FALSE, 'Not on the latest version tab route.'],
@@ -35,14 +37,17 @@ class ContentPreprocessTest extends \PHPUnit_Framework_TestCase {
   /**
    * Mock the current route matching object.
    *
-   * @param string $route
+   * @param string $route_name
+   *   The route to mock.
    * @param int $nid
+   *   The node ID for mocking.
    *
-   * @return CurrentRouteMatch
+   * @return \Drupal\Core\Routing\CurrentRouteMatch
+   *   The mocked current route match object.
    */
-  protected function setupCurrentRouteMatch($routeName, $nid) {
+  protected function setupCurrentRouteMatch($route_name, $nid) {
     $route_match = $this->prophesize(CurrentRouteMatch::class);
-    $route_match->getRouteName()->willReturn($routeName);
+    $route_match->getRouteName()->willReturn($route_name);
     $route_match->getParameter('node')->willReturn($this->setupNode($nid));
 
     return $route_match->reveal();
@@ -52,7 +57,10 @@ class ContentPreprocessTest extends \PHPUnit_Framework_TestCase {
    * Mock a node object.
    *
    * @param int $nid
-   * @return Node
+   *   The node ID to mock.
+   *
+   * @return \Drupal\node\Entity\Node
+   *   The mocked node.
    */
   protected function setupNode($nid) {
     $node = $this->prophesize(Node::class);

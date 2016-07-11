@@ -20,7 +20,7 @@ class ModerationHandler implements ModerationHandlerInterface, EntityHandlerInte
   use StringTranslationTrait;
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static();
@@ -40,13 +40,12 @@ class ModerationHandler implements ModerationHandlerInterface, EntityHandlerInte
    * {@inheritdoc}
    */
   public function onBundleModerationConfigurationFormSubmit(ConfigEntityInterface $bundle) {
-    // The Revisions portion of Entity API is not uniformly applied or consistent.
-    // Until that's fixed in core, we'll make a best-attempt to apply it to
-    // the common entity patterns so as to avoid every entity type needing to
-    // implement this method, although some will still need to do so for now.
-
-    // This is the API that should be universal, but isn't yet. See NodeType
-    // for an example.
+    // The Revisions portion of Entity API is not uniformly applied or
+    // consistent. Until that's fixed in core, we'll make a best-attempt to
+    // apply it to the common entity patterns so as to avoid every entity type
+    // needing to implement this method, although some will still need to do so
+    // for now. This is the API that should be universal, but isn't yet.
+    // @see \Drupal\node\Entity\NodeType
     if (method_exists($bundle, 'setNewRevision')) {
       $bundle->setNewRevision(TRUE);
     }
@@ -59,25 +58,19 @@ class ModerationHandler implements ModerationHandlerInterface, EntityHandlerInte
       $bundle->set('revision', TRUE);
     }
 
-
     $bundle->save();
-
-    return;
   }
 
   /**
    * {@inheritdoc}
    */
   public function enforceRevisionsEntityFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
-    return;
   }
-
 
   /**
    * {@inheritdoc}
    */
   public function enforceRevisionsBundleFormAlter(array &$form, FormStateInterface $form_state, $form_id) {
-    return;
   }
 
 }

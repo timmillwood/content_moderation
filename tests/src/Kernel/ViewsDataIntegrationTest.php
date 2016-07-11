@@ -37,6 +37,11 @@ class ViewsDataIntegrationTest extends ViewsKernelTestBase {
     $this->installConfig('content_moderation');
   }
 
+  /**
+   * Tests content_moderation_views_data().
+   *
+   * @see content_moderation_views_data()
+   */
   public function testViewsData() {
     $node_type = NodeType::create([
       'type' => 'page',
