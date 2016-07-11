@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Drupal\content_moderation;
-
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\DatabaseExceptionWrapper;
@@ -21,14 +19,14 @@ class RevisionTracker implements RevisionTrackerInterface {
   protected $tableName;
 
   /**
-   * Constructs a new RevisionTracker.
+   * The database connection.
    *
    * @var \Drupal\Core\Database\Connection
    */
   protected $connection;
 
   /**
-   * RevisionTracker constructor.
+   * Constructs a new RevisionTracker.
    *
    * @param \Drupal\Core\Database\Connection $connection
    *   The database connection.

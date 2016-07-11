@@ -12,7 +12,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-class ModerationStateValidator extends ConstraintValidator implements ContainerInjectionInterface {
+/**
+ * Checks if a moderation state transition is valid.
+ */
+class ModerationStateConstraintValidator extends ConstraintValidator implements ContainerInjectionInterface {
 
   /**
    * The state transition validation.
@@ -22,6 +25,8 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
   protected $validation;
 
   /**
+   * The entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   private $entityTypeManager;
@@ -34,7 +39,7 @@ class ModerationStateValidator extends ConstraintValidator implements ContainerI
   protected $moderationInformation;
 
   /**
-   * Creates a new ModerationStateValidator instance.
+   * Creates a new ModerationStateConstraintValidator instance.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.

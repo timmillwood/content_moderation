@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains install/update hooks for moderation_state.
+ * Install, update and uninstall functions for the content_moderation module.
  */
 
 use Drupal\Core\Entity\ContentEntityTypeInterface;

@@ -276,7 +276,7 @@ class StateTransitionValidationTest extends \PHPUnit_Framework_TestCase {
  */
 class Validator extends StateTransitionValidation {
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   protected function getTransitionFromStates(ModerationStateInterface $from, ModerationStateInterface $to) {
     if ($from->id() === 'draft' && $to->id() === 'draft') {

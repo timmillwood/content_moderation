@@ -8,7 +8,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 
 /**
- * @coversDefaultClass \Drupal\content_moderation\Plugin\Validation\Constraint\ModerationStateValidator
+ * @coversDefaultClass \Drupal\content_moderation\Plugin\Validation\Constraint\ModerationStateConstraintValidator
  * @group content_moderation
  */
 class EntityStateChangeValidationTest extends KernelTestBase {

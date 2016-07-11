@@ -2,6 +2,11 @@
 
 namespace Drupal\content_moderation\Event;
 
+/**
+ * Defines events for content moderation.
+ *
+ * @see \Drupal\content_moderation\Event\ContentModerationTransitionEvent
+ */
 final class ContentModerationEvents {
 
   /**

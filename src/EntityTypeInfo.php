@@ -200,9 +200,9 @@ class EntityTypeInfo {
    *   - edit: (optional) String containing markup (normally a link) used as the
    *     element's 'edit' operation in the administration interface. Only for
    *     'form' context.
-   *   - delete: (optional) String containing markup (normally a link) used as the
-   *     element's 'delete' operation in the administration interface. Only for
-   *     'form' context.
+   *   - delete: (optional) String containing markup (normally a link) used as
+   *     the element's 'delete' operation in the administration interface. Only
+   *     for 'form' context.
    */
   public function entityExtraFieldInfo() {
     $return = [];
@@ -226,7 +226,8 @@ class EntityTypeInfo {
    *
    * @return \Generator
    *   A generator, yielding a 2 element associative array:
-   *   - entity: The machine name of an entity, such as "node" or "block_content".
+   *   - entity: The machine name of an entity type, such as "node" or
+   *     "block_content".
    *   - bundle: The machine name of a bundle, such as "page" or "article".
    */
   protected function getModeratedBundles() {
@@ -255,7 +256,6 @@ class EntityTypeInfo {
    *   New fields added by moderation state.
    */
   public function entityBaseFieldInfo(EntityTypeInterface $entity_type) {
-
     if (!$this->moderationInfo->isModeratableEntityType($entity_type)) {
       return [];
     }

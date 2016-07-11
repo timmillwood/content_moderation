@@ -21,7 +21,7 @@ class ModerationStateTransitionListBuilder extends DraggableListBuilder {
   protected $stateStorage;
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static(

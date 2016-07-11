@@ -35,6 +35,7 @@ use Drupal\content_moderation\ModerationStateTransitionInterface;
  * )
  */
 class ModerationStateTransition extends ConfigEntityBase implements ModerationStateTransitionInterface {
+
   /**
    * The Moderation state transition ID.
    *

@@ -6,9 +6,9 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Content Moderation Transition Event
+ * Defines the content moderation transition event.
  *
- * @see \Drupal\content_moderation\ModerationStateEvents
+ * @see \Drupal\content_moderation\Event\ContentModerationEvents
  */
 class ContentModerationTransitionEvent extends Event {
 

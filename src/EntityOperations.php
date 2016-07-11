@@ -202,7 +202,6 @@ class EntityOperations {
    * @see EntityFieldManagerInterface::getExtraFields()
    */
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
-
     if (!$this->moderationInfo->isModeratableEntity($entity)) {
       return;
     }

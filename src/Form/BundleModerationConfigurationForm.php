@@ -172,7 +172,6 @@ class BundleModerationConfigurationForm extends EntityForm {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-
     // If moderation is enabled, revisions MUST be enabled as well.
     // Otherwise we can't have forward revisions.
     if ($form_state->getValue('enable_moderation_state')) {

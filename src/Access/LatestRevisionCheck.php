@@ -9,9 +9,14 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\content_moderation\ModerationInformationInterface;
 use Symfony\Component\Routing\Route;
 
+/**
+ * Access check for the entity moderation tab.
+ */
 class LatestRevisionCheck implements AccessInterface {
 
   /**
+   * The moderation information service.
+   *
    * @var \Drupal\content_moderation\ModerationInformationInterface
    */
   protected $moderationInfo;
@@ -32,8 +37,6 @@ class LatestRevisionCheck implements AccessInterface {
    * This checker assumes the presence of an '_entity_access' requirement key
    * in the same form as used by EntityAccessCheck.
    *
-   * @see \Drupal\Core\Entity\EntityAccessCheck
-   *
    * @param \Symfony\Component\Routing\Route $route
    *   The route to check against.
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
@@ -41,11 +44,11 @@ class LatestRevisionCheck implements AccessInterface {
    *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
+   *
+   * @see \Drupal\Core\Entity\EntityAccessCheck
    */
   public function access(Route $route, RouteMatchInterface $route_match) {
-
-    // This tab should not show up period unless there's a reason to show it.
-    // @todo Do we need any extra cache tags here?
+    // This tab should not show up unless there's a reason to show it.
     $entity = $this->loadEntity($route, $route_match);
     return $this->moderationInfo->hasForwardRevision($entity)
       ? AccessResult::allowed()->addCacheableDependency($entity)

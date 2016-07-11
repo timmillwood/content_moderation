@@ -2,7 +2,6 @@
 
 namespace Drupal\content_moderation\Entity\Handler;
 
-
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityHandlerInterface;
@@ -21,7 +20,7 @@ class ModerationHandler implements ModerationHandlerInterface, EntityHandlerInte
   use StringTranslationTrait;
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static();

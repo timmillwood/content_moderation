@@ -35,7 +35,7 @@ class EntityModerationForm extends FormBase {
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -46,14 +46,14 @@ class EntityModerationForm extends FormBase {
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function getFormId() {
     return 'content_moderation_entity_moderation_form';
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, ContentEntityInterface $entity = NULL) {
     /** @var \Drupal\content_moderation\Entity\ModerationState $current_state */
@@ -110,7 +110,7 @@ class EntityModerationForm extends FormBase {
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     /** @var ContentEntityInterface $entity */

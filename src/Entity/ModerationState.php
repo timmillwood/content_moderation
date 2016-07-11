@@ -34,6 +34,7 @@ use Drupal\content_moderation\ModerationStateInterface;
  * )
  */
 class ModerationState extends ConfigEntityBase implements ModerationStateInterface {
+
   /**
    * The Moderation state ID.
    *

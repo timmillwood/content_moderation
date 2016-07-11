@@ -2,7 +2,6 @@
 
 namespace Drupal\content_moderation;
 
-use Drupal\content_moderation\Entity\ModerationState;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
@@ -91,20 +90,20 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
 
     $states_for_bundle = $bundle->getThirdPartySetting('content_moderation', 'allowed_moderation_states', []);
 
-    /** @var \Drupal\content_moderation\Entity\ModerationState $state */
-    $state = $entity->moderation_state->entity;
-    $current_state_id = $state->id();
+    /** @var \Drupal\content_moderation\Entity\ModerationState $current_state */
+    $current_state = $entity->moderation_state->entity;
 
     $all_transitions = $this->getPossibleTransitions();
-    $destinations = $all_transitions[$current_state_id];
+    $destination_ids = $all_transitions[$current_state->id()];
 
-    $destinations = array_intersect($states_for_bundle, $destinations);
+    $destination_ids = array_intersect($states_for_bundle, $destination_ids);
+    $destinations = $this->entityTypeManager->getStorage('moderation_state')->loadMultiple($destination_ids);
 
-    $permitted_destinations = array_filter($destinations, function($state_name) use ($current_state_id, $user) {
-      return $this->userMayTransition($current_state_id, $state_name, $user);
+    $permitted_destination_ids = array_filter($destinations, function($destination_state) use ($current_state, $user) {
+      return $this->userMayTransition($current_state, $destination_state, $user);
     });
 
-    return $this->entityTypeManager->getStorage('moderation_state')->loadMultiple($permitted_destinations);
+    return $this->entityTypeManager->getStorage('moderation_state')->loadMultiple($permitted_destination_ids);
   }
 
   /**

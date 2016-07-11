@@ -21,6 +21,7 @@ interface ModerationInformationInterface {
    *   The bundle ID.
    *
    * @return \Drupal\Core\Config\Entity\ConfigEntityInterface|null
+   *   The bundle entity.
    */
   public function loadBundleEntity($bundle_entity_type_id, $bundle_id);
 
@@ -173,8 +174,8 @@ interface ModerationInformationInterface {
   /**
    * Determines if an entity is a latest revision.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   A revisionable Content entity.
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   A revisionable content entity.
    *
    * @return bool
    *   TRUE if the specified object is the latest revision of its entity,

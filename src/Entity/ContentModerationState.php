@@ -4,7 +4,6 @@ namespace Drupal\content_moderation\Entity;
 
 use Drupal\content_moderation\ContentModerationStateInterface;
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -12,11 +11,11 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\user\UserInterface;
 
 /**
- * Defines the content_moderation_state entity class.
+ * Defines the Content moderation state entity.
  *
  * @ContentEntityType(
  *   id = "content_moderation_state",
- *   label = @Translation("Content Moderation State"),
+ *   label = @Translation("Content moderation state"),
  *   label_singular = @Translation("content moderation state"),
  *   label_plural = @Translation("content moderation states"),
  *   label_count = @PluralTranslation(
@@ -37,11 +36,12 @@ use Drupal\user\UserInterface;
  *   }
  * )
  */
-class ContentModerationState extends ContentEntityBase implements ContentModerationStateInterface{
+class ContentModerationState extends ContentEntityBase implements ContentModerationStateInterface {
+
   use EntityChangedTrait;
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
@@ -118,15 +118,15 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
   }
 
   /**
-   * Creates an entity or updates.
+   * Creates or updates the moderation state of an entity.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The content entity to moderate.
-   * @param string $moderation_state->target_id
+   * @param string $moderation_state_id
    *   (optional) The ID of the state to give the entity.
    */
-  public static function updateOrCreateFromEntity(EntityInterface $entity, $moderation_state = NULL) {
-    $moderation_state = $moderation_state ?: $entity->moderation_state->target_id;
+  public static function updateOrCreateFromEntity(EntityInterface $entity, $moderation_state_id= NULL) {
+    $moderation_state = $moderation_state_id ?: $entity->moderation_state->target_id;
     /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
     if (!$moderation_state) {
       $moderation_state = \Drupal::service('content_moderation.moderation_information')
@@ -134,7 +134,7 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
         ->getThirdPartySetting('content_moderation', 'default_moderation_state');
     }
 
-    // @todo what if $moderation_state->target_id is null at this point?
+    // @todo what if $entity->moderation_state->target_id is null at this point?
 
     $entity_type_id = $entity->getEntityTypeId();
     $entity_id = $entity->id();
@@ -177,9 +177,9 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
   }
 
   /**
-   * Default value callback for 'uid' base field definition.
+   * Default value callback for the 'uid' base field definition.
    *
-   * @see ::baseFieldDefinitions()
+   * @see \Drupal\content_moderation\Entity\ContentModerationState::baseFieldDefinitions()
    *
    * @return array
    *   An array of default values.

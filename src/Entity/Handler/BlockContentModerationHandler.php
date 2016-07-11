@@ -4,7 +4,6 @@ namespace Drupal\content_moderation\Entity\Handler;
 
 use Drupal\Core\Form\FormStateInterface;
 
-
 /**
  * Customizations for block content entities.
  */
