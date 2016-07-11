@@ -70,7 +70,10 @@ class ModerationStateFieldItemList extends EntityReferenceFieldItemList {
     // Compute the value of the moderation state.
     if (!isset($this->list[$index])) {
       $moderation_state = $this->getModerationState();
-      $this->list[$index] = $this->createItem($index, ['entity' => $moderation_state]);
+      // Do not store NULL values in the static cache.
+      if ($moderation_state) {
+        $this->list[$index] = $this->createItem($index, ['entity' => $moderation_state]);
+      }
     }
 
     return isset($this->list[$index]) ? $this->list[$index] : NULL;
