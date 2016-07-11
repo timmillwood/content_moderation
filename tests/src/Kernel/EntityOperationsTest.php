@@ -56,7 +56,7 @@ class EntityOperationsTest extends KernelTestBase {
       'type' => 'page',
       'title' => 'A',
     ]);
-    $page->moderation_state->target_id= 'draft';
+    $page->moderation_state->target_id = 'draft';
     $page->save();
 
     $id = $page->id();

@@ -36,6 +36,7 @@ class ContentModerationStateTest extends KernelTestBase {
   }
 
   /**
+   * Tests basic monolingual content moderation through the API.
    */
   public function testBasicModeration() {
     $node_type = NodeType::create([
@@ -84,6 +85,7 @@ class ContentModerationStateTest extends KernelTestBase {
 
 
   /**
+   * Tests basic multilingual content moderation through the API.
    */
   public function testMultilingualModeration() {
     // Enable French
