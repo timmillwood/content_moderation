@@ -68,7 +68,7 @@ class ModerationStateFieldItemList extends EntityReferenceFieldItemList {
       throw new \InvalidArgumentException('An entity can not have multiple moderation states at the same time.');
     }
     // Compute the value of the moderation state.
-    if (!isset($this->list[$index])) {
+    if (!isset($this->list[$index]) || $this->list[$index]->isEmpty()) {
       $moderation_state = $this->getModerationState();
       // Do not store NULL values in the static cache.
       if ($moderation_state) {

@@ -157,6 +157,8 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     // Publish the English article before testing the archive transition.
     $this->drupalPostForm('node/' . $english_node->id() . '/edit', [], t('Save and Publish (this translation)'));
     $this->assertText(t('Article Another node has been updated.'));
+    $english_node = $this->drupalGetNodeByTitle('Another node', TRUE);
+    $this->assertEqual($english_node->moderation_state->target_id, 'published');
 
     // Archive the node and its translation.
     $this->drupalPostForm('node/' . $english_node->id() . '/edit', [], t('Save and Archive (this translation)'));
