@@ -118,9 +118,9 @@ abstract class ModerationStateTestBase extends WebTestBase {
     $edit['enable_moderation_state'] = 1;
 
     /** @var ModerationState $state */
-    foreach (ModerationState::loadMultiple() as $id => $state) {
+    foreach (ModerationState::loadMultiple() as $state) {
       $key = $state->isPublishedState() ? 'allowed_moderation_states_published[' . $state->id() . ']' : 'allowed_moderation_states_unpublished[' . $state->id() . ']';
-      $edit[$key] = (int)in_array($id, $allowed_states);
+      $edit[$key] = in_array($state->id(), $allowed_states, TRUE) ? $state->id() : FALSE;
     }
 
     $edit['default_moderation_state'] = $default_state;
