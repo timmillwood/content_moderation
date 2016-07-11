@@ -99,11 +99,9 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
     $destination_ids = array_intersect($states_for_bundle, $destination_ids);
     $destinations = $this->entityTypeManager->getStorage('moderation_state')->loadMultiple($destination_ids);
 
-    $permitted_destination_ids = array_filter($destinations, function($destination_state) use ($current_state, $user) {
+    return array_filter($destinations, function(ModerationStateInterface $destination_state) use ($current_state, $user) {
       return $this->userMayTransition($current_state, $destination_state, $user);
     });
-
-    return $this->entityTypeManager->getStorage('moderation_state')->loadMultiple($permitted_destination_ids);
   }
 
   /**
