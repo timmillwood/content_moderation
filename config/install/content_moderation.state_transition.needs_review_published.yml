@@ -2,9 +2,10 @@ langcode: en
 status: true
 dependencies:
   config:
+    - content_moderation.state.needs_review
     - content_moderation.state.published
-id: published_published
+id: needs_review_published
 label: 'Publish'
-stateFrom: published
+stateFrom: needs_review
 stateTo: published
-weight: -4
+weight: -7

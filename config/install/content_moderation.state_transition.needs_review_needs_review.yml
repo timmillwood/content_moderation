@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - content_moderation.state.needs_review
+id: needs_review_needs_review
+label: 'Keep in Review'
+stateFrom: needs_review
+stateTo: needs_review
+weight: -8
