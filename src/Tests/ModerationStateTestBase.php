@@ -56,9 +56,6 @@ abstract class ModerationStateTestBase extends WebTestBase {
     'block',
     'block_content',
     'node',
-    'views',
-    'options',
-    'user',
   ];
 
   /**

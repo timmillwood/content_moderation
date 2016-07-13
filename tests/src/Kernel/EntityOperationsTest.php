@@ -21,8 +21,6 @@ class EntityOperationsTest extends KernelTestBase {
   public static $modules = [
     'content_moderation',
     'node',
-    'views',
-    'options',
     'user',
     'system',
   ];

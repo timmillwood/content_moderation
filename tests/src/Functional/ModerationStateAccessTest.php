@@ -19,11 +19,6 @@ class ModerationStateAccessTest extends BrowserTestBase {
   public static $modules = [
     'content_moderation_test_views',
     'content_moderation',
-    'node',
-    'views',
-    'options',
-    'user',
-    'system',
   ];
 
   /**
