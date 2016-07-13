@@ -115,7 +115,6 @@ function _content_moderation_create_entity_operations() {
     \Drupal::service('content_moderation.moderation_information'),
     \Drupal::service('entity_type.manager'),
     \Drupal::service('form_builder'),
-    \Drupal::service('event_dispatcher'),
     \Drupal::service('content_moderation.revision_tracker')
   );
 }
