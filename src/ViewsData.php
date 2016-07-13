@@ -49,7 +49,7 @@ class ViewsData {
   public function getViewsData() {
     $data = [];
 
-    $data['content_revision_tracker']['table']['group'] = $this->t('Content moderation');
+    $data['content_revision_tracker']['table']['group'] = $this->t('Content moderation (tracker)');
 
     $data['content_revision_tracker']['entity_type'] = [
       'title' => $this->t('Entity type'),
