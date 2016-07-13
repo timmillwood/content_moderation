@@ -49,7 +49,7 @@ class ViewsData {
   public function getViewsData() {
     $data = [];
 
-    $data['content_revision_tracker']['table']['group'] = $this->t('Content moderation');
+    $data['content_revision_tracker']['table']['group'] = $this->t('Content moderation (tracker)');
 
     $data['content_revision_tracker']['entity_type'] = [
       'title' => $this->t('Entity type'),
@@ -171,6 +171,54 @@ class ViewsData {
           ];
         }
       }
+    }
+
+    // Provides a relationship from moderated entity to its moderation state
+    // entity.
+    $content_moderation_state_entity_type = \Drupal::entityTypeManager()->getDefinition('content_moderation_state');
+    $content_moderation_state_entity_base_table = $content_moderation_state_entity_type->getDataTable() ?: $content_moderation_state_entity_type->getBaseTable();
+    $content_moderation_state_entity_revision_base_table = $content_moderation_state_entity_type->getRevisionDataTable() ?: $content_moderation_state_entity_type->getRevisionTable();
+    foreach ($this->moderationInformation->selectRevisionableEntities($this->entityTypeManager->getDefinitions()) as $entity_type_id => $entity_type) {
+      $table = $entity_type->getDataTable() ?: $entity_type->getBaseTable();
+
+      $data[$table]['moderation_state'] = [
+        'title' => t('Moderation state'),
+        'relationship' => [
+          'id' => 'standard',
+          'label' => $this->t('@label moderation state', ['@label' => $entity_type->getLabel()]),
+          'base' => $content_moderation_state_entity_base_table,
+          'base field' => 'content_entity_id',
+          'relationship field' => $entity_type->getKey('id'),
+          'join_extra' => [
+            [
+              'field' => 'content_entity_type_id',
+              'value' => $entity_type_id,
+            ],
+            [
+              'field' => 'content_entity_revision_id',
+              'left_field' => $entity_type->getKey('revision'),
+            ],
+          ],
+        ],
+      ];
+
+      $revision_table = $entity_type->getRevisionDataTable() ?: $entity_type->getRevisionTable();
+      $data[$revision_table]['moderation_state'] = [
+        'title' => t('Moderation state'),
+        'relationship' => [
+          'id' => 'standard',
+          'label' => $this->t('@label moderation state', ['@label' => $entity_type->getLabel()]),
+          'base' => $content_moderation_state_entity_revision_base_table,
+          'base field' => 'content_entity_revision_id',
+          'relationship field' => $entity_type->getKey('revision'),
+          'join_extra' => [
+            [
+              'field' => 'content_entity_type_id',
+              'value' => $entity_type_id,
+            ],
+          ],
+        ],
+      ];
     }
 
     return $data;
