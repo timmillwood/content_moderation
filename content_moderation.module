@@ -248,27 +248,3 @@ function content_moderation_action_info_alter(&$definitions) {
     $definitions['node_unpublish_action']['class'] = ModerationOptOutUnpublishNode::class;
   }
 }
-
-/**
- * Implements hook_views_data_alter().
- *
- * @todo Use \Drupal\workbench_moderation\ViewsData
- */
-function content_moderation_views_data_alter(array &$data) {
-
-  /** @var \Drupal\content_moderation\ModerationInformationInterface $mod_info */
-  $mod_info = \Drupal::service('content_moderation.moderation_information');
-
-  /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $etm */
-  $etm = \Drupal::service('entity_type.manager');
-
-  $revisionable_types = $mod_info->selectRevisionableEntities($etm->getDefinitions());
-
-  foreach ($revisionable_types as $type) {
-    $data[$type->getRevisionTable()]['latest_revision'] = [
-      'title' => t('Is Latest Revision'),
-      'help' => t('Restrict the view to only revisions that are the latest revision of their entity.'),
-      'filter' => ['id' => 'latest_revision'],
-    ];
-  }
-}

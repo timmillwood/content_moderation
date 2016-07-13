@@ -177,6 +177,26 @@ class ViewsData {
   }
 
   /**
+   * Alters the table and field information from hook_views_data().
+   *
+   * @param array $data
+   *   An array of all information about Views tables and fields, collected from
+   *   hook_views_data(), passed by reference.
+   *
+   * @see hook_views_data()
+   */
+  public function alterViewsData(array &$data) {
+    $revisionable_types = $this->moderationInformation->selectRevisionableEntities($this->entityTypeManager->getDefinitions());
+    foreach ($revisionable_types as $type) {
+      $data[$type->getRevisionTable()]['latest_revision'] = [
+        'title' => t('Is Latest Revision'),
+        'help' => t('Restrict the view to only revisions that are the latest revision of their entity.'),
+        'filter' => ['id' => 'latest_revision'],
+      ];
+    }
+  }
+
+  /**
    * Gets the table of an entity type to be used as revision table in views.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
