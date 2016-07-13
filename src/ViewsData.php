@@ -177,6 +177,7 @@ class ViewsData {
     // entity.
     $content_moderation_state_entity_type = \Drupal::entityTypeManager()->getDefinition('content_moderation_state');
     $content_moderation_state_entity_base_table = $content_moderation_state_entity_type->getDataTable() ?: $content_moderation_state_entity_type->getBaseTable();
+    $content_moderation_state_entity_revision_base_table = $content_moderation_state_entity_type->getRevisionDataTable() ?: $content_moderation_state_entity_type->getRevisionTable();
     foreach ($this->moderationInformation->selectRevisionableEntities($this->entityTypeManager->getDefinitions()) as $entity_type_id => $entity_type) {
       $table = $entity_type->getDataTable() ?: $entity_type->getBaseTable();
 
@@ -207,7 +208,7 @@ class ViewsData {
         'relationship' => [
           'id' => 'standard',
           'label' => $this->t('@label moderation state', ['@label' => $entity_type->getLabel()]),
-          'base' => $content_moderation_state_entity_base_table,
+          'base' => $content_moderation_state_entity_revision_base_table,
           'base field' => 'content_entity_revision_id',
           'relationship field' => $entity_type->getKey('revision'),
           'join_extra' => [
