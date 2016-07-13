@@ -3,8 +3,7 @@
 namespace Drupal\content_moderation\Plugin\Derivative;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
-use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
-use Drupal\Core\Entity\ContentEntityTypeInterface;
+use Drupal\content_moderation\ModerationInformationInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
@@ -34,6 +33,13 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   protected $entityTypeManager;
 
   /**
+   * The moderation information service.
+   *
+   * @var \Drupal\content_moderation\ModerationInformationInterface
+   */
+  protected $moderationInfo;
+
+  /**
    * Creates an FieldUiLocalTask object.
    *
    * @param string $base_plugin_id
@@ -43,10 +49,11 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The translation manager.
    */
-  public function __construct($base_plugin_id, EntityTypeManagerInterface $entity_type_manager, TranslationInterface $string_translation) {
+  public function __construct($base_plugin_id, EntityTypeManagerInterface $entity_type_manager, TranslationInterface $string_translation, ModerationInformationInterface $moderation_information) {
     $this->entityTypeManager = $entity_type_manager;
     $this->stringTranslation = $string_translation;
     $this->basePluginId = $base_plugin_id;
+    $this->moderationInfo = $moderation_information;
   }
 
   /**
@@ -56,7 +63,8 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
     return new static(
       $base_plugin_id,
       $container->get('entity_type.manager'),
-      $container->get('string_translation')
+      $container->get('string_translation'),
+      $container->get('content_moderation.moderation_information')
     );
   }
 
@@ -99,11 +107,7 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
    *   An array of just those entities we care about.
    */
   protected function moderatableEntityDefinitions() {
-    return array_filter($this->entityTypeManager->getDefinitions(), function (EntityTypeInterface $type) {
-      return ($type instanceof ContentEntityTypeInterface)
-        && $type->getBundleEntityType()
-        && $type->isRevisionable();
-    });
+    return $this->moderationInfo->selectRevisionableEntities($this->entityTypeManager->getDefinitions());
   }
 
   /**
@@ -113,13 +117,7 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
    *   An array of entity types that represent bundles that can be moderated.
    */
   protected function moderatableEntityTypeDefinitions() {
-    $entity_types = $this->entityTypeManager->getDefinitions();
-
-    return array_filter($entity_types, function (EntityTypeInterface $type) use ($entity_types) {
-      return ($type instanceof ConfigEntityTypeInterface)
-        && ($bundle_of = $type->get('bundle_of'))
-        && $entity_types[$bundle_of]->isRevisionable();
-    });
+    return $this->moderationInfo->selectRevisionableEntityTypes($this->entityTypeManager->getDefinitions());
   }
 
 }
