@@ -4,8 +4,8 @@ dependencies:
   config:
     - system.menu.main
   module:
-    - user
     - content_moderation
+    - user
 id: latest
 label: Latest
 module: views
@@ -253,9 +253,9 @@ display:
           field_api_classes: false
         moderation_state:
           id: moderation_state
-          table: node_field_revision
+          table: content_moderation_state_field_revision
           field: moderation_state
-          relationship: none
+          relationship: moderation_state
           group_type: group
           admin_label: ''
           label: 'Moderation state'
@@ -313,7 +313,7 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
+          entity_type: content_moderation_state
           entity_field: moderation_state
           plugin_id: field
       filters:
@@ -359,7 +359,17 @@ display:
       header: {  }
       footer: {  }
       empty: {  }
-      relationships: {  }
+      relationships:
+        moderation_state:
+          id: moderation_state
+          table: node_field_revision
+          field: moderation_state
+          relationship: none
+          group_type: group
+          admin_label: 'Content moderation state'
+          required: false
+          entity_type: node
+          plugin_id: standard
       arguments: {  }
       display_extenders: {  }
     cache_metadata:
