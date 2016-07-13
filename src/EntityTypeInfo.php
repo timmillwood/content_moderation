@@ -291,7 +291,7 @@ class EntityTypeInfo {
   }
 
   /**
-   * Force moderatable bundles to have a moderation_state field.
+   * Adds the ModerationState constraint to bundles that are moderatable.
    *
    * @param \Drupal\Core\Field\FieldDefinitionInterface[] $fields
    *   The array of bundle field definitions.
