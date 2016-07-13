@@ -4,8 +4,6 @@ dependencies:
   module:
     - node
     - user
-_core:
-  default_config_hash: 5PoZglK-ZXEh1fnzVSvRWZ7QvLPqkT-gwz-8DJT1cKY
 id: test_content_moderation_latest_revision
 label: test_content_moderation_latest_revision
 module: views
@@ -261,9 +259,9 @@ display:
           plugin_id: field
         moderation_state:
           id: moderation_state
-          table: node_field_data
+          table: content_moderation_state_field_revision
           field: moderation_state
-          relationship: none
+          relationship: moderation_state
           group_type: group
           admin_label: ''
           label: ''
@@ -308,9 +306,8 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: entity_reference_label
-          settings:
-            link: true
+          type: entity_reference_entity_id
+          settings: {  }
           group_column: target_id
           group_columns: {  }
           group_rows: true
@@ -321,14 +318,14 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
+          entity_type: content_moderation_state
           entity_field: moderation_state
           plugin_id: field
-        moderation_state_revision:
-          id: moderation_state_revision
-          table: node_field_revision
+        moderation_state_1:
+          id: moderation_state_1
+          table: content_moderation_state_field_revision
           field: moderation_state
-          relationship: latest_revision__node
+          relationship: moderation_state_1
           group_type: group
           admin_label: ''
           label: ''
@@ -373,9 +370,8 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: entity_reference_label
-          settings:
-            link: true
+          type: entity_reference_entity_id
+          settings: {  }
           group_column: target_id
           group_columns: {  }
           group_rows: true
@@ -386,7 +382,7 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
+          entity_type: content_moderation_state
           entity_field: moderation_state
           plugin_id: field
       filters: {  }
@@ -417,6 +413,26 @@ display:
           group_type: group
           admin_label: 'Content latest revision'
           required: false
+          plugin_id: standard
+        moderation_state_1:
+          id: moderation_state_1
+          table: node_field_revision
+          field: moderation_state
+          relationship: latest_revision__node
+          group_type: group
+          admin_label: 'Content moderation state (latest revision)'
+          required: false
+          entity_type: node
+          plugin_id: standard
+        moderation_state:
+          id: moderation_state
+          table: node_field_revision
+          field: moderation_state
+          relationship: none
+          group_type: group
+          admin_label: 'Content moderation state'
+          required: false
+          entity_type: node
           plugin_id: standard
       arguments: {  }
       display_extenders: {  }
