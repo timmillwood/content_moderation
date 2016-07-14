@@ -6,6 +6,9 @@ use Drupal\Core\Config\Entity\DraggableListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\user\Entity\Role;
+use Drupal\user\RoleStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -21,13 +24,21 @@ class ModerationStateTransitionListBuilder extends DraggableListBuilder {
   protected $stateStorage;
 
   /**
+   * The role storage.
+   *
+   * @var \Drupal\user\RoleStorageInterface
+   */
+  protected $roleStorage;
+
+  /**
    * {@inheritdoc}
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static(
       $entity_type,
       $container->get('entity.manager')->getStorage($entity_type->id()),
-      $container->get('entity.manager')->getStorage('moderation_state')
+      $container->get('entity.manager')->getStorage('moderation_state'),
+      $container->get('entity.manager')->getStorage('user_role')
     );
   }
 
@@ -40,10 +51,13 @@ class ModerationStateTransitionListBuilder extends DraggableListBuilder {
    *   Moderation state transition entity storage.
    * @param \Drupal\Core\Entity\EntityStorageInterface $state_storage
    *   Moderation state entity storage.
+   * @param \Drupal\user\RoleStorageInterface $role_storage
+   *   The role storage.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $transition_storage, EntityStorageInterface $state_storage) {
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $transition_storage, EntityStorageInterface $state_storage, RoleStorageInterface $role_storage) {
     parent::__construct($entity_type, $transition_storage);
     $this->stateStorage = $state_storage;
+    $this->roleStorage = $role_storage;
   }
 
   /**
@@ -57,10 +71,10 @@ class ModerationStateTransitionListBuilder extends DraggableListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['label'] = $this->t('Moderation state transition');
-    $header['id'] = $this->t('Machine name');
-    $header['from'] = $this->t('From state');
     $header['to'] = $this->t('To state');
+    $header['label'] = $this->t('Button label');
+    $header['roles'] = $this->t('Allowed roles');
+
     return $header + parent::buildHeader();
   }
 
@@ -68,12 +82,19 @@ class ModerationStateTransitionListBuilder extends DraggableListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /** @var ModerationStateTransitionInterface $entity */
-
-    $row['label'] = $entity->label();
-    $row['id']['#markup'] = $entity->id();
-    $row['from']['#markup'] = $this->stateStorage->load($entity->getFromState())->label();
     $row['to']['#markup'] = $this->stateStorage->load($entity->getToState())->label();
+    $row['label'] = $entity->label();
+
+    $transition_id = $entity->id();
+    $allowed_roles = array_filter($this->roleStorage->loadMultiple(), function ($role) use ($transition_id) {
+      return $role->hasPermission('use ' . $transition_id . ' transition');
+    });
+
+    $allow_role_labels = [];
+    foreach ($allowed_roles as $role) {
+      $allow_role_labels[] = $role->label();
+    }
+    $row['roles']['#markup'] = implode(', ', $allow_role_labels);
 
     return $row + parent::buildRow($entity);
   }
@@ -86,11 +107,83 @@ class ModerationStateTransitionListBuilder extends DraggableListBuilder {
 
     $build['item'] = [
       '#type' => 'item',
-      '#markup' => $this->t('When saving an entity, only a destination state that has a transition is legal. That includes its current state. If you want to allow an entity to be saved without changing its state then you must define a transition from that state to itself. Note that all users will still need permission to use a defined transition.'),
+      '#markup' => $this->t('On this screen you can define <em>transitions</em>. Every time an entity is saved, it undergoes a transition. It is not possible to save an entity if it tries do a transition not defined here. Transitions do not necessarily mean a state change, it is possible to transition from a state to the same state but that transition needs to be defined here as well.'),
       '#weight' => -5,
     ];
 
     return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    $this->entities = $this->load();
+
+    /** @var \Drupal\content_moderation\ModerationStateTransitionInterface $entity */
+    $groups = [];
+    foreach ($this->entities as $entity) {
+      $groups[$entity->getFromState()][] = $entity;
+    }
+    ksort($groups);
+
+    // If there is a 'draft' transition, put it at the top of the list.
+    // @todo Maybe we should add weights to the moderation states themselves and
+    //   order by that.
+    if (array_key_exists('draft', $groups)) {
+      $groups = ['draft' => $groups['draft']] + $groups;
+    }
+
+    foreach ($groups as $group_name => $entities) {
+      $form[$group_name] = [
+        '#type' => 'details',
+        '#title' => $this->t('From @state to...', ['@state' => $this->stateStorage->load($group_name)->label()]),
+        // Make sure that the first group is always open.
+        '#open' => $group_name === array_keys($groups)[0],
+      ];
+
+      $form[$group_name][$this->entitiesKey] = array(
+        '#type' => 'table',
+        '#header' => $this->buildHeader(),
+        '#empty' => t('There is no @label yet.', array('@label' => $this->entityType->getLabel())),
+        '#tabledrag' => array(
+          array(
+            'action' => 'order',
+            'relationship' => 'sibling',
+            'group' => 'weight',
+          ),
+        ),
+      );
+
+
+      $delta = 10;
+      // Change the delta of the weight field if have more than 20 entities.
+      if (!empty($this->weightKey)) {
+        $count = count($this->entities);
+        if ($count > 20) {
+          $delta = ceil($count / 2);
+        }
+      }
+      foreach ($entities as $entity) {
+        $row = $this->buildRow($entity);
+        if (isset($row['label'])) {
+          $row['label'] = array('#markup' => $row['label']);
+        }
+        if (isset($row['weight'])) {
+          $row['weight']['#delta'] = $delta;
+        }
+        $form[$group_name][$this->entitiesKey][$entity->id()] = $row;
+      }
+    }
+
+    $form['actions']['#type'] = 'actions';
+    $form['actions']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save order'),
+      '#button_type' => 'primary',
+    );
+
+    return $form;
   }
 
 }
