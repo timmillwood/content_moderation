@@ -36,7 +36,6 @@ class ModerationStateAccessTest extends BrowserTestBase {
     $editor1 = $this->drupalCreateUser($permissions);
     $this->drupalLogin($editor1);
 
-    /** @var Node $node_1 */
     $node_1 = Node::create([
       'type' => $node_type_id,
       'title' => 'Draft node',
@@ -45,34 +44,23 @@ class ModerationStateAccessTest extends BrowserTestBase {
     $node_1->moderation_state->target_id = 'draft';
     $node_1->save();
 
-    /** @var Node $node_2 */
     $node_2 = Node::create([
-      'type' => $node_type_id,
-      'title' => 'Review node',
-      'uid' => $editor1->id(),
-    ]);
-    $node_2->moderation_state->target_id = 'needs_review';
-    $node_2->save();
-
-    /** @var Node $node_3 */
-    $node_3 = Node::create([
       'type' => $node_type_id,
       'title' => 'Published node',
       'uid' => $editor1->id(),
     ]);
-    $node_3->moderation_state->target_id = 'published';
-    $node_3->save();
+    $node_2->moderation_state->target_id = 'published';
+    $node_2->save();
 
     // Resave the node with a new state.
-    $node_3->setTitle('Archived node');
-    $node_3->moderation_state->target_id = 'archived';
-    $node_3->save();
+    $node_2->setTitle('Archived node');
+    $node_2->moderation_state->target_id = 'archived';
+    $node_2->save();
 
     // Now show the View, and confirm that the state labels are showing.
     $this->drupalGet('/latest');
     $page = $this->getSession()->getPage();
     $this->assertTrue($page->hasLink('Draft'));
-    $this->assertTrue($page->hasLink('Needs Review'));
     $this->assertTrue($page->hasLink('Archived'));
     $this->assertFalse($page->hasLink('Published'));
 
@@ -89,7 +77,6 @@ class ModerationStateAccessTest extends BrowserTestBase {
     $page = $this->getSession()->getPage();
     $this->assertEquals(200, $this->getSession()->getStatusCode());
     $this->assertTrue($page->hasLink('Draft'));
-    $this->assertTrue($page->hasLink('Needs Review'));
     $this->assertTrue($page->hasLink('Archived'));
     $this->assertFalse($page->hasLink('Published'));
   }

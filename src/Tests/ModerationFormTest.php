@@ -17,7 +17,6 @@ class ModerationFormTest extends ModerationStateTestBase {
     $this->drupalLogin($this->adminUser);
     $this->createContentTypeFromUi('Moderated content', 'moderated_content', TRUE, [
       'draft',
-      'needs_review',
       'published',
     ], 'draft');
     $this->grantUserPermissionToCreateContentOfType($this->adminUser, 'moderated_content');
@@ -55,7 +54,7 @@ class ModerationFormTest extends ModerationStateTestBase {
     // Update the draft.
     $this->drupalPostForm($edit_path, [
       'body[0][value]' => 'Second version of the content.',
-    ], t('Save and Request Review'));
+    ], t('Save and Create New Draft'));
 
     // The latest version page should not show, because there is still no
     // forward revision.
@@ -96,17 +95,15 @@ class ModerationFormTest extends ModerationStateTestBase {
     $this->assertText('Status', 'Form text found on the latest-version page.');
     $this->assertText('Draft', 'Correct status found on the latest-version page.');
 
-    // Submit the moderation form to change status to needs review.
+    // Submit the moderation form to change status to published.
     $this->drupalPostForm($latest_version_path, [
-      'new_state' => 'needs_review',
+      'new_state' => 'published',
     ], t('Apply'));
 
-    // The latest version page should show the moderation form and have "Needs
-    // Review" status, because the forward revision is in "Needs Review".
+    // The latest version page should not show, because there is no
+    // forward revision.
     $this->drupalGet($latest_version_path);
-    $this->assertResponse(200);
-    $this->assertText('Status', 'Form text found on the latest-version page.');
-    $this->assertText('Needs Review', 'Correct status found on the latest-version page.');
+    $this->assertResponse(403);
   }
 
 }

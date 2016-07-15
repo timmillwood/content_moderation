@@ -49,8 +49,6 @@ class ModerationStateNodeTest extends ModerationStateTestBase {
     $node = reset($nodes);
 
     $path = 'node/' . $node->id() . '/edit';
-    // Set up needs review revision.
-    $this->drupalPostForm($path, [], t('Save and Request Review'));
     // Set up published revision.
     $this->drupalPostForm($path, [], t('Save and Publish'));
     \Drupal::entityTypeManager()->getStorage('node')->resetCache([$node->id()]);
@@ -84,11 +82,11 @@ class ModerationStateNodeTest extends ModerationStateTestBase {
     $this->assertUrl(Url::fromRoute('entity.node.canonical', ['node' => $node->id()]));
     $this->assertText('First version of the content.');
 
-    // Update the draft to review; after saving, we should still be on the
-    // canonical URL, but viewing the second revision.
+    // Create a new draft; after saving, we should still be on the canonical
+    // URL, but viewing the second revision.
     $this->drupalPostForm($edit_path, [
       'body[0][value]' => 'Second version of the content.',
-    ], t('Save and Request Review'));
+    ], t('Save and Create New Draft'));
     $this->assertUrl(Url::fromRoute('entity.node.canonical', ['node' => $node->id()]));
     $this->assertText('Second version of the content.');
 

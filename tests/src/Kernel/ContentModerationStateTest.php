@@ -50,7 +50,7 @@ class ContentModerationStateTest extends KernelTestBase {
       'type' => 'example',
     ]);
     $node_type->setThirdPartySetting('content_moderation', 'enabled', TRUE);
-    $node_type->setThirdPartySetting('content_moderation', 'allowed_moderation_states', ['draft', 'needs_review', 'published']);
+    $node_type->setThirdPartySetting('content_moderation', 'allowed_moderation_states', ['draft', 'published']);
     $node_type->setThirdPartySetting('content_moderation', 'default_moderation_state', 'draft');
     $node_type->save();
     $node = Node::create([
@@ -60,12 +60,6 @@ class ContentModerationStateTest extends KernelTestBase {
     $node->save();
     $node = $this->reloadNode($node);
     $this->assertEquals('draft', $node->moderation_state->entity->id());
-
-    $node->moderation_state->target_id = 'needs_review';
-    $node->save();
-
-    $node = $this->reloadNode($node);
-    $this->assertEquals('needs_review', $node->moderation_state->entity->id());
 
     $published = ModerationState::load('published');
     $node->moderation_state->entity = $published;
@@ -83,11 +77,11 @@ class ContentModerationStateTest extends KernelTestBase {
     $node = $this->reloadNode($node);
     $this->assertEquals('draft', $node->moderation_state->entity->id());
 
-    $node->moderation_state->target_id = 'needs_review';
+    $node->moderation_state->target_id = 'published';
     $node->save();
 
     $node = $this->reloadNode($node);
-    $this->assertEquals('needs_review', $node->moderation_state->entity->id());
+    $this->assertEquals('published', $node->moderation_state->entity->id());
   }
 
   /**
@@ -100,7 +94,7 @@ class ContentModerationStateTest extends KernelTestBase {
       'type' => 'example',
     ]);
     $node_type->setThirdPartySetting('content_moderation', 'enabled', TRUE);
-    $node_type->setThirdPartySetting('content_moderation', 'allowed_moderation_states', ['draft', 'needs_review', 'published']);
+    $node_type->setThirdPartySetting('content_moderation', 'allowed_moderation_states', ['draft', 'published']);
     $node_type->setThirdPartySetting('content_moderation', 'default_moderation_state', 'draft');
     $node_type->save();
     $english_node = Node::create([
@@ -120,11 +114,11 @@ class ContentModerationStateTest extends KernelTestBase {
     $this->assertEquals('draft', $french_node->moderation_state->entity->id());
     $this->assertFalse($french_node->isPublished());
 
-    // Move English node to needs review.
+    // Move English node to create another draft.
     $english_node = $this->reloadNode($english_node);
-    $english_node->moderation_state->target_id = 'needs_review';
+    $english_node->moderation_state->target_id = 'draft';
     $english_node->save();
-    $this->assertEquals('needs_review', $english_node->moderation_state->entity->id());
+    $this->assertEquals('draft', $english_node->moderation_state->entity->id());
 
     // French node should still be in draft.
     $french_node = $this->reloadNode($english_node)->getTranslation('fr');
@@ -137,7 +131,7 @@ class ContentModerationStateTest extends KernelTestBase {
     $this->assertEquals('published', $french_node->moderation_state->entity->id());
     $this->assertTrue($french_node->isPublished());
     $english_node = $this->reloadNode($french_node)->getTranslation('en');
-    $this->assertEquals('needs_review', $english_node->moderation_state->entity->id());
+    $this->assertEquals('draft', $english_node->moderation_state->entity->id());
 
     // Publish the English node.
     $english_node->moderation_state->target_id = 'published';
@@ -166,12 +160,12 @@ class ContentModerationStateTest extends KernelTestBase {
     $this->assertEquals('published', $french_node->moderation_state->entity->id());
 
     // This should unpublish the French node.
-    ContentModerationState::updateOrCreateFromEntity($french_node, 'needs_review');
+    ContentModerationState::updateOrCreateFromEntity($french_node, 'draft');
 
     $english_node = $this->reloadNode($french_node);
     $this->assertEquals('draft', $english_node->moderation_state->entity->id());
     $french_node = $this->reloadNode($english_node)->getTranslation('fr');
-    $this->assertEquals('needs_review', $french_node->moderation_state->entity->id());
+    $this->assertEquals('draft', $french_node->moderation_state->entity->id());
     // @todo Switching the moderation state to an unpublished state should
     // update the entity, but currently doesn't.
     // $this->assertFalse($french_node->isPublished());

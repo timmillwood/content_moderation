@@ -56,11 +56,11 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     $node->moderation_state->target_id = 'draft';
     $node->save();
 
-    $node->moderation_state->target_id = 'needs_review';
+    $node->moderation_state->target_id = 'published';
     $this->assertCount(0, $node->validate());
     $node->save();
 
-    $this->assertEquals('needs_review', $node->moderation_state->entity->id());
+    $this->assertEquals('published', $node->moderation_state->entity->id());
   }
 
   /**
@@ -109,7 +109,7 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     /** @var NodeType $node_type */
     $node_type = NodeType::load('example');
     $node_type->setThirdPartySetting('content_moderation', 'enabled', TRUE);
-    $node_type->setThirdPartySetting('content_moderation', 'allowed_moderation_states', ['draft', 'needs_review', 'published']);
+    $node_type->setThirdPartySetting('content_moderation', 'allowed_moderation_states', ['draft', 'published']);
     $node_type->setThirdPartySetting('content_moderation', 'default_moderation_state', 'draft');
     $node_type->save();
 
@@ -158,7 +158,7 @@ class EntityStateChangeValidationTest extends KernelTestBase {
     /** @var NodeType $node_type */
     $node_type = NodeType::load('example');
     $node_type->setThirdPartySetting('content_moderation', 'enabled', TRUE);
-    $node_type->setThirdPartySetting('content_moderation', 'allowed_moderation_states', ['draft', 'needs_review', 'published']);
+    $node_type->setThirdPartySetting('content_moderation', 'allowed_moderation_states', ['draft', 'published']);
     $node_type->setThirdPartySetting('content_moderation', 'default_moderation_state', 'draft');
     $node_type->save();
 

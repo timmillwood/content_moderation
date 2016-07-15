@@ -16,8 +16,8 @@ class ModerationStateTransitionsTest extends ModerationStateTestBase {
     $paths = [
       'admin/config/workflow/moderation/transitions',
       'admin/config/workflow/moderation/transitions/add',
-      'admin/config/workflow/moderation/transitions/draft_needs_review',
-      'admin/config/workflow/moderation/transitions/draft_needs_review/delete',
+      'admin/config/workflow/moderation/transitions/draft_published',
+      'admin/config/workflow/moderation/transitions/draft_published/delete',
     ];
 
     foreach ($paths as $path) {
@@ -42,24 +42,24 @@ class ModerationStateTransitionsTest extends ModerationStateTestBase {
     $this->drupalGet('admin/config/workflow/moderation');
     $this->clickLink('Moderation state transitions');
     $this->assertLink('Add Moderation state transition');
-    $this->assertText('Request Review');
+    $this->assertText('Create New Draft');
 
-    // Edit the Draft » Needs review.
-    $this->drupalGet('admin/config/workflow/moderation/transitions/draft_needs_review');
-    $this->assertFieldByName('label', 'Request Review');
+    // Edit the Draft » Draft review.
+    $this->drupalGet('admin/config/workflow/moderation/transitions/draft_draft');
+    $this->assertFieldByName('label', 'Create New Draft');
     $this->assertFieldByName('stateFrom', 'draft');
-    $this->assertFieldByName('stateTo', 'needs_review');
+    $this->assertFieldByName('stateTo', 'draft');
     $this->drupalPostForm(NULL, [
-      'label' => 'Draft to Needs review',
+      'label' => 'Create Draft',
     ], t('Save'));
-    $this->assertText('Saved the Draft to Needs review Moderation state transition.');
-    $this->drupalGet('admin/config/workflow/moderation/transitions/draft_needs_review');
-    $this->assertFieldByName('label', 'Draft to Needs review');
+    $this->assertText('Saved the Create Draft Moderation state transition.');
+    $this->drupalGet('admin/config/workflow/moderation/transitions/draft_draft');
+    $this->assertFieldByName('label', 'Create Draft');
     // Now set it back.
     $this->drupalPostForm(NULL, [
-      'label' => 'Request Review',
+      'label' => 'Create New Draft',
     ], t('Save'));
-    $this->assertText('Saved the Request Review Moderation state transition.');
+    $this->assertText('Saved the Create New Draft Moderation state transition.');
 
     // Add a new state.
     $this->drupalGet('admin/config/workflow/moderation/states/add');

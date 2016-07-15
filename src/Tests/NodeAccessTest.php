@@ -19,7 +19,7 @@ class NodeAccessTest extends ModerationStateTestBase {
       'Moderated content',
       'moderated_content',
       TRUE,
-      ['draft', 'needs_review', 'published'],
+      ['draft', 'published'],
       'draft'
     );
     $this->grantUserPermissionToCreateContentOfType($this->adminUser, 'moderated_content');
@@ -54,7 +54,6 @@ class NodeAccessTest extends ModerationStateTestBase {
     $latest_path = 'node/' . $node->id() . '/latest';
 
     // Publish the node.
-    $this->drupalPostForm($edit_path, [], t('Save and Request Review'));
     $this->drupalPostForm($edit_path, [], t('Save and Publish'));
 
     // Ensure access works correctly for anonymous users.
@@ -77,9 +76,7 @@ class NodeAccessTest extends ModerationStateTestBase {
     // Now make a new user and verify that the new user's access is correct.
     $user = $this->createUser([
       'use draft_draft transition',
-      'use draft_needs_review transition',
       'use published_draft transition',
-      'use needs_review_published transition',
       'view latest version',
       'view any unpublished content',
     ]);
@@ -95,9 +92,7 @@ class NodeAccessTest extends ModerationStateTestBase {
 
     // Now make another user, who should not be able to see forward revisions.
     $user = $this->createUser([
-      'use draft_needs_review transition',
       'use published_draft transition',
-      'use needs_review_published transition',
     ]);
     $this->drupalLogin($user);
 
