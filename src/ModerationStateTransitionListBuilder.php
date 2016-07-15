@@ -7,7 +7,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\user\Entity\Role;
 use Drupal\user\RoleStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -154,7 +153,6 @@ class ModerationStateTransitionListBuilder extends DraggableListBuilder {
           ),
         ),
       );
-
 
       $delta = 10;
       // Change the delta of the weight field if have more than 20 entities.

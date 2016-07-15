@@ -141,12 +141,15 @@ class ViewsDataIntegrationTest extends ViewsKernelTestBase {
       [
         'nid' => $node->id(),
         // @todo I would have expected that the content_moderation_state default
-        //   revision is the same one as in the node, but it isn't
-        // joins from the base table to the default revision of the content_moderation.
+        //   revision is the same one as in the node, but it isn't.
+        // Joins from the base table to the default revision of the
+        // content_moderation.
         'moderation_state' => 'draft',
-        // joins from the revision table to the default revision of the content_moderation.
+        // Joins from the revision table to the default revision of the
+        // content_moderation.
         'moderation_state_1' => 'draft',
-        // joins from the revision table to the revision of the content_moderation.
+        // Joins from the revision table to the revision of the
+        // content_moderation.
         'moderation_state_2' => 'published',
       ],
     ];

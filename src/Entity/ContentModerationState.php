@@ -5,7 +5,6 @@ namespace Drupal\content_moderation\Entity;
 use Drupal\content_moderation\ContentModerationStateInterface;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\TypedData\TranslatableInterface;
@@ -124,12 +123,12 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
   /**
    * Creates or updates an entity's moderation state whilst saving that entity.
    *
+   * @param \Drupal\content_moderation\Entity\ContentModerationState $content_moderation_state
+   *   The content moderation entity content entity to create or save.
+   *
    * @internal
    *   This method should only be called as a result of saving the related
    *   content entity.
-   *
-   * @param \Drupal\content_moderation\Entity\ContentModerationState $content_moderation_state
-   *   The content moderation entity content entity to create or save.
    */
   public static function updateOrCreateFromEntity(ContentModerationState $content_moderation_state) {
     $content_moderation_state->realSave();
@@ -148,7 +147,7 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function save() {
     $related_entity = \Drupal::entityTypeManager()
