@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\TypedData\TranslatableInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -176,7 +177,7 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
     // Create the ContentModerationState entity for the inserted entity.
     $content_moderation_state->set('content_entity_revision_id', $entity_revision_id);
     $content_moderation_state->set('moderation_state', $moderation_state);
-    $content_moderation_state->save();
+    $content_moderation_state->realSave();
   }
 
   /**
@@ -189,6 +190,36 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
    */
   public static function getCurrentUserId() {
     return array(\Drupal::currentUser()->id());
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function save() {
+    $related_entity = \Drupal::entityTypeManager()
+      ->getStorage($this->content_entity_type_id->value)
+      ->loadRevision($this->content_entity_revision_id->value);
+    if ($related_entity instanceof TranslatableInterface) {
+      $related_entity = $related_entity->getTranslation($this->activeLangcode);
+    }
+    $related_entity->moderation_state->target_id = $this->moderation_state->target_id;
+    return $related_entity->save();
+  }
+
+  /**
+   * Saves an entity permanently.
+   *
+   * When saving existing entities, the entity is assumed to be complete,
+   * partial updates of entities are not supported.
+   *
+   * @return int
+   *   Either SAVED_NEW or SAVED_UPDATED, depending on the operation performed.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   *   In case of failures an exception is thrown.
+   */
+  protected function realSave() {
+    return parent::save();
   }
 
 }
