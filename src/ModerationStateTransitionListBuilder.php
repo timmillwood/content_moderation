@@ -83,17 +83,7 @@ class ModerationStateTransitionListBuilder extends DraggableListBuilder {
   public function buildRow(EntityInterface $entity) {
     $row['to']['#markup'] = $this->stateStorage->load($entity->getToState())->label();
     $row['label'] = $entity->label();
-
-    $transition_id = $entity->id();
-    $allowed_roles = array_filter($this->roleStorage->loadMultiple(), function ($role) use ($transition_id) {
-      return $role->hasPermission('use ' . $transition_id . ' transition');
-    });
-
-    $allow_role_labels = [];
-    foreach ($allowed_roles as $role) {
-      $allow_role_labels[] = $role->label();
-    }
-    $row['roles']['#markup'] = implode(', ', $allow_role_labels);
+    $row['roles']['#markup'] = implode(', ', user_role_names(FALSE, 'use ' . $entity->id() . ' transition'));
 
     return $row + parent::buildRow($entity);
   }
