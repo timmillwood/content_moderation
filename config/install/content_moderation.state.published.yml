@@ -5,3 +5,4 @@ id: published
 label: Published
 published: true
 default_revision: true
+weight: -9

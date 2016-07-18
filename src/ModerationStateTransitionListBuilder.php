@@ -109,24 +109,20 @@ class ModerationStateTransitionListBuilder extends DraggableListBuilder {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $this->entities = $this->load();
 
+    // Get all the moderation states and sort them by weight.
+    $states = $this->stateStorage->loadMultiple();
+    uasort($states, array($this->entityType->getClass(), 'sort'));
+
     /** @var \Drupal\content_moderation\ModerationStateTransitionInterface $entity */
-    $groups = [];
+    $groups = array_fill_keys(array_keys($states), []);
     foreach ($this->entities as $entity) {
       $groups[$entity->getFromState()][] = $entity;
-    }
-    ksort($groups);
-
-    // If there is a 'draft' transition, put it at the top of the list.
-    // @todo Maybe we should add weights to the moderation states themselves and
-    //   order by that.
-    if (array_key_exists('draft', $groups)) {
-      $groups = ['draft' => $groups['draft']] + $groups;
     }
 
     foreach ($groups as $group_name => $entities) {
       $form[$group_name] = [
         '#type' => 'details',
-        '#title' => $this->t('From @state to...', ['@state' => $this->stateStorage->load($group_name)->label()]),
+        '#title' => $this->t('From @state to...', ['@state' => $states[$group_name]->label()]),
         // Make sure that the first group is always open.
         '#open' => $group_name === array_keys($groups)[0],
       ];

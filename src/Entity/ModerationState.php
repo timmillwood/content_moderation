@@ -24,13 +24,20 @@ use Drupal\content_moderation\ModerationStateInterface;
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",
- *     "uuid" = "uuid"
+ *     "uuid" = "uuid",
+ *     "weight" = "weight",
  *   },
  *   links = {
  *     "edit-form" = "/admin/config/workflow/moderation/states/{moderation_state}/edit",
  *     "delete-form" = "/admin/config/workflow/moderation/states/{moderation_state}/delete",
  *     "collection" = "/admin/config/workflow/moderation/states"
- *   }
+ *   },
+ *   config_export = {
+ *     "id",
+ *     "label",
+ *     "published",
+ *     "weight",
+ *   },
  * )
  */
 class ModerationState extends ConfigEntityBase implements ModerationStateInterface {
@@ -55,6 +62,13 @@ class ModerationState extends ConfigEntityBase implements ModerationStateInterfa
    * @var bool
    */
   protected $published;
+
+  /**
+   * Relative weight of this state.
+   *
+   * @var int
+   */
+  protected $weight;
 
   /**
    * Whether this state represents a default revision of the node.
