@@ -36,6 +36,7 @@ use Drupal\content_moderation\ModerationStateInterface;
  *     "id",
  *     "label",
  *     "published",
+ *     "default_revision",
  *     "weight",
  *   },
  * )
