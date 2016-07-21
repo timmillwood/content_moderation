@@ -180,6 +180,43 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->assertFalse($english_node->isPublished());
     $this->assertEqual($french_node->moderation_state->target_id, 'archived');
     $this->assertFalse($french_node->isPublished());
+
+    // Create another article with its translation. This time publishing english
+    // after creating a forward french revision.
+    $edit = [
+      'title[0][value]' => 'An english node',
+    ];
+    $this->drupalPostForm('node/add/article', $edit, t('Save and Create New Draft'));
+    $this->assertText(t('Article An english node has been created.'));
+    $english_node = $this->drupalGetNodeByTitle('An english node');
+    $this->assertFalse($english_node->isPublished());
+
+    // Add a French translation.
+    $this->drupalGet('node/' . $english_node->id() . '/translations');
+    $this->clickLink(t('Add'));
+    $edit = [
+      'title[0][value]' => 'A french node',
+    ];
+    $this->drupalPostForm(NULL, $edit, t('Save and Publish (this translation)'));
+    $english_node = $this->drupalGetNodeByTitle('An english node', TRUE);
+    $french_node = $english_node->getTranslation('fr');
+    $this->assertTrue($french_node->isPublished());
+    $this->assertFalse($english_node->isPublished());
+
+    // Create a forward revision
+    $this->drupalPostForm('fr/node/' . $english_node->id() . '/edit', [], t('Save and Create New Draft (this translation)'));
+    $english_node = $this->drupalGetNodeByTitle('An english node', TRUE);
+    $french_node = $english_node->getTranslation('fr');
+    $this->assertTrue($french_node->isPublished());
+    $this->assertFalse($english_node->isPublished());
+
+    // Publish the english node and the default french node not the latest
+    // french node should be used.
+    $this->drupalPostForm('/node/' . $english_node->id() . '/edit', [], t('Save and Publish (this translation)'));
+    $english_node = $this->drupalGetNodeByTitle('An english node', TRUE);
+    $french_node = $english_node->getTranslation('fr');
+    $this->assertTrue($french_node->isPublished());
+    $this->assertTrue($english_node->isPublished());
   }
 
 }
