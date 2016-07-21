@@ -139,8 +139,7 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->assertEqual($english_node->moderation_state->target_id, 'draft');
     $this->assertFalse($english_node->isPublished());
 
-    // Now check that we can create a new draft of the translation and then
-    // publish it.
+    // Now check that we can create a new draft of the translation.
     $edit = [
       'title[0][value]' => 'New draft of translated node',
     ];

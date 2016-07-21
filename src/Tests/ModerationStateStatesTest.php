@@ -46,7 +46,7 @@ class ModerationStateStatesTest extends ModerationStateTestBase {
     $this->assertLink('Add Moderation state');
     $this->assertText('Draft');
     // Edit the draft.
-    $this->clickLink('Edit', 1);
+    $this->clickLink('Edit', 0);
     $this->assertFieldByName('label', 'Draft');
     $this->assertNoFieldChecked('edit-published');
     $this->drupalPostForm(NULL, [
