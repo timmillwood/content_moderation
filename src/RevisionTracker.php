@@ -54,6 +54,29 @@ class RevisionTracker implements RevisionTrackerInterface {
   }
 
   /**
+   * Get the latest revision for the given language.
+   *
+   * @param string $entity_type_id
+   *   The machine name of the type of entity.
+   * @param string $entity_id
+   *   The Entity ID in question.
+   * @param string $langcode
+   *   The langcode of the revision we're saving. Each language has its own
+   *   effective tree of entity revisions, so in different languages
+   *   different revisions will be "latest".
+   * @return mixed
+   */
+  public function getLatestRevision($entity_type_id, $entity_id, $langcode) {
+    return $this->connection->select($this->tableName, 'tracker')
+      ->condition('tracker.entity_type', $entity_type_id)
+      ->condition('tracker.entity_id', $entity_id)
+      ->condition('tracker.langcode', $langcode)
+      ->fields('tracker', array('revision_id'))
+      ->execute()
+      ->fetchField();
+  }
+
+  /**
    * Records the latest revision of a given entity.
    *
    * @param string $entity_type_id

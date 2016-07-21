@@ -1,7 +1,7 @@
 services:
   paramconverter.latest_revision:
     class: Drupal\content_moderation\ParamConverter\EntityRevisionConverter
-    arguments: ['@entity.manager', '@content_moderation.moderation_information']
+    arguments: ['@entity.manager', '@content_moderation.moderation_information', '@content_moderation.revision_tracker']
     tags:
       - { name: paramconverter, priority: 5 }
     arguments: ['@entity.manager']
