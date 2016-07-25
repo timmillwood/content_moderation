@@ -7,7 +7,6 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\ParamConverter\EntityConverter;
 use Drupal\Core\TypedData\TranslatableInterface;
 use Drupal\content_moderation\ModerationInformationInterface;
-use Drupal\content_moderation\RevisionTrackerInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -23,13 +22,6 @@ class EntityRevisionConverter extends EntityConverter {
   protected $moderationInformation;
 
   /**
-   * Revisions tracker service.
-   *
-   * @var \Drupal\content_moderation\RevisionTracker
-   */
-  protected $tracker;
-
-  /**
    * EntityRevisionConverter constructor.
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
@@ -40,10 +32,9 @@ class EntityRevisionConverter extends EntityConverter {
    * @todo: If the parent class is ever cleaned up to use EntityTypeManager
    *   instead of Entity manager, this method will also need to be adjusted.
    */
-  public function __construct(EntityManagerInterface $entity_manager, ModerationInformationInterface $moderation_info, RevisionTrackerInterface $tracker) {
+  public function __construct(EntityManagerInterface $entity_manager, ModerationInformationInterface $moderation_info) {
     parent::__construct($entity_manager);
     $this->moderationInformation = $moderation_info;
-    $this->tracker = $tracker;
   }
 
   /**
@@ -97,16 +88,17 @@ class EntityRevisionConverter extends EntityConverter {
   public function convert($value, $definition, $name, array $defaults) {
     $entity = parent::convert($value, $definition, $name, $defaults);
 
-    if ($entity && $this->moderationInformation->isModeratableEntity($entity)) {
+    if ($entity && $this->moderationInformation->isModeratableEntity($entity) && !$this->moderationInformation->isLatestRevision($entity)) {
       $entity_type_id = $this->getEntityTypeFromDefaults($definition, $name, $defaults);
-      $latest_revision_id = $this->tracker->getLatestRevision($entity_type_id, $entity->id(), $entity->language()->getId());
-      if ($latest_revision_id) {
-        $latest_revision = node_revision_load($latest_revision_id);
-        // If the entity type is translatable, ensure we return the proper
-        // translation object for the current context.
-        if ($latest_revision instanceof EntityInterface && $entity instanceof TranslatableInterface) {
-          $latest_revision = $this->entityManager->getTranslationFromContext($latest_revision, NULL, array('operation' => 'entity_upcast'));
-        }
+      $latest_revision = $this->moderationInformation->getLatestRevision($entity_type_id, $value);
+
+      // If the entity type is translatable, ensure we return the proper
+      // translation object for the current context.
+      if ($latest_revision instanceof EntityInterface && $entity instanceof TranslatableInterface) {
+        $latest_revision = $this->entityManager->getTranslationFromContext($latest_revision, NULL, array('operation' => 'entity_upcast'));
+      }
+
+      if ($latest_revision->isRevisionTranslationAffected()) {
         $entity = $latest_revision;
       }
     }
