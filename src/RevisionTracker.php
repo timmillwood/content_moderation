@@ -5,6 +5,7 @@ namespace Drupal\content_moderation;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\DatabaseExceptionWrapper;
 use Drupal\Core\Database\SchemaObjectExistsException;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Tracks metadata about revisions across entities.
@@ -26,6 +27,13 @@ class RevisionTracker implements RevisionTrackerInterface {
   protected $connection;
 
   /**
+   * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * Constructs a new RevisionTracker.
    *
    * @param \Drupal\Core\Database\Connection $connection
@@ -33,8 +41,9 @@ class RevisionTracker implements RevisionTrackerInterface {
    * @param string $table
    *   The table that should be used for tracking.
    */
-  public function __construct(Connection $connection, $table = 'content_revision_tracker') {
+  public function __construct(Connection $connection, EntityTypeManagerInterface $entity_type_manager, $table = 'content_revision_tracker') {
     $this->connection = $connection;
+    $this->entityTypeManager = $entity_type_manager;
     $this->tableName = $table;
   }
 
@@ -64,16 +73,19 @@ class RevisionTracker implements RevisionTrackerInterface {
    *   The langcode of the revision we're saving. Each language has its own
    *   effective tree of entity revisions, so in different languages
    *   different revisions will be "latest".
-   * @return mixed
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   The latest revision of a content entity.
    */
   public function getLatestRevision($entity_type_id, $entity_id, $langcode) {
-    return $this->connection->select($this->tableName, 'tracker')
+    $latest_revision_id = $this->connection->select($this->tableName, 'tracker')
       ->condition('tracker.entity_type', $entity_type_id)
       ->condition('tracker.entity_id', $entity_id)
       ->condition('tracker.langcode', $langcode)
       ->fields('tracker', array('revision_id'))
       ->execute()
       ->fetchField();
+    return $this->entityTypeManager->getStorage($entity_type_id)->loadRevision($latest_revision_id);
   }
 
   /**

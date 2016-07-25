@@ -215,8 +215,8 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->drupalPostForm('/node/' . $english_node->id() . '/edit', [], t('Save and Publish (this translation)'));
     $english_node = $this->drupalGetNodeByTitle('An english node', TRUE);
     $french_node = $english_node->getTranslation('fr');
-    $this->assertTrue($french_node->isPublished());
     $this->assertTrue($english_node->isPublished());
+    $this->assertTrue($french_node->isPublished());
   }
 
 }

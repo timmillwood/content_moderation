@@ -18,6 +18,6 @@ services:
       - { name: access_check, applies_to: _content_moderation_latest_version }
   content_moderation.revision_tracker:
     class: Drupal\content_moderation\RevisionTracker
-    arguments: ['@database']
+    arguments: ['@database', '@entity_type.manager']
     tags:
      - { name: backend_overridable }

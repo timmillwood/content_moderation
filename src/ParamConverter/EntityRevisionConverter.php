@@ -99,9 +99,8 @@ class EntityRevisionConverter extends EntityConverter {
 
     if ($entity && $this->moderationInformation->isModeratableEntity($entity)) {
       $entity_type_id = $this->getEntityTypeFromDefaults($definition, $name, $defaults);
-      $latest_revision_id = $this->tracker->getLatestRevision($entity_type_id, $entity->id(), $entity->language()->getId());
-      if ($latest_revision_id) {
-        $latest_revision = node_revision_load($latest_revision_id);
+      $latest_revision = $this->tracker->getLatestRevision($entity_type_id, $entity->id(), $entity->language()->getId());
+      if ($latest_revision) {
         // If the entity type is translatable, ensure we return the proper
         // translation object for the current context.
         if ($latest_revision instanceof EntityInterface && $entity instanceof TranslatableInterface) {
