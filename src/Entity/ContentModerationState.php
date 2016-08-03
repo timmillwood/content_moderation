@@ -23,6 +23,7 @@ use Drupal\user\UserInterface;
  *     plural = "@count content moderation states"
  *   ),
  *   handlers = {
+ *     "storage_schema" = "Drupal\content_moderation\ContentModerationStateStorageSchema",
  *     "views_data" = "\Drupal\views\EntityViewsData",
  *   },
  *   base_table = "content_moderation_state",

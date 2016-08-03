@@ -101,7 +101,9 @@ class EntityOperations {
       return;
     }
     if ($entity->moderation_state->target_id) {
-      $moderation_state = ModerationState::load($entity->moderation_state->target_id);
+      $moderation_state = $this->entityTypeManager
+        ->getStorage('moderation_state')
+        ->load($entity->moderation_state->target_id);
       $published_state = $moderation_state->isPublishedState();
 
       // This entity is default if it is new, the default revision, or the
@@ -168,18 +170,16 @@ class EntityOperations {
     $entity_revision_id = $entity->getRevisionId();
     $entity_langcode = $entity->language()->getId();
 
-    // @todo maybe just try and get it from the computed field?
-    $entities = $this->entityTypeManager
-      ->getStorage('content_moderation_state')
-      ->loadByProperties([
-        'content_entity_type_id' => $entity_type_id,
-        'content_entity_id' => $entity_id,
-      ]);
+    $storage = $this->entityTypeManager->getStorage('content_moderation_state');
+    $entities = $storage->loadByProperties([
+      'content_entity_type_id' => $entity_type_id,
+      'content_entity_id' => $entity_id,
+    ]);
 
     /** @var \Drupal\content_moderation\ContentModerationStateInterface $content_moderation_state */
     $content_moderation_state = reset($entities);
     if (!($content_moderation_state instanceof ContentModerationStateInterface)) {
-      $content_moderation_state = ContentModerationState::create([
+      $content_moderation_state = $storage->create([
         'content_entity_type_id' => $entity_type_id,
         'content_entity_id' => $entity_id,
       ]);

@@ -39,9 +39,8 @@ class BundleModerationConfigurationForm extends EntityForm {
   /**
    * {@inheritdoc}
    *
-   * We need to blank out the base form ID so that poorly written form alters
-   * that use the base form ID to target both add and edit forms don't pick
-   * up our form. This should be fixed in core.
+   * Blank out the base form ID so that form alters that use the base form ID to
+   * target both add and edit forms don't pick up this form.
    */
   public function getBaseFormId() {
     return NULL;
@@ -114,9 +113,9 @@ class BundleModerationConfigurationForm extends EntityForm {
       ],
     ];
 
-    // This is screwy, but the key of the array needs to be a user-facing string
-    // so we have to fully render the translatable string to a real string, or
-    // else PHP chokes on an object used as an array key.
+    // The key of the array needs to be a user-facing string so we have to fully
+    // render the translatable string to a real string, or else PHP errors on an
+    // object used as an array key.
     $options = [
       $this->t('Unpublished')->render() => $options_unpublished,
       $this->t('Published')->render() => $options_published,

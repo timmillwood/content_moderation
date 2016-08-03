@@ -3,10 +3,6 @@
 /**
  * @file
  * Contains content_moderation.module.
- *
- * @todo include UI bits of https://www.drupal.org/node/2429153
- * @todo How to remove the live version (i.e. published => draft without new
- *   revision) - i.e. unpublish
  */
 
 use Drupal\content_moderation\EntityOperations;
@@ -35,7 +31,7 @@ function content_moderation_help($route_name, RouteMatchInterface $route_match) 
     case 'help.page.content_moderation':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('The Content Moderation module provides basic moderation for content. For more information, see the <a href=":content_moderation">online documentation for the Content Moderation module</a>.', array(':content_moderation' => 'https://www.drupal.org/documentation/modules/workbench_moderation/')) . '</p>';
+      $output .= '<p>' . t('The Content Moderation module provides basic moderation for content.') . '</p>';
       return $output;
   }
 }

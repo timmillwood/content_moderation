@@ -129,9 +129,6 @@ class ModerationInformation implements ModerationInformationInterface {
    * {@inheritdoc}
    */
   public function isRevisionableBundleForm(FormInterface $form_object) {
-    // We really shouldn't be checking for a base class, but core lacks an
-    // interface here. When core adds a better way to determine if we're on
-    // a Bundle configuration form we should switch to that.
     if ($form_object instanceof BundleEntityFormBase) {
       $bundle_of = $form_object->getEntity()->getEntityType()->getBundleOf();
       $type = $this->entityTypeManager->getDefinition($bundle_of);

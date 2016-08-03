@@ -275,8 +275,6 @@ class EntityTypeInfo {
         'type' => 'hidden',
         'weight' => -5,
       ])
-      // @todo write a custom widget/selection handler plugin instead of
-      // manual filtering?
       ->setDisplayOptions('form', [
         'type' => 'moderation_state_default',
         'weight' => 5,
