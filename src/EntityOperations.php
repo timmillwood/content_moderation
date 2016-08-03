@@ -3,7 +3,6 @@
 namespace Drupal\content_moderation;
 
 use Drupal\content_moderation\Entity\ContentModerationState;
-use Drupal\content_moderation\Entity\ModerationState;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
