@@ -48,6 +48,8 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
    *   The entity type manager.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The translation manager.
+   * @param \Drupal\content_moderation\ModerationInformationInterface $moderation_information
+   *   The moderation information service.
    */
   public function __construct($base_plugin_id, EntityTypeManagerInterface $entity_type_manager, TranslationInterface $string_translation, ModerationInformationInterface $moderation_information) {
     $this->entityTypeManager = $entity_type_manager;

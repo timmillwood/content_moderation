@@ -62,7 +62,7 @@ class ModerationStateTransitionForm extends EntityForm {
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
       '#default_value' => $moderation_state_transition->label(),
-      '#description' => $this->t("Label for the Moderation state transition."),
+      '#description' => $this->t('Label for the Moderation state transition.'),
       '#required' => TRUE,
     ];
 

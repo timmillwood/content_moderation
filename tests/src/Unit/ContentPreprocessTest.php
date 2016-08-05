@@ -28,7 +28,7 @@ class ContentPreprocessTest extends \PHPUnit_Framework_TestCase {
    */
   public function routeNodeProvider() {
     return [
-      ['entity.node.cannonical', 1, 1, FALSE, 'Not on the latest version tab route.'],
+      ['entity.node.canonical', 1, 1, FALSE, 'Not on the latest version tab route.'],
       ['entity.node.latest_version', 1, 1, TRUE, 'On the latest version tab route, with the route node.'],
       ['entity.node.latest_version', 1, 2, FALSE, 'On the latest version tab route, with a different node.'],
     ];

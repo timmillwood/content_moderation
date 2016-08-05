@@ -26,7 +26,7 @@ class ModerationStateAccessTest extends BrowserTestBase {
    */
   public function testViewShowsCorrectStates() {
     $node_type_id = 'test';
-    $node_type = $this->createNodeType('Test', $node_type_id);
+    $this->createNodeType('Test', $node_type_id);
 
     $permissions = [
       'access content',

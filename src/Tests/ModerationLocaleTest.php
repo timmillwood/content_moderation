@@ -71,7 +71,7 @@ class ModerationLocaleTest extends ModerationStateTestBase {
       'title[0][value]' => 'French node Draft',
     ];
     $this->drupalPostForm(NULL, $edit, t('Save and Create New Draft (this translation)'));
-    // Here the error has occured "The website encountered an unexpected error.
+    // Here the error has occurred "The website encountered an unexpected error.
     // Please try again later."
     // If the translation has got lost.
     $this->assertText(t('Article French node Draft has been updated.'));
@@ -126,7 +126,6 @@ class ModerationLocaleTest extends ModerationStateTestBase {
     $this->drupalPostForm(NULL, $edit, t('Save and Create New Draft (this translation)'));
     $this->assertText(t('Article Translated node has been updated.'));
     $english_node = $this->drupalGetNodeByTitle('Another node', TRUE);
-    $french_node = $english_node->getTranslation('fr');
 
     // Publish the translation and check that the source language version stays
     // unpublished.

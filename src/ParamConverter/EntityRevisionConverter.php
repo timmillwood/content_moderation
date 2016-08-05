@@ -47,8 +47,8 @@ class EntityRevisionConverter extends EntityConverter {
   /**
    * Determines if the route definition includes a forward-revision flag.
    *
-   * This is a custom flag defined by WBM to load forward revisions rather than
-   * the default revision on a given route.
+   * This is a custom flag defined by the Content Moderation module to load
+   * forward revisions rather than the default revision on a given route.
    *
    * @param array $definition
    *   The parameter definition provided in the route options.

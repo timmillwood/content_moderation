@@ -24,7 +24,7 @@ class ModerationStateForm extends EntityForm {
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
       '#default_value' => $moderation_state->label(),
-      '#description' => $this->t("Label for the Moderation state."),
+      '#description' => $this->t('Label for the Moderation state.'),
       '#required' => TRUE,
     );
 

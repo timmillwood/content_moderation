@@ -301,7 +301,7 @@ class EntityTypeInfo {
    * @see hook_entity_bundle_field_info_alter();
    */
   public function entityBundleFieldInfoAlter(&$fields, EntityTypeInterface $entity_type, $bundle) {
-    if ($this->moderationInfo->isModeratableBundle($entity_type, $bundle) && !empty($fields['moderation_state'])) {
+    if (!empty($fields['moderation_state']) && $this->moderationInfo->isModeratableBundle($entity_type, $bundle)) {
       $fields['moderation_state']->addConstraint('ModerationState', []);
     }
   }

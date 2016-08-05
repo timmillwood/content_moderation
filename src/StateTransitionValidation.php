@@ -125,7 +125,7 @@ class StateTransitionValidation implements StateTransitionValidationInterface {
     // filtered by those whose target is legal on this bundle and that the
     // user has access to execute.
     $transitions = array_filter($this->getTransitionsFrom($current_state_id), function(ModerationStateTransition $transition) use ($legal_bundle_states, $user) {
-      return in_array($transition->getToState(), $legal_bundle_states)
+      return in_array($transition->getToState(), $legal_bundle_states, TRUE)
         && $user->hasPermission('use ' . $transition->id() . ' transition');
     });
 

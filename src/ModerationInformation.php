@@ -159,8 +159,7 @@ class ModerationInformation implements ModerationInformationInterface {
         ->range(0, 1)
         ->execute();
       if ($revision_ids) {
-        $revision_id = array_keys($revision_ids)[0];
-        return $revision_id;
+        return array_keys($revision_ids)[0];
       }
     }
   }
@@ -176,8 +175,7 @@ class ModerationInformation implements ModerationInformationInterface {
         ->range(0, 1)
         ->execute();
       if ($revision_ids) {
-        $revision_id = array_keys($revision_ids)[0];
-        return $revision_id;
+        return array_keys($revision_ids)[0];
       }
     }
   }
