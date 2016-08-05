@@ -48,18 +48,18 @@ class ModerationInformation implements ModerationInformationInterface {
   /**
    * {@inheritdoc}
    */
-  public function isModeratableEntity(EntityInterface $entity) {
+  public function isModeratedEntity(EntityInterface $entity) {
     if (!$entity instanceof ContentEntityInterface) {
       return FALSE;
     }
 
-    return $this->isModeratableBundle($entity->getEntityType(), $entity->bundle());
+    return $this->isModeratedBundle($entity->getEntityType(), $entity->bundle());
   }
 
   /**
    * {@inheritdoc}
    */
-  public function isModeratableEntityType(EntityTypeInterface $entity_type) {
+  public function isModeratedEntityType(EntityTypeInterface $entity_type) {
     return $entity_type->hasHandlerClass('moderation');
   }
 
@@ -75,7 +75,7 @@ class ModerationInformation implements ModerationInformationInterface {
   /**
    * {@inheritdoc}
    */
-  public function isModeratableBundle(EntityTypeInterface $entity_type, $bundle) {
+  public function isModeratedBundle(EntityTypeInterface $entity_type, $bundle) {
     if ($bundle_entity = $this->loadBundleEntity($entity_type->getBundleEntityType(), $bundle)) {
       return $bundle_entity->getThirdPartySetting('content_moderation', 'enabled', FALSE);
     }
@@ -107,7 +107,7 @@ class ModerationInformation implements ModerationInformationInterface {
   /**
    * {@inheritdoc}
    */
-  public function isBundleForModeratableEntity(EntityInterface $entity) {
+  public function isBundleForModeratedEntity(EntityInterface $entity) {
     $type = $entity->getEntityType();
 
     return
@@ -122,7 +122,7 @@ class ModerationInformation implements ModerationInformationInterface {
    */
   public function isModeratedEntityForm(FormInterface $form_object) {
     return $form_object instanceof ContentEntityFormInterface
-    && $this->isModeratableEntity($form_object->getEntity());
+    && $this->isModeratedEntity($form_object->getEntity());
   }
 
   /**
@@ -191,7 +191,7 @@ class ModerationInformation implements ModerationInformationInterface {
    * {@inheritdoc}
    */
   public function hasForwardRevision(ContentEntityInterface $entity) {
-    return $this->isModeratableEntity($entity)
+    return $this->isModeratedEntity($entity)
       && !($this->getLatestRevisionId($entity->getEntityTypeId(), $entity->id()) == $this->getDefaultRevisionId($entity->getEntityTypeId(), $entity->id()));
   }
 
