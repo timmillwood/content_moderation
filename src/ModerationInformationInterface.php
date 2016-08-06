@@ -26,29 +26,29 @@ interface ModerationInformationInterface {
   public function loadBundleEntity($bundle_entity_type_id, $bundle_id);
 
   /**
-   * Determines if an entity is moderated.
+   * Determines if an entity is one we should be moderating.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity we may be moderating.
    *
    * @return bool
-   *   TRUE if this is an entity tis moderated, FALSE otherwise.
+   *   TRUE if this is an entity that we should act upon, FALSE otherwise.
    */
-  public function isModeratedEntity(EntityInterface $entity);
+  public function isModeratableEntity(EntityInterface $entity);
 
   /**
-   * Determines if an entity type is moderated.
+   * Determines if an entity type has been marked as moderatable.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   An entity type object.
    *
    * @return bool
-   *   TRUE if this entity type is moderated, FALSE otherwise.
+   *   TRUE if this entity type has been marked as moderatable, FALSE otherwise.
    */
-  public function isModeratedEntityType(EntityTypeInterface $entity_type);
+  public function isModeratableEntityType(EntityTypeInterface $entity_type);
 
   /**
-   * Determines if an entity type/bundle is moderated.
+   * Determines if an entity type/bundle is one that will be moderated.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type definition to check.
@@ -56,9 +56,9 @@ interface ModerationInformationInterface {
    *   The bundle to check.
    *
    * @return bool
-   *   TRUE if this is a bundle is moderated, FALSE otherwise.
+   *   TRUE if this is a bundle we want to moderate, FALSE otherwise.
    */
-  public function isModeratedBundle(EntityTypeInterface $entity_type, $bundle);
+  public function isModeratableBundle(EntityTypeInterface $entity_type, $bundle);
 
   /**
    * Filters entity lists to just bundle definitions for revisionable entities.
@@ -72,16 +72,16 @@ interface ModerationInformationInterface {
   public function selectRevisionableEntityTypes(array $entity_types);
 
   /**
-   * Filters entity lists to just the definitions that can be moderated.
+   * Filters entity lists to just the definitions for moderatable entities.
    *
-   * An entity type can be moderated only if it is both revisionable and
+   * An entity type is moderatable only if it is both revisionable and
    * bundleable.
    *
    * @param EntityTypeInterface[] $entity_types
    *   The master entity type list filter.
    *
    * @return \Drupal\Core\Entity\ContentEntityTypeInterface[]
-   *   An array of only the content entity definitions that can be moderated.
+   *   An array of only the content entity definitions we want to modify.
    */
   public function selectRevisionableEntities(array $entity_types);
 
@@ -101,7 +101,7 @@ interface ModerationInformationInterface {
    *   TRUE if we want to add a Moderation operation to this entity, FALSE
    *   otherwise.
    */
-  public function isBundleForModeratedEntity(EntityInterface $entity);
+  public function isBundleForModeratableEntity(EntityInterface $entity);
 
   /**
    * Determines if this form is for a moderated entity.

@@ -73,7 +73,7 @@ class ModerationStateConstraintValidator extends ConstraintValidator implements 
     $entity = $value->getEntity();
 
     // Ignore entities that are not subject to moderation anyway.
-    if (!$this->moderationInformation->isModeratedEntity($entity)) {
+    if (!$this->moderationInformation->isModeratableEntity($entity)) {
       return;
     }
 

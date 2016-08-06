@@ -78,7 +78,7 @@ class EditTab extends LocalTaskDefault implements ContainerFactoryPluginInterfac
    * {@inheritdoc}
    */
   public function getTitle() {
-    if (!$this->moderationInfo->isModeratedEntity($this->entity)) {
+    if (!$this->moderationInfo->isModeratableEntity($this->entity)) {
       // Moderation isn't enabled.
       return parent::getTitle();
     }

@@ -76,7 +76,7 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   public function getDerivativeDefinitions($base_plugin_definition) {
     $this->derivatives = [];
 
-    foreach ($this->moderatedEntityTypeDefinitions() as $entity_type_id => $entity_type) {
+    foreach ($this->moderatableEntityTypeDefinitions() as $entity_type_id => $entity_type) {
       $this->derivatives["$entity_type_id.moderation_tab"] = [
         'route_name' => "entity.$entity_type_id.moderation",
         'title' => $this->t('Manage moderation'),
@@ -86,7 +86,7 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
       ] + $base_plugin_definition;
     }
 
-    $latest_version_entities = array_filter($this->moderatedEntityDefinitions(), function (EntityTypeInterface $type) {
+    $latest_version_entities = array_filter($this->moderatableEntityDefinitions(), function (EntityTypeInterface $type) {
       return $type->hasLinkTemplate('latest-version');
     });
 
@@ -103,12 +103,12 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
   }
 
   /**
-   * Returns an array of content entities that are potentially moderated.
+   * Returns an array of content entities that are potentially moderatable.
    *
    * @return EntityTypeInterface[]
    *   An array of just those entities we care about.
    */
-  protected function moderatedEntityDefinitions() {
+  protected function moderatableEntityDefinitions() {
     return $this->moderationInfo->selectRevisionableEntities($this->entityTypeManager->getDefinitions());
   }
 
@@ -118,7 +118,7 @@ class DynamicLocalTasks extends DeriverBase implements ContainerDeriverInterface
    * @return EntityTypeInterface[]
    *   An array of entity types that represent bundles that can be moderated.
    */
-  protected function moderatedEntityTypeDefinitions() {
+  protected function moderatableEntityTypeDefinitions() {
     return $this->moderationInfo->selectRevisionableEntityTypes($this->entityTypeManager->getDefinitions());
   }
 

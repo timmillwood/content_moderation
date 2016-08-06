@@ -64,9 +64,9 @@ class ModerationInformationTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @dataProvider providerBoolean
-   * @covers ::isModeratedEntity
+   * @covers ::isModeratableEntity
    */
-  public function testIsModeratedEntity($status) {
+  public function testIsModeratableEntity($status) {
     $moderation_information = new ModerationInformation($this->setupModerationEntityManager($status), $this->getUser());
 
     $entity_type = new ContentEntityType([
@@ -77,13 +77,13 @@ class ModerationInformationTest extends \PHPUnit_Framework_TestCase {
     $entity->getEntityType()->willReturn($entity_type);
     $entity->bundle()->willReturn('test_bundle');
 
-    $this->assertEquals($status, $moderation_information->isModeratedEntity($entity->reveal()));
+    $this->assertEquals($status, $moderation_information->isModeratableEntity($entity->reveal()));
   }
 
   /**
-   * @covers ::isModeratedEntity
+   * @covers ::isModeratableEntity
    */
-  public function testIsModeratedEntityForNonBundleEntityType() {
+  public function testIsModeratableEntityForNonBundleEntityType() {
     $entity_type = new ContentEntityType([
       'id' => 'test_entity_type',
     ]);
@@ -95,14 +95,14 @@ class ModerationInformationTest extends \PHPUnit_Framework_TestCase {
     $entity_type_manager = $this->getEntityTypeManager($entity_storage->reveal());
     $moderation_information = new ModerationInformation($entity_type_manager, $this->getUser());
 
-    $this->assertEquals(FALSE, $moderation_information->isModeratedEntity($entity->reveal()));
+    $this->assertEquals(FALSE, $moderation_information->isModeratableEntity($entity->reveal()));
   }
 
   /**
    * @dataProvider providerBoolean
-   * @covers ::isModeratedBundle
+   * @covers ::isModeratableBundle
    */
-  public function testIsModeratedBundle($status) {
+  public function testIsModeratableBundle($status) {
     $entity_type = new ContentEntityType([
       'id' => 'test_entity_type',
       'bundle_entity_type' => 'entity_test_bundle',
@@ -110,7 +110,7 @@ class ModerationInformationTest extends \PHPUnit_Framework_TestCase {
 
     $moderation_information = new ModerationInformation($this->setupModerationEntityManager($status), $this->getUser());
 
-    $this->assertEquals($status, $moderation_information->isModeratedBundle($entity_type, 'test_bundle'));
+    $this->assertEquals($status, $moderation_information->isModeratableBundle($entity_type, 'test_bundle'));
   }
 
   /**

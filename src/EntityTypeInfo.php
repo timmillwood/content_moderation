@@ -170,7 +170,7 @@ class EntityTypeInfo {
     $operations = [];
     $type = $entity->getEntityType();
 
-    if ($this->moderationInfo->isBundleForModeratedEntity($entity)) {
+    if ($this->moderationInfo->isBundleForModeratableEntity($entity)) {
       $operations['manage-moderation'] = [
         'title' => t('Manage moderation'),
         'weight' => 27,
@@ -259,7 +259,7 @@ class EntityTypeInfo {
    *   New fields added by moderation state.
    */
   public function entityBaseFieldInfo(EntityTypeInterface $entity_type) {
-    if (!$this->moderationInfo->isModeratedEntityType($entity_type)) {
+    if (!$this->moderationInfo->isModeratableEntityType($entity_type)) {
       return [];
     }
 
@@ -289,7 +289,7 @@ class EntityTypeInfo {
   }
 
   /**
-   * Adds the ModerationState constraint to bundles that are moderated.
+   * Adds the ModerationState constraint to bundles that are moderatable.
    *
    * @param \Drupal\Core\Field\FieldDefinitionInterface[] $fields
    *   The array of bundle field definitions.
@@ -301,7 +301,7 @@ class EntityTypeInfo {
    * @see hook_entity_bundle_field_info_alter();
    */
   public function entityBundleFieldInfoAlter(&$fields, EntityTypeInterface $entity_type, $bundle) {
-    if (!empty($fields['moderation_state']) && $this->moderationInfo->isModeratedBundle($entity_type, $bundle)) {
+    if (!empty($fields['moderation_state']) && $this->moderationInfo->isModeratableBundle($entity_type, $bundle)) {
       $fields['moderation_state']->addConstraint('ModerationState', []);
     }
   }
