@@ -30,8 +30,7 @@ class ModerationHandler implements ModerationHandlerInterface, EntityHandlerInte
    * {@inheritdoc}
    */
   public function onPresave(ContentEntityInterface $entity, $default_revision, $published_state) {
-    // This is *probably* not necessary if configuration is setup correctly,
-    // but it can't hurt.
+    // This is probably not necessary if configuration is setup correctly.
     $entity->setNewRevision(TRUE);
     $entity->isDefaultRevision($default_revision);
   }
@@ -41,10 +40,10 @@ class ModerationHandler implements ModerationHandlerInterface, EntityHandlerInte
    */
   public function onBundleModerationConfigurationFormSubmit(ConfigEntityInterface $bundle) {
     // The Revisions portion of Entity API is not uniformly applied or
-    // consistent. Until that's fixed in core, we'll make a best-attempt to
-    // apply it to the common entity patterns so as to avoid every entity type
-    // needing to implement this method, although some will still need to do so
-    // for now. This is the API that should be universal, but isn't yet.
+    // consistent. Until that's fixed, we'll make a best-attempt to apply it to
+    // the common entity patterns so as to avoid every entity type needing to
+    // implement this method, although some will still need to do so for now.
+    // This is the API that should be universal, but isn't yet.
     // @see \Drupal\node\Entity\NodeType
     if (method_exists($bundle, 'setNewRevision')) {
       $bundle->setNewRevision(TRUE);

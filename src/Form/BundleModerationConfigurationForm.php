@@ -153,7 +153,7 @@ class BundleModerationConfigurationForm extends EntityForm {
    *   The current state of the form.
    */
   public function formBuilderCallback($entity_type_id, EntityInterface $bundle, &$form, FormStateInterface $form_state) {
-    // @todo write a test for this.
+    // @todo https://www.drupal.org/node/2779933 write a test for this.
     if ($bundle instanceof ThirdPartySettingsInterface) {
       $bundle->setThirdPartySetting('content_moderation', 'enabled', $form_state->getValue('enable_moderation_state'));
       $bundle->setThirdPartySetting('content_moderation', 'allowed_moderation_states', array_keys(array_filter($form_state->getValue('allowed_moderation_states_published') + $form_state->getValue('allowed_moderation_states_unpublished'))));

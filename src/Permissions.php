@@ -20,7 +20,7 @@ class Permissions {
    *   The transition permissions.
    */
   public function transitionPermissions() {
-    // @todo write a test for this.
+    // @todo https://www.drupal.org/node/2779933 write a test for this.
     $perms = [];
     /* @var \Drupal\content_moderation\ModerationStateInterface[] $states */
     $states = ModerationState::loadMultiple();

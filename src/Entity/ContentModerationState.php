@@ -79,8 +79,9 @@ class ContentModerationState extends ContentEntityBase implements ContentModerat
       ->setRequired(TRUE)
       ->setRevisionable(TRUE);
 
-    // @todo Add constraint that enforces unique content_entity_type_id / content_entity_id
-    // @todo Index on content_entity_type_id, content_entity_id and content_entity_revision_id
+    // @todo https://www.drupal.org/node/2779931 Add constraint that enforces
+    //   unique content_entity_type_id, content_entity_id and
+    //   content_entity_revision_id.
 
     $fields['content_entity_revision_id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Content entity revision ID'))
